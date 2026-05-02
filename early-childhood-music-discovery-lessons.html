@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Music Discovery Lessons for Young Children | Cincinnati School of Music</title>
+<meta name="description" content="Music Discovery lessons for children ages 3 to 6 in Cincinnati. Private 30-minute sessions at five Greater Cincinnati locations. Cincinnati School of Music.">
+<link rel="canonical" href="https://cincinnatischoolofmusic.com/early-childhood-music-discovery-lessons">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,200;0,300;0,400;0,500;0,600;1,200;1,300&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   CSM BRAND SYSTEM — April 2026
+   Accent    Coral     #f74f57
+   Teal      #3cb5c6
+   Structure Charcoal    #3D3D3D
+   Base      Off-white   #F0EFEE
+══════════════════════════════════════════ */
+:root {
+  --accent:    #f74f57;
+  --accent-dk: #d93f48;
+  --slate:     #3cb5c6;
+  --slate-lt:  #7dd4df;
+  --charcoal:  #3D3D3D;
+  --mid:       #747474;
+  --light:     #9A9A9A;
+  --offwhite:  #F0EFEE;
+  --offwb:     #E6E4E1;
+  --white:     #FFFFFF;
+  --f: 'Jost','Avenir Next','Avenir',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--f);background:var(--offwhite);color:var(--charcoal);font-weight:300;line-height:1.7;-webkit-font-smoothing:antialiased}
+
+/* ── LABEL BAR ── */
+
+/* ── NAV ── */
+
+.bc a{color:var(--slate);text-decoration:none}
+.bc a:hover{color:var(--charcoal)}
+
+/* ── BUTTONS ── */
+.btn-a{display:inline-block;background:var(--accent);color:var(--white);text-decoration:none;font-size:.68rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:15px 40px;transition:background .18s}
+.btn-a:hover{background:var(--accent-dk)}
+.btn-b{display:inline-block;border:1px solid rgba(255,255,255,.32);color:rgba(255,255,255,.62);text-decoration:none;font-size:.68rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:14px 34px;transition:all .18s}
+.btn-b:hover{border-color:rgba(255,255,255,.7);color:var(--white)}
+.btn-a-lg{display:inline-block;background:var(--accent);color:var(--white);text-decoration:none;font-size:.7rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:17px 50px;margin-bottom:10px;transition:background .18s}
+.btn-a-lg:hover{background:var(--accent-dk)}
+
+/* ── SECTION SHARED ── */
+.section-label{display:block;font-size:.62rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);margin-bottom:16px}
+h2{font-weight:300;font-size:clamp(1.75rem,2.8vw,2.6rem);color:var(--charcoal);letter-spacing:.02em;line-height:1.2}
+h2 em{font-style:italic;font-weight:200}
+.body-text{font-size:.92rem;font-weight:300;line-height:1.95;color:var(--mid);max-width:520px}
+
+/* ── HERO SPLIT ── */
+.hero-split{min-height:78vh;display:grid;grid-template-columns:1fr 1fr;padding:0;background:none;text-align:left;align-items:stretch}
+.hero-left{background:var(--charcoal);display:flex;flex-direction:column;justify-content:center;padding:80px 72px;position:relative;overflow:hidden}
+.hero-left::before{content:'';position:absolute;top:-140px;right:-140px;width:400px;height:400px;background:radial-gradient(circle,rgba(185,106,99,0.08) 0%,transparent 70%);pointer-events:none}
+.hero-right{position:relative;overflow:hidden;background:#1e1e1e}
+.hero-right img{width:100%;height:100%;object-fit:cover;display:block;object-position:center 20%}
+.hero-left .hero-ey{font-size:.63rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:28px;display:block}
+.hero-left .hero-ey em{font-style:normal;color:var(--accent);opacity:.85}
+.hero-left h1{font-weight:300;font-size:clamp(2.2rem,3.6vw,3.8rem);color:var(--white);letter-spacing:.02em;line-height:1.15;margin:0 0 24px}
+.hero-left h1 em{font-style:italic;font-weight:200}
+.hero-left .hero-by{font-size:.92rem;font-weight:300;color:rgba(255,255,255,.62);line-height:1.85;margin:0 0 48px;max-width:440px}
+.cta-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+
+/* ── INTRO SPLIT ── */
+.intro-wrap{background:var(--white);border-bottom:1px solid var(--offwb)}
+.intro-inner{max-width:1100px;margin:0 auto;padding:92px 48px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.intro-img-real{background:var(--offwb);overflow:hidden;height:380px}
+.intro-img-real img{width:100%;height:100%;object-fit:cover;display:block;object-position:center 20%}
+
+/* ── WHAT THEY EXPLORE — 6 items ── */
+.levels-wrap{background:var(--offwhite);border-top:1px solid var(--offwb)}
+.levels-inner{max-width:1100px;margin:0 auto;padding:96px 48px}
+.levels-inner h2{margin-bottom:52px}
+.levels-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--offwb);border:1px solid var(--offwb)}
+.lv{background:var(--offwhite);padding:28px 24px}
+.lv-n{font-size:.58rem;font-weight:600;letter-spacing:.18em;color:var(--slate);margin-bottom:10px}
+.lv-t{font-size:.8rem;font-weight:600;letter-spacing:.08em;color:var(--charcoal);margin-bottom:8px}
+.lv-d{font-size:.84rem;font-weight:300;color:var(--mid);line-height:1.8}
+
+/* ── HUMAN PROOF ── */
+.human-wrap{background:var(--white);border-bottom:1px solid var(--offwb)}
+.human-inner{max-width:1200px;margin:0 auto;padding:0;display:grid;grid-template-columns:1fr 1fr;min-height:520px;align-items:stretch}
+.human-photo{overflow:hidden;background:var(--offwb)}
+.human-photo img{width:100%;height:100%;object-fit:cover;display:block;object-position:center 15%}
+.human-text{padding:80px 72px;display:flex;flex-direction:column;justify-content:center;background:var(--offwhite)}
+.human-quote{font-size:1.4rem;font-weight:300;color:var(--charcoal);line-height:1.5;letter-spacing:.01em;margin:0 0 28px;font-style:italic}
+.human-attr{font-size:.62rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);margin-bottom:32px}
+.human-frame{font-size:.85rem;font-weight:300;color:var(--mid);line-height:1.9;padding-top:28px;border-top:1px solid var(--offwb)}
+
+/* ── DARK SECTION ── */
+.dark-wrap{background:var(--charcoal)}
+.dark-inner{max-width:1100px;margin:0 auto;padding:92px 48px}
+.dark-inner .section-label{color:var(--slate-lt);opacity:.85}
+.dark-inner h2{color:var(--white);margin-bottom:56px}
+.three-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:44px}
+.dg-n{font-size:.58rem;font-weight:600;letter-spacing:.2em;color:var(--slate-lt);margin-bottom:14px}
+.dg-t{font-size:.86rem;font-weight:500;letter-spacing:.05em;color:rgba(255,255,255,.88);margin-bottom:12px;line-height:1.4}
+.dg-d{font-size:.84rem;font-weight:300;color:rgba(255,255,255,.4);line-height:1.85}
+
+/* ── HOW LESSONS WORK ── */
+.split-wrap{background:var(--white);border-top:1px solid var(--offwb)}
+.split-inner{max-width:1100px;margin:0 auto;padding:92px 48px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+.format-tiles{display:flex;flex-direction:column;gap:1px;background:var(--offwb);border:1px solid var(--offwb)}
+.ft{background:var(--white);padding:22px 24px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.ft-lbl{font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:4px}
+.ft-val{font-size:1.4rem;font-weight:200;color:var(--charcoal);line-height:1}
+.ft-note{font-size:.78rem;font-weight:300;color:var(--mid);line-height:1.6;max-width:200px;text-align:right}
+.ft-dark{background:var(--charcoal)!important;padding:24px}
+.ft-dark .ft-lbl{color:var(--slate-lt);opacity:.8}
+.ft-dark .ft-val-d{font-size:.9rem;font-weight:400;color:var(--white);line-height:1.5;margin-top:4px}
+.ft-dark .ft-sub-d{font-size:.78rem;font-weight:300;color:rgba(255,255,255,.38);line-height:1.7;margin-top:6px}
+
+/* ── FINAL CTA ── */
+.cta-wrap{background:var(--white);border-top:1px solid var(--offwb)}
+.cta-inner{max-width:640px;margin:0 auto;padding:104px 48px;text-align:center}
+.cta-inner .section-label{margin-bottom:18px}
+.cta-inner h2{margin-bottom:20px}
+.cta-inner p{font-size:.88rem;font-weight:300;color:var(--mid);line-height:1.9;margin-bottom:40px}
+
+/* ── OTHER INSTRUMENTS STRIP ── */
+.other-wrap{background:var(--offwhite);border-top:1px solid var(--offwb)}
+.other-inner{max-width:1100px;margin:0 auto;padding:72px 48px}
+.other-inner h2{margin-bottom:40px;font-size:1.4rem}
+.other-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--offwb);border:1px solid var(--offwb)}
+.ot{background:var(--white);padding:28px 20px;text-align:center;transition:background .18s;text-decoration:none;display:block}
+.ot:hover{background:var(--offwhite)}
+.ot-icon{display:block;font-size:1.3rem;margin-bottom:12px}
+.ot-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--charcoal)}
+
+/* ── FOOTER ── */
+footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.ft-nav{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.ft-nav a{font-size:.62rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.42);text-decoration:none!important;transition:color .18s}
+.ft-nav a:hover{color:var(--slate-lt)}
+.ft-award{font-size:.6rem;font-weight:400;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.32)}
+.ft-award em{font-style:normal;color:var(--accent);opacity:.85}
+.ft-copy{font-size:.58rem;font-weight:300;letter-spacing:.1em;color:rgba(255,255,255,.28)}
+.ft-copy a{color:var(--slate-lt);opacity:.75;text-decoration:none;transition:opacity .18s}
+.ft-copy a:hover{opacity:.8}
+/* ══════════════════════════════════════════
+   CSM v2.14 — SHARED MOBILE BREAKPOINT BLOCK
+   Paste inside <style> on every page.
+   Breakpoint: 880px
+══════════════════════════════════════════ */
+@media (max-width:880px){
+
+  /* ── NAV ── */
+  
+  
+
+  /* ── BREADCRUMB ── */
+  .bc{padding:12px 24px}
+
+  /* ── HERO SPLIT → single column, image below ── */
+  .hero-split{grid-template-columns:1fr;min-height:auto}
+  .hero-left{padding:56px 24px}
+  .hero-right{height:280px}
+  .hero-stat-row{gap:20px;flex-wrap:wrap}
+
+  /* ── READING / NARRATIVE SECTIONS ── */
+  .read-inner{padding:56px 24px}
+  .pivot-inner{padding:56px 24px}
+  .close-inner{padding:56px 24px}
+  .pullquote-inner{padding:56px 24px}
+
+  /* ── PHOTO STRIP → single column ── */
+  .photo-strip{grid-template-columns:1fr}
+  .photo-strip-item img{height:280px}
+  .photo-break img{height:280px}
+  .photo-caption{padding:12px 24px}
+
+  /* ── TIMELINE → single column ── */
+  .timeline-inner{padding:56px 24px}
+  .timeline-grid{grid-template-columns:1fr}
+  /* override inline 6-col style on student success */
+  .timeline-grid[style]{grid-template-columns:1fr!important}
+
+  /* ── PROOF / STATS ── */
+  .proof-inner{padding:56px 24px}
+  .proof-stats{grid-template-columns:1fr 1fr}
+  .scale-row{flex-wrap:wrap;gap:20px}
+
+  /* ── REVIEWS ── */
+  .reviews-inner{padding:56px 24px}
+  .reviews-grid{grid-template-columns:1fr}
+
+  /* ── PILLARS ── */
+  .pillars-inner{padding:56px 24px}
+  .pillars-grid{grid-template-columns:1fr}
+
+  /* ── LESSONS GRID ── */
+  .lessons-inner{padding:56px 24px}
+  .tile-grid{grid-template-columns:1fr 1fr}
+
+  /* ── LOCATION TILES ── */
+  .loc-inner{padding:56px 24px}
+  .loc-grid{grid-template-columns:1fr}
+
+  /* ── DARK SECTION ── */
+  .dark-inner{padding:56px 24px}
+  .dg-n,.dg-t,.dg-d{grid-column:1/-1}
+
+  /* ── HOW IT WORKS ── */
+  .how-inner{padding:56px 24px}
+  .how-grid{grid-template-columns:1fr}
+
+  /* ── LEVELS ── */
+  .levels-inner{padding:56px 24px}
+  .levels-grid{grid-template-columns:1fr}
+
+  /* ── HUMAN / TEACHER SPOTLIGHT ── */
+  .human-inner{padding:56px 24px}
+  .human-frame{grid-template-columns:1fr;gap:32px}
+  .human-photo{height:300px}
+
+  /* ── SPLIT SECTIONS ── */
+  .split-inner{padding:56px 24px;grid-template-columns:1fr;gap:40px}
+  .gift-options-inner{grid-template-columns:1fr;padding:56px 24px;gap:40px}
+
+  /* ── INTRO ── */
+  .intro-inner{padding:56px 24px;grid-template-columns:1fr;gap:40px}
+  .intro-img-real{height:280px}
+
+  /* ── ORIGIN ── */
+  .origin-inner{padding:56px 24px}
+
+  /* ── OTHER INSTRUMENTS ── */
+  .other-inner{padding:56px 24px}
+  .other-grid{grid-template-columns:1fr 1fr}
+
+  /* ── LIGHT WHY ── */
+  .lightwhy-inner{padding:56px 24px}
+  .lightwhy-grid{grid-template-columns:1fr}
+
+  /* ── FORMAT TILES ── */
+  .format-tiles{grid-template-columns:1fr}
+
+  /* ── THREE GRID ── */
+  .three-grid{grid-template-columns:1fr}
+
+  /* ── CTA ── */
+  .cta-inner{padding:72px 24px}
+  .cta-row{flex-direction:column;align-items:flex-start}
+
+  /* ── LOCATION INFO ── */
+  .locinfo-inner{padding:56px 24px;grid-template-columns:1fr;gap:40px}
+
+  /* ── INST HERE ── */
+  .inst-here-inner{padding:56px 24px}
+
+  /* ── PAGE UTILITY ── */
+  .page-inner{padding:56px 24px 72px}
+  .contact-inner{padding:32px 24px;gap:28px}
+  .legal-inner{padding:56px 24px 72px}
+  .embed-inner{padding:56px 24px}
+
+  /* ── FOOTER ── */
+  footer{padding:40px 24px}
+  .ft-
+
+}
+
+/* ── NAV ── */
+nav {
+  background: var(--offwhite);
+  border-bottom: 1px solid var(--offwb);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 68px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  overflow: visible;
+}
+
+.nav-logo-link {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav-logo {
+  height: 52px;
+  width: auto;
+  display: block;
+  mix-blend-mode: darken;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links > li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 68px;
+}
+
+.nav-links a,
+.nav-links span {
+  font-size: .68rem;
+  font-weight: 500;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--mid);
+  text-decoration: none;
+  transition: color .18s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.nav-links a:hover,
+.nav-links span:hover,
+.nav-has-dropdown:hover > span {
+  color: var(--charcoal);
+}
+
+/* dropdown panel */
+.nav-dropdown {
+  position: absolute;
+  top: 68px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 235px;
+  background: var(--offwhite);
+  border: 1px solid var(--offwb);
+  box-shadow: 0 18px 36px rgba(0,0,0,.10);
+  padding: 12px 0;
+  display: none;
+  z-index: 500;
+}
+
+.nav-has-dropdown:hover .nav-dropdown,
+.nav-has-dropdown:focus-within .nav-dropdown {
+  display: block;
+}
+
+.nav-dropdown a {
+  display: block;
+  padding: 10px 18px;
+  font-size: .62rem;
+  line-height: 1.35;
+  letter-spacing: .12em;
+  color: var(--mid);
+  white-space: normal;
+}
+
+.nav-dropdown a:hover {
+  background: var(--white);
+  color: var(--charcoal);
+}
+
+/* CTA */
+.nav-cta a {
+  background: var(--accent) !important;
+  color: var(--white) !important;
+  padding: 11px 20px;
+  transition: background .18s !important;
+  white-space: nowrap;
+}
+
+.nav-cta a:hover {
+  background: var(--accent-dk) !important;
+}
+
+/* RECITAL CALLOUT */
+.recital-callout{background:var(--charcoal);padding:52px 48px;text-align:center}
+.recital-callout .rc-label{display:block;font-size:.6rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--slate-lt);margin-bottom:12px}
+.recital-callout h3{font-size:clamp(1.2rem,2vw,1.6rem);font-weight:300;color:var(--white);margin-bottom:10px}
+.recital-callout p{font-size:.88rem;color:rgba(255,255,255,.56);max-width:520px;margin:0 auto 28px}
+.recital-callout .btn-ghost{display:inline-block;border:1px solid rgba(255,255,255,.35);color:rgba(255,255,255,.75);text-decoration:none;font-size:.64rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:13px 32px;transition:all .18s}
+.recital-callout .btn-ghost:hover{border-color:var(--white);color:var(--white)}
+
+/* ═════════════════════════════════════════
+   MOBILE RESPONSIVE LAYER
+   v2-50: 880/560 breakpoints (was 720/480)
+   Does not modify desktop selectors above 880px
+   ═════════════════════════════════════════ */
+
+/* Hamburger toggle button — hidden on desktop */
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:10px;margin-right:-10px;color:var(--charcoal)}
+.nav-toggle svg{display:block;width:24px;height:24px}
+
+@media (max-width:880px){
+
+  /* ── NAV: hamburger pattern ── */
+  nav{padding:0 22px;height:64px;flex-wrap:wrap}
+  .nav-logo{height:46px}
+  .nav-toggle{display:flex;align-items:center;justify-content:center;order:3;width:42px;height:42px;border:1px solid var(--offwb);background:var(--white);color:var(--charcoal)}
+  .nav-toggle svg{width:22px;height:22px}
+  .nav-links{order:4;flex-basis:100%;flex-direction:column;align-items:stretch;gap:0;background:var(--offwhite);max-height:0;overflow:hidden;transition:max-height .35s ease;border-top:1px solid transparent}
+  nav.nav-open .nav-links{max-height:calc(100vh - 64px);overflow-y:auto;border-top-color:var(--offwb);padding:8px 0 16px}
+  .nav-links > li{height:auto;min-height:48px;border-bottom:1px solid var(--offwb);width:100%;display:block;position:static}
+  .nav-links > li:last-child{border-bottom:none}
+  .nav-links a,.nav-links span{display:block;padding:14px 22px;font-size:.74rem;letter-spacing:.14em;width:100%;white-space:normal;line-height:1.4}
+  .nav-has-dropdown > span{position:relative;cursor:pointer}
+  .nav-has-dropdown > span::after{content:"+";position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:1.3rem;font-weight:300;color:var(--mid);transition:transform .2s}
+  .nav-has-dropdown.dropdown-open > span::after{content:"−"}
+  .nav-dropdown{position:static;transform:none;display:none;box-shadow:none;border:none;background:rgba(0,0,0,.04);min-width:0;padding:4px 0;width:100%}
+  .nav-has-dropdown:hover .nav-dropdown,.nav-has-dropdown:focus-within .nav-dropdown{display:none}
+  .nav-has-dropdown.dropdown-open .nav-dropdown{display:block}
+  .nav-dropdown a{padding:11px 38px;font-size:.66rem;letter-spacing:.1em;color:var(--mid)}
+  .nav-cta a{display:block;text-align:center;margin:8px 22px;border-radius:2px;padding:14px 18px}
+
+  /* ── BREADCRUMB ── */
+  .bc{padding:12px 24px;font-size:.58rem}
+
+  /* ── HERO: shared rules ── */
+  .hero{min-height:auto;padding:64px 24px 56px}
+  .hero h1{font-size:clamp(2rem,8vw,2.6rem);line-height:1.18;margin-bottom:18px}
+  .hero-by,.hero-sub{font-size:.88rem;line-height:1.85;margin-bottom:36px;max-width:none}
+  .hero-ey{font-size:.58rem;letter-spacing:.2em;margin-bottom:20px}
+
+  /* ── HERO SPLIT (about, application pages) ── */
+  .hero-split{grid-template-columns:1fr;min-height:auto}
+  .hero-left{padding:64px 24px}
+  .hero-left h1{font-size:clamp(2rem,10vw,3rem)}
+  .hero-lead{font-size:.92rem;max-width:none}
+  .hero-right{height:300px;order:-1}
+  .hero-right img{height:100%;object-fit:cover}
+  .hero-stats{font-size:.58rem;letter-spacing:.16em;line-height:2}
+
+  /* ── BUTTONS: tap targets ≥ 44px ── */
+  .btn-a,.btn-c,.btn-a-lg{padding:15px 28px;font-size:.7rem;letter-spacing:.16em;display:inline-block;line-height:1.2}
+  .btn-a-lg{padding:17px 32px;margin:0 0 12px 0}
+  .btn-a + .btn-c,.btn-c + .btn-a,.btn-a-lg + .btn-c{margin-top:12px}
+
+  /* ── SECTION PADDING: tighten ── */
+  .intro-inner,.award-inner,.split-inner,.dark-inner,.reviews-inner,.loc-inner,.pillars-inner,.lessons-inner,.locinfo-inner,.how-inner,.cta-inner,.read-inner,.pivot-inner,.close-inner,.pullquote-inner,.timeline-inner,.proof-inner,.identity-inner,.expect-inner,.five-inner,.grid-inner,.schedule-inner,.three-inner,.lightwhy-inner,.format-inner,.human-inner,.gift-options-inner,.other-inner,.faq-inner,.intro-band .intro-inner,.proof-band .proof-inner{padding-left:24px;padding-right:24px;padding-top:56px;padding-bottom:56px}
+
+  /* ── MAJOR CONTENT SPLITS → single column ── */
+  .intro-inner,.split-inner,.human-inner,.award-inner,.gift-options-inner{grid-template-columns:1fr;gap:36px}
+  .award-inner{grid-template-columns:1fr}
+  .intro-img,.intro-img-real{height:300px}
+  .human-photo img{height:300px;width:100%;object-fit:cover}
+
+  /* ── TEXT-HEAVY 3-COL GRIDS → single column ── */
+  .pillars-grid,.reviews-grid,.three-grid,.tile-grid,.lightwhy-grid,.how-grid{grid-template-columns:1fr;gap:20px}
+  .two-grid{grid-template-columns:1fr;gap:24px}
+
+  /* ── 2-COL GRIDS / NUMERIC TILES — stay 2-col at 880, collapse later ── */
+  .levels-grid,.proof-stats,.stats-row,.locinfo-inner,.other-grid,.loc-grid{grid-template-columns:repeat(2,1fr)}
+  .format-tiles{grid-template-columns:repeat(2,1fr);gap:16px}
+
+  /* ── PROOF STRIPS (flex-based) ── */
+  .proof-strip{flex-direction:row;flex-wrap:wrap}
+  .ps-item{flex:1 1 50%;border-right:none;border-bottom:1px solid rgba(255,255,255,.07);padding:22px 16px}
+  .ps-item:nth-child(odd){border-right:1px solid rgba(255,255,255,.07)}
+  .scale-row{grid-template-columns:repeat(2,1fr);padding:0 24px}
+
+  /* ── HEADINGS ── */
+  h2{font-size:1.55rem;line-height:1.22}
+
+  /* ── FOOTER ── */
+  footer{padding:40px 24px}
+  .ft-nav{gap:8px;row-gap:14px}
+  .ft-nav a{padding:6px 8px;font-size:.6rem}
+
+  /* ── IDENTITY/QUOTE block ── */
+  .id-line{font-size:1.4rem;line-height:1.4}
+  .human-quote{font-size:1.15rem}
+
+  /* ── FORM ROWS ── */
+  .form-row{grid-template-columns:1fr;gap:14px}
+
+  /* ── RECITAL SCHEDULE TABLE ── */
+  .schedule-table th:nth-child(2),.schedule-table td:nth-child(2){display:none}
+  .schedule-table td{padding:14px 8px 14px 0;font-size:.82rem}
+
+  /* ── EXPECT GRID ── */
+  .expect-inner{grid-template-columns:1fr}
+
+  /* ── REQUEST-INFO loc tiles 4-up → 2-up ── */
+  section.loc-wrap .loc-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media (max-width:560px){
+  /* ── ALL 2-COL GRIDS → single column ── */
+  .levels-grid,.proof-stats,.stats-row,.locinfo-inner,.other-grid,.loc-grid,.format-tiles,.scale-row,section.loc-wrap .loc-grid{grid-template-columns:1fr}
+  .ps-item{flex-basis:100%;border-right:none!important;border-bottom:1px solid rgba(255,255,255,.07);padding:20px 16px}
+
+  /* ── SECTION PADDING: tighter ── */
+  .intro-inner,.award-inner,.split-inner,.dark-inner,.reviews-inner,.loc-inner,.pillars-inner,.lessons-inner,.cta-inner,.read-inner,.pivot-inner,.close-inner,.pullquote-inner,.timeline-inner,.proof-inner,.identity-inner,.expect-inner,.five-inner,.grid-inner,.schedule-inner,.human-inner,.other-inner,.intro-band .intro-inner{padding-left:22px;padding-right:22px;padding-top:48px;padding-bottom:48px}
+
+  /* ── HEADINGS ── */
+  .hero h1,.hero-left h1{font-size:1.85rem}
+  h2{font-size:1.35rem}
+
+  /* ── BUTTONS: full-width stacked ── */
+  .btn-a,.btn-c,.btn-a-lg{display:block;text-align:center;width:100%;padding-left:18px;padding-right:18px;letter-spacing:.14em}
+  .btn-a + .btn-c,.btn-c + .btn-a,.btn-a-lg + .btn-c,.btn-a-lg + .btn-a-lg{margin-top:12px}
+  .nav-cta a{margin:6px 18px}
+
+  /* ── HERO ── */
+  .hero{padding:56px 22px 48px}
+  .hero-left{padding:56px 22px}
+  .hero-right{height:260px}
+
+  /* ── IMAGES ── */
+  .intro-img,.intro-img-real{height:240px}
+  .human-photo img{height:260px}
+
+  /* ── TILE/CARD INNERS ── */
+  .loc-tile,.ot,.ps-item,.scale-cell{padding:24px 18px}
+}
+
+</style>
+<!-- JSON-LD Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://cincinnatischoolofmusic.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Music Lessons",
+      "item": "https://cincinnatischoolofmusic.com/lessons"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Music Discovery",
+      "item": "https://cincinnatischoolofmusic.com/early-childhood-music-discovery-lessons"
+    }
+  ]
+}
+</script>
+
+<!-- CSM-TRACKING-INJECTED v1 -->
+
+<!-- Site verification -->
+<meta name="norton-safeweb-site-verification" content="t-cj9cdlcf1gq4bqzt5x0fa8z6iad5lsfegpz4aqqhlx7ov2vquytd9di-43zw3wwhl8a-5ikp5qw6rkg54wgdh1rpkfcfrb4sx8z5lx262hmacy0cfi8eot0foqnhgd">
+<meta name="p:domain_verify" content="2aa58cc7e9ac7c157be9615d699f7891">
+<meta name="msvalidate.01" content="85FA914F6119C38215C51EE35017A6AC">
+<meta name="facebook-domain-verification" content="vp9gr2lcef51u8yl82np3lvo3i2lql">
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PNGJK75');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R3FZGNMFEK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-R3FZGNMFEK');
+</script>
+<!-- End Google Analytics 4 -->
+
+<!-- Facebook Pixel -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '314323718729638');
+  fbq('track', 'PageView');
+</script>
+<!-- End Facebook Pixel -->
+
+<!-- Book Intro click tracking (sitewide global listener) -->
+<script>
+(function(){
+  document.addEventListener('click', function(e){
+    var link = e.target.closest && e.target.closest('a');
+    if(!link || !link.href) return;
+    if(link.href.indexOf('opus1.io') === -1) return;
+    // Skip non-booking Opus URLs
+    if(link.href.indexOf('/login') !== -1) return;
+    if(link.href.indexOf('/w/recitals') !== -1) return;
+
+    var location = window.location.pathname || '/';
+
+    // GA4 event
+    if(typeof gtag === 'function'){
+      gtag('event', 'book_intro_click', {
+        link_url: link.href,
+        page_path: location,
+        link_text: (link.textContent || '').trim().slice(0, 80)
+      });
+    }
+    // GTM dataLayer event
+    if(window.dataLayer){
+      window.dataLayer.push({
+        event: 'book_intro_click',
+        link_url: link.href,
+        page_path: location,
+        link_text: (link.textContent || '').trim().slice(0, 80)
+      });
+    }
+    // Facebook Pixel: standard Lead event
+    if(typeof fbq === 'function'){
+      fbq('track', 'Lead', {
+        content_name: 'Book Intro Lesson',
+        content_category: location
+      });
+    }
+  }, true);
+})();
+</script>
+<!-- End Book Intro click tracking -->
+
+</head>
+<body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PNGJK75"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=314323718729638&ev=PageView&noscript=1"></noscript>
+<nav>
+  <a href="/" class="nav-logo-link"><img src="images/csm-logo.png" class="nav-logo" alt="Cincinnati School of Music"></a>
+  <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg></button>
+  <ul class="nav-links">
+    <li class="nav-has-dropdown">
+      <span>Music Lessons</span>
+      <div class="nav-dropdown">
+        <a href="/piano-lessons">Piano</a>
+        <a href="/voice-lessons">Voice</a>
+        <a href="/guitar-lessons">Guitar</a>
+        <a href="/violin-lessons">Strings</a>
+        <a href="/drum-lessons">Drums</a>
+        <a href="/flute-clarinet-lessons">Winds</a>
+        <a href="/adult-lessons">Adult Lessons</a>
+        <a href="/early-childhood-music-discovery-lessons">Music Discovery</a>
+        <a href="/gift-certificate">Gift Certificates</a>
+        <a href="/lessons">FAQ</a>
+      </div>
+    </li>
+    <li><a href="/about-us">About Us</a></li>
+    <li><a href="/testimonials">Success Stories</a></li>
+    <li class="nav-has-dropdown">
+      <span>Student Resources</span>
+      <div class="nav-dropdown">
+        <a href="/recitals">Recitals</a>
+        <a href="/cancel-lessons-form">Cancel / Reschedule Lessons</a>
+        <a href="/holiday-schedule-closures">Holiday Schedule &amp; Closures</a>
+        <a href="/commonly-used-books">Commonly Used Books</a>
+      </div>
+    </li>
+    <li class="nav-has-dropdown">
+      <span>For Teachers</span>
+      <div class="nav-dropdown">
+        <a href="/instrument-maintenance-request-form">Instrument Maintenance Request</a>
+        <a href="https://www.cincinnatimusicteacher.com" target="_blank" rel="noopener">Interested in Teaching at CSM?</a>
+      </div>
+    </li>
+    <li class="nav-has-dropdown">
+      <span>Locations</span>
+      <div class="nav-dropdown">
+        <a href="/olde-montgomery">Olde Montgomery</a>
+        <a href="/mason">Mason</a>
+        <a href="/anderson">Anderson</a>
+        <a href="/middletown">Middletown</a>
+        <a href="/maineville">Maineville</a>
+      </div>
+    </li>
+    <li class="nav-cta"><a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro">Book a Lesson</a></li>
+  </ul>
+</nav>
+
+<div class="bc">
+  <a href="/">Home</a> &nbsp;/&nbsp;
+  <a href="/lessons">Lessons</a> &nbsp;/&nbsp;
+  Music Discovery
+</div>
+
+<!-- ═══════════════════════════════════════
+     SPLIT HERO
+     Photo: IMG_6013.JPG — thumbs up
+═══════════════════════════════════════ -->
+<section class="hero-split">
+  <div class="hero-left">
+    <span class="hero-ey">Cincinnati School of Music — <em>Ages 3 to 6</em></span>
+    <h1>Music Discovery <em>Lessons</em></h1>
+    <p class="hero-by">A structured introduction to music for young children. No instrument required. No practice expectations. Just curiosity, rhythm, and a great teacher.</p>
+    <div class="cta-row">
+      <a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro" class="btn-a">Book Your Intro Lesson</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="images/IMG_6013.JPG" alt="Young student giving thumbs up during Music Discovery lesson at CSM" />
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     INTRO SPLIT
+     Photo: IMG_6014.JPG — activity at table
+═══════════════════════════════════════ -->
+<div class="intro-wrap">
+  <div class="intro-inner">
+    <div>
+      <span class="section-label">What Is Music Discovery</span>
+      <h2>Music Lessons <em>Made for Young Children.</em></h2>
+      <p class="body-text" style="margin-top:22px">Music Discovery is a private lesson experience designed for children ages 3 to 6. At this age, the goal is not to produce a pianist or a violinist. The goal is to help music feel natural, playful, and familiar through rhythm, listening, movement, and hands-on exploration before formal instrument study begins.</p>
+      <p class="body-text" style="margin-top:16px">Music Discovery lessons at CSM are taught one-on-one by teachers trained to work with very young learners. Each lesson uses structured activities, games, and instruments appropriate for the age. Nothing is expected at home between lessons — the work happens in the room.</p>
+    </div>
+    <div class="intro-img-real">
+      <img src="images/IMG_6014.JPG" alt="Young child working on music activity with teacher at CSM" />
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     WHAT THEY EXPLORE — 6 items
+═══════════════════════════════════════ -->
+<div class="levels-wrap">
+  <div class="levels-inner">
+    <span class="section-label">What Happens in the Lesson</span>
+    <h2>What Young Students <em>Explore</em></h2>
+    <div class="levels-grid">
+      <div class="lv">
+        <div class="lv-n">01</div>
+        <div class="lv-t">Rhythm and Beat</div>
+        <div class="lv-d">Children learn to feel and respond to a steady beat — clapping, tapping, moving. This is the foundation everything else builds on. Teachers use games and repetition to make the concept stick without turning it into a drill.</div>
+      </div>
+      <div class="lv">
+        <div class="lv-n">02</div>
+        <div class="lv-t">Listening and Sound</div>
+        <div class="lv-d">High and low. Loud and soft. Fast and slow. Young children develop musical ears by learning to pay attention to what they hear. This kind of active listening is a skill that carries forward into every instrument they might eventually study.</div>
+      </div>
+      <div class="lv">
+        <div class="lv-n">03</div>
+        <div class="lv-t">Instrument Exploration</div>
+        <div class="lv-d">Students get hands-on time with instruments — piano keys, small percussion, and other age-appropriate tools. The focus is curiosity and familiarity, not technique. By the time a child moves to formal lessons, the instruments are no longer foreign objects.</div>
+      </div>
+      <div class="lv">
+        <div class="lv-n">04</div>
+        <div class="lv-t">Music Fundamentals</div>
+        <div class="lv-d">Notes, names, patterns. Not theory — just the basic vocabulary of music introduced through games, colors, and visual tools that young children respond to. The note wheel and matching activities in each lesson build pattern recognition naturally.</div>
+      </div>
+      <div class="lv">
+        <div class="lv-n">05</div>
+        <div class="lv-t">Focus and Attention</div>
+        <div class="lv-d">A 30-minute structured lesson with a patient adult is itself a developmental activity at this age. Music Discovery lessons are designed to hold a young child's attention — teachers know how to move between activities to keep engagement high throughout.</div>
+      </div>
+      <div class="lv">
+        <div class="lv-n">06</div>
+        <div class="lv-t">Readiness for Instrument Study</div>
+        <div class="lv-d">Children who go through Music Discovery arrive at instrument lessons with more confidence, better listening habits, and a foundation in musical concepts. The transition to piano, violin, guitar, or voice is smoother — and the enjoyment is higher from the start.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     HUMAN PROOF MOMENT
+     Photo: IMG_6015.JPG — child at activity
+═══════════════════════════════════════ -->
+<div class="human-wrap">
+  <div class="human-inner">
+    <div class="human-photo">
+      <img src="images/IMG_6007.PNG" alt="Young student playing xylophone during CSM Music Discovery lesson" />
+    </div>
+    <div class="human-text">
+      <p class="human-quote">"Our six year old granddaughter has been taking piano for about four months and she is loving it! She cannot wait to show us what she is learning every week. Her teacher Sharon is wonderful. She is patient and such a great teacher. I think we will be here for a long time!"</p>
+      <div class="human-attr">— David T. · Google Review</div>
+      <p class="human-frame">The most common thing parents tell us after the first Music Discovery lesson is that they did not expect their child to be that engaged. Thirty minutes is a long time for a three or four-year-old to stay focused on anything. These teachers know how to keep young children engaged without making the lesson feel like school — and how to make it feel like play while the learning is happening.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     WHY CSM FOR YOUNG LEARNERS — dark
+     3 items only. One dark section (this is it)
+═══════════════════════════════════════ -->
+<div class="dark-wrap">
+  <div class="dark-inner">
+    <span class="section-label">Why CSM</span>
+    <h2>Teachers Who Know <em>This Age Group</em></h2>
+    <div class="three-grid">
+      <div>
+        <div class="dg-n">01</div>
+        <div class="dg-t">Taught one-on-one</div>
+        <div class="dg-d">Every Music Discovery lesson is private. One teacher, one child, thirty minutes. That structure allows the teacher to follow the child's pace, hold attention, and adjust activities in real time. Group music classes teach groups. This teaches your child.</div>
+      </div>
+      <div>
+        <div class="dg-n">02</div>
+        <div class="dg-t">No practice required at home</div>
+        <div class="dg-d">Music Discovery is designed for the lesson room. Parents do not need to supervise practice sessions at home or maintain a practice schedule between visits. Music Discovery is designed for what happens in the lesson room — which is exactly the right expectation for this age.</div>
+      </div>
+      <div>
+        <div class="dg-n">03</div>
+        <div class="dg-t">A clear path forward</div>
+        <div class="dg-d">When a child is ready to move into formal instrument study — piano, voice, guitar, violin, or another instrument — that transition happens within the same school. The teacher knows the student. Music Discovery is built to lead somewhere.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     HOW MUSIC DISCOVERY LESSONS WORK
+═══════════════════════════════════════ -->
+<div class="split-wrap">
+  <div class="split-inner">
+    <div>
+      <span class="section-label">How Lessons Work</span>
+      <h2>Simple Structure. <em>No Pressure.</em></h2>
+      <p class="body-text" style="margin-top:22px">Music Discovery lessons are 30 minutes, private, and run at any of our five Greater Cincinnati locations. Lessons are available seven days a week. Parents are welcome to observe — many do, especially in the first few sessions.</p>
+      <p class="body-text" style="margin-top:16px">When a child is developmentally ready to begin formal instrument instruction — typically around age 5 or 6 — the transition is a natural next step. Teachers communicate that readiness to parents directly. There is no deadline and no pressure to move faster than the child is ready.</p>
+      <a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro" class="btn-a" style="display:inline-block;margin-top:36px">Book Your Intro Lesson</a>
+    </div>
+    <div class="format-tiles">
+      <div class="ft">
+        <div>
+          <div class="ft-lbl">Ages</div>
+          <div class="ft-val">3 – 6</div>
+        </div>
+        <div class="ft-note">No prior music experience needed</div>
+      </div>
+      <div class="ft">
+        <div>
+          <div class="ft-lbl">Lesson Length</div>
+          <div class="ft-val">30 min</div>
+        </div>
+        <div class="ft-note">Designed for young attention spans</div>
+      </div>
+      <div class="ft">
+        <div>
+          <div class="ft-lbl">Format</div>
+          <div class="ft-val">Private</div>
+        </div>
+        <div class="ft-note">One teacher, one child, every session</div>
+      </div>
+      <div class="ft">
+        <div>
+          <div class="ft-lbl">Availability</div>
+          <div class="ft-val">7 days</div>
+        </div>
+        <div class="ft-note">Monday through Sunday; hours vary by location</div>
+      </div>
+      <div class="ft ft-dark">
+        <div class="ft-lbl">Billing</div>
+        <div class="ft-val-d">Month-to-month. No contracts. No semester minimums.</div>
+        <div class="ft-sub-d">Enrollment is month-to-month. Families can start without a long-term contract.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     FINAL CTA — single button
+═══════════════════════════════════════ -->
+<div class="recital-callout">
+  <span class="rc-label">Student Recitals</span>
+  <h3>CSM recitals are free for families and offered throughout the year.</h3>
+  <p>Students perform when they're ready. No pressure, no competition. Most students perform within their first year.</p>
+  <a href="/recitals" class="btn-ghost">See the Recital Schedule</a>
+</div>
+
+<div class="cta-wrap">
+  <div class="cta-inner">
+    <span class="section-label">Get Started</span>
+    <h2>Book a <em>Music Discovery Lesson</em></h2>
+    <p>For children ages 3 to 6, at any of our five Greater Cincinnati locations. No instrument needed. No experience required.</p>
+    <a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro" class="btn-a-lg">Book Your Intro Lesson</a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     OTHER INSTRUMENTS STRIP
+═══════════════════════════════════════ -->
+<div class="other-wrap">
+  <div class="other-inner">
+    <span class="section-label">When They're Ready</span>
+    <h2>Instruments We Teach <em>at CSM</em></h2>
+    <div class="other-grid">
+      <a href="/piano-lessons" class="ot"><span class="ot-icon">🎹</span><div class="ot-title">Piano</div></a>
+      <a href="/voice-lessons" class="ot"><span class="ot-icon">🎤</span><div class="ot-title">Voice</div></a>
+      <a href="/guitar-lessons" class="ot"><span class="ot-icon">🎸</span><div class="ot-title">Guitar</div></a>
+      <a href="/violin-lessons" class="ot"><span class="ot-icon">🎻</span><div class="ot-title">Strings</div></a>
+      <a href="/drum-lessons" class="ot"><span class="ot-icon">🥁</span><div class="ot-title">Drums</div></a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="ft-nav">
+    <a href="/piano-lessons">Piano</a>
+    <a href="/voice-lessons">Voice</a>
+    <a href="/guitar-lessons">Guitar</a>
+    <a href="/drum-lessons">Drums</a>
+    <a href="/violin-lessons">Strings</a>
+    <a href="/flute-clarinet-lessons">Winds</a>
+    <a href="/locations">Locations</a>
+    <a href="/teachers">Teachers</a>
+    <a href="/about-us">About</a>
+    <a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro">Book a Lesson</a>
+  </div>
+  <div class="ft-award"><em>★</em> Cincy Magazine Best of the North — Music Instruction — 10 Consecutive Years</div>
+  <div class="ft-copy">© 2026 Cincinnati School of Music LLC &nbsp;·&nbsp; <a href="/privacy-policy">Privacy Policy</a> &nbsp;·&nbsp; <a href="/sms-terms">SMS Terms</a></div>
+</footer>
+
+
+
+<script>
+/* Mobile nav: hamburger toggle + tap-to-expand dropdowns (≤880px) */
+(function(){
+  var nav = document.querySelector('nav');
+  if(!nav) return;
+  var toggle = nav.querySelector('.nav-toggle');
+  if(toggle){
+    toggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      var open = nav.classList.toggle('nav-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+  nav.querySelectorAll('.nav-has-dropdown > span').forEach(function(span){
+    span.addEventListener('click', function(e){
+      if(window.matchMedia('(max-width:880px)').matches){
+        e.preventDefault();
+        var li = span.parentElement;
+        var wasOpen = li.classList.contains('dropdown-open');
+        nav.querySelectorAll('.nav-has-dropdown.dropdown-open').forEach(function(other){
+          if(other !== li) other.classList.remove('dropdown-open');
+        });
+        li.classList.toggle('dropdown-open', !wasOpen);
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

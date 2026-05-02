@@ -1,0 +1,1035 @@
+<!DOCTYPE html><html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Music Lessons for Cincinnati Families | Cincinnati School of Music</title>
+<meta name="description" content="Music lessons for Cincinnati families. Piano, voice, guitar, drums, strings, and winds at five Greater Cincinnati locations. Cincinnati School of Music — since 2012.">
+<link rel="canonical" href="https://cincinnatischoolofmusic.com/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,200;0,300;0,400;0,500;0,600;1,200;1,300&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   CSM BRAND SYSTEM — April 2026
+   Accent    Coral       #f74f57
+   Cool      Slate       #5B7080  (cool injection, secondary only)
+   Structure Charcoal    #3D3D3D
+   Base      Off-white   #F0EFEE  (warm, not stark)
+══════════════════════════════════════════ */
+:root {
+  --accent:    #f74f57;
+  --accent-dk: #d93f48;
+  --slate:     #3cb5c6;
+  --slate-lt:  #7dd4df;
+  --charcoal:  #3D3D3D;
+  --mid:       #747474;
+  --light:     #9A9A9A;
+  --offwhite:  #F0EFEE;
+  --offwb:     #E6E4E1;
+  --white:     #FFFFFF;
+  --f: 'Jost','Avenir Next','Avenir',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--f);background:var(--offwhite);color:var(--charcoal);font-weight:300;line-height:1.7;-webkit-font-smoothing:antialiased}
+
+/* ── LABEL BAR ── */
+
+/* ── NAV ── */
+
+/* ── BREADCRUMB ── */
+.bc{padding:14px 48px;font-size:.62rem;font-weight:400;letter-spacing:.1em;color:var(--light);border-bottom:1px solid var(--offwb);background:var(--white)}
+.bc a{color:var(--slate);text-decoration:none}
+.bc a:hover{color:var(--charcoal)}
+
+/* ── HERO ── */
+.hero{position:relative;min-height:86vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;overflow:hidden}
+.hero-ey{font-size:.63rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.48);margin-bottom:28px;display:block}
+.hero-ey em{font-style:normal;color:var(--accent);opacity:.85}
+.hero h1{font-weight:300;font-size:clamp(2.4rem,5vw,4.4rem);color:var(--white);letter-spacing:.02em;line-height:1.16;max-width:800px;margin:0 auto 20px}
+.hero h1 em{font-style:italic;font-weight:200}
+.hero-by{font-size:.88rem;font-weight:300;letter-spacing:.06em;color:rgba(255,255,255,.50);max-width:440px;margin:0 auto 48px;line-height:2}
+.cta-row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+
+/* ── BUTTONS ── */
+.btn-a{display:inline-block;background:var(--accent);color:var(--white);text-decoration:none;font-size:.68rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:15px 40px;transition:background .18s}
+.btn-a:hover{background:var(--accent-dk)}
+.btn-b{display:inline-block;border:1px solid rgba(255,255,255,.32);color:rgba(255,255,255,.62);text-decoration:none;font-size:.68rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:14px 34px;transition:all .18s}
+.btn-b:hover{border-color:rgba(255,255,255,.7);color:var(--white)}
+.btn-c{display:inline-block;border:1px solid var(--slate);color:var(--slate);text-decoration:none;font-size:.68rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:13px 32px;transition:all .18s}
+.btn-c:hover{background:var(--slate);color:var(--white)}
+.btn-a-lg{display:inline-block;background:var(--accent);color:var(--white);text-decoration:none;font-size:.7rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:17px 50px;margin-right:10px;margin-bottom:10px;transition:background .18s}
+.btn-a-lg:hover{background:var(--accent-dk)}
+
+/* ── PROOF STRIP ── */
+.proof-strip{background:var(--charcoal);display:flex;align-items:stretch;justify-content:center;flex-wrap:wrap}
+.ps-item{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 40px;border-right:1px solid rgba(255,255,255,.07);text-align:center}
+.ps-item:last-child{border-right:none}
+.ps-num{font-size:1.25rem;font-weight:600;color:var(--accent);line-height:1}
+.ps-lbl{font-size:.6rem;font-weight:400;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:6px}
+
+/* ── SECTION SHARED ── */
+.section-label{display:block;font-size:.62rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);margin-bottom:16px}
+h2{font-weight:300;font-size:clamp(1.75rem,2.8vw,2.6rem);color:var(--charcoal);letter-spacing:.02em;line-height:1.2}
+h2 em{font-style:italic;font-weight:200}
+.body-text{font-size:.92rem;font-weight:300;line-height:1.95;color:var(--mid);max-width:520px}
+
+/* ── INTRO SPLIT ── */
+.intro-wrap{background:var(--white);border-bottom:1px solid var(--offwb)}
+.intro-inner{max-width:1100px;margin:0 auto;padding:92px 48px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.intro-img{background:var(--offwb);height:380px;display:flex;align-items:center;justify-content:center;font-size:.68rem;letter-spacing:.14em;color:var(--light);text-transform:uppercase}
+
+/* ── AWARD SECTION ── */
+.award-wrap{background:var(--white)}
+.award-inner{max-width:1100px;margin:0 auto;padding:92px 48px;display:grid;grid-template-columns:1fr 200px;gap:72px;align-items:center}
+.award-badge{text-align:center;border:1px solid var(--offwb);padding:36px 28px}
+.badge-star{display:block;font-size:1.6rem;color:var(--accent);margin-bottom:12px;line-height:1}
+.badge-ey{font-size:.58rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);margin-bottom:4px}
+.badge-ct{font-size:4rem;font-weight:200;color:var(--charcoal);line-height:1;letter-spacing:-.02em}
+.badge-ct sup{font-size:1.6rem;font-weight:300;color:var(--accent);vertical-align:super}
+.badge-sub{font-size:.58rem;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:var(--light);margin-top:6px}
+
+/* ── STATS ROW ── */
+.stats-wrap{background:var(--offwhite);border-top:1px solid var(--offwb);border-bottom:1px solid var(--offwb)}
+.stats-row{max-width:1100px;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:repeat(4,1fr)}
+.stat-cell{display:flex;flex-direction:column;align-items:center;padding:48px 16px;border-right:1px solid var(--offwb);text-align:center}
+.stat-cell:last-child{border-right:none}
+.stat-num{font-size:2.6rem;font-weight:200;color:var(--charcoal);line-height:1}
+.stat-u{color:var(--slate)}
+.stat-lbl{font-size:.6rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--light);margin-top:8px}
+
+/* ── GRID TILES (lessons / instruments) ── */
+.tile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--offwb);border:1px solid var(--offwb)}
+.tile{background:var(--white);overflow:hidden;transition:background .18s;display:flex;flex-direction:column}
+.tile:hover{background:var(--offwhite)}
+.tile:hover .tile-img img{transform:scale(1.04)}
+.tile-img{height:240px;overflow:hidden;flex-shrink:0}
+.tile-img img{width:100%;height:100%;object-fit:cover;transition:transform .45s}
+.tile-body{padding:24px 28px 28px;display:flex;flex-direction:column;flex:1}
+.tile-icon{display:none}
+.tile-title{font-size:.76rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--charcoal);margin-bottom:8px}
+.tile-copy{font-size:.86rem;font-weight:300;color:var(--mid);line-height:1.75;margin-bottom:18px;flex:1}
+.tile-link{font-size:.62rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .18s;align-self:flex-start}
+.tile-link:hover{border-color:var(--slate)}
+
+/* ── DARK SECTION (why csm etc) ── */
+.dark-wrap{background:var(--charcoal)}
+.dark-inner{max-width:1100px;margin:0 auto;padding:92px 48px}
+.dark-inner .section-label{color:var(--slate-lt);opacity:.85}
+.dark-inner h2{color:var(--white);margin-bottom:56px}
+.three-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:44px}
+.two-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:44px}
+.dg-n{font-size:.58rem;font-weight:600;letter-spacing:.2em;color:var(--slate-lt);margin-bottom:14px}
+.dg-t{font-size:.86rem;font-weight:500;letter-spacing:.05em;color:rgba(255,255,255,.88);margin-bottom:12px;line-height:1.4}
+.dg-d{font-size:.84rem;font-weight:300;color:rgba(255,255,255,.4);line-height:1.85}
+
+/* ── LEVELS / FORMATS SPLIT ── */
+.split-wrap{background:var(--white);border-top:1px solid var(--offwb)}
+.split-inner{max-width:1100px;margin:0 auto;padding:92px 48px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+.format-tiles{display:flex;flex-direction:column;gap:1px;background:var(--offwb);border:1px solid var(--offwb)}
+.ft{background:var(--white);padding:22px 24px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.ft-lbl{font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:4px}
+.ft-val{font-size:1.4rem;font-weight:200;color:var(--charcoal);line-height:1}
+.ft-note{font-size:.78rem;font-weight:300;color:var(--mid);line-height:1.6;max-width:200px;text-align:right}
+.ft-dark{background:var(--charcoal)!important;padding:24px}
+.ft-dark .ft-lbl{color:var(--slate-lt);opacity:.8}
+.ft-dark .ft-val-d{font-size:.9rem;font-weight:400;color:var(--white);line-height:1.5;margin-top:4px}
+.ft-dark .ft-sub-d{font-size:.78rem;font-weight:300;color:rgba(255,255,255,.38);line-height:1.7;margin-top:6px}
+
+/* ── LEVELS GRID ── */
+.levels-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--offwb);border:1px solid var(--offwb)}
+.lv{background:var(--offwhite);padding:28px 24px}
+.lv-n{font-size:.58rem;font-weight:600;letter-spacing:.18em;color:var(--slate);margin-bottom:10px}
+.lv-t{font-size:.8rem;font-weight:600;letter-spacing:.08em;color:var(--charcoal);margin-bottom:8px}
+.lv-d{font-size:.84rem;font-weight:300;color:var(--mid);line-height:1.8}
+
+/* ── REVIEWS ── */
+.reviews-wrap{background:var(--offwhite)}
+.reviews-inner{max-width:1100px;margin:0 auto;padding:92px 48px}
+.reviews-inner h2{margin-bottom:48px}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.rv-card{background:var(--white);border:1px solid var(--offwb);padding:32px}
+.rv-stars{display:block;font-size:.7rem;color:var(--accent);letter-spacing:.1em;margin-bottom:16px}
+.rv-text{font-size:.86rem;font-weight:300;color:var(--mid);line-height:1.85;font-style:italic;margin-bottom:18px}
+.rv-name{font-size:.6rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
+
+/* ── LOCINFO BAR ── */
+.locinfo-wrap{background:var(--white);border-bottom:1px solid var(--offwb)}
+.locinfo-inner{max-width:1100px;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:repeat(4,1fr)}
+.li-cell{padding:36px 16px;border-right:1px solid var(--offwb)}
+.li-cell:last-child{border-right:none}
+.li-lbl{font-size:.58rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
+.li-val{font-size:.88rem;font-weight:300;color:var(--charcoal);line-height:1.7}
+
+/* ── LOC STRIP (dark) ── */
+.loc-strip{background:#3D3D3D}
+.loc-inner{max-width:1100px;margin:0 auto;padding:88px 48px}
+.loc-inner h2{color:var(--white);margin-bottom:48px}
+.loc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06)}
+.loc-tile{background:#3D3D3D;padding:28px 20px;text-align:center;transition:background .18s}
+.loc-tile:hover,.loc-tile.active{background:var(--charcoal)}
+.loc-tile.active .loc-name{color:var(--accent)}
+.loc-name{font-size:.86rem;font-weight:500;letter-spacing:.07em;color:rgba(255,255,255,.82);margin-bottom:4px}
+.loc-sub{font-size:.6rem;font-weight:400;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.27)}
+.loc-lnk{display:block;font-size:.58rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate-lt);text-decoration:none;margin-top:12px;opacity:.7;transition:opacity .18s}
+.loc-lnk:hover{opacity:1}
+
+/* ── FINAL CTA ── */
+.cta-wrap{background:var(--white);border-top:1px solid var(--offwb)}
+.cta-inner{max-width:640px;margin:0 auto;padding:104px 48px;text-align:center}
+.cta-inner .section-label{margin-bottom:18px}
+.cta-inner h2{margin-bottom:20px}
+.cta-inner p{font-size:.88rem;font-weight:300;color:var(--mid);line-height:1.9;margin-bottom:40px}
+
+/* ── FOOTER ── */
+footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.ft-nav{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.ft-nav a{font-size:.62rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.60)!important;text-decoration:none!important;transition:color .18s;padding:0 8px}
+.ft-nav a:hover{color:var(--slate-lt)}
+.ft-award{font-size:.6rem;font-weight:400;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.ft-award em{font-style:normal;color:var(--accent);opacity:.85}
+.ft-copy{font-size:.58rem;font-weight:300;letter-spacing:.1em;color:rgba(255,255,255,.38)}
+.ft-copy a{color:var(--slate-lt);opacity:.75;text-decoration:none;transition:opacity .18s}
+.ft-copy a:hover{opacity:.8}
+
+/* ── SPLIT HERO ── */
+.hero-split {
+  min-height: 88vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 0;
+  background: none;
+  text-align: left;
+  align-items: stretch;
+}
+.hero-left {
+  background: var(--charcoal);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 72px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-left::before {
+  content: '';
+  position: absolute; top: -140px; right: -140px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(185,106,99,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-right { position: relative; overflow: hidden; background: #1e1e1e; }
+.hero-right img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-left .hero-ey {
+  font-size: .63rem; font-weight: 500; letter-spacing: .24em;
+  text-transform: uppercase; color: rgba(255,255,255,.42);
+  margin-bottom: 28px; display: block;
+}
+.hero-left .hero-ey em { font-style: normal; color: var(--accent); opacity: .85; }
+.hero-left h1 {
+  font-weight: 300; font-size: clamp(2.2rem, 3.6vw, 3.8rem);
+  color: var(--white); letter-spacing: .02em; line-height: 1.15;
+  margin: 0 0 24px;
+}
+.hero-left h1 em { font-style: italic; font-weight: 200; }
+
+/* Split byline: lead sentence + stat line */
+.hero-lead {
+  font-size: 1rem; font-weight: 300;
+  color: rgba(255,255,255,.72); line-height: 1.7;
+  margin: 0 0 18px; max-width: 420px;
+}
+.hero-stats {
+  font-size: .62rem; font-weight: 500; letter-spacing: .22em;
+  text-transform: uppercase; color: rgba(255,255,255,.42);
+  margin: 0 0 48px; line-height: 1.9;
+}
+.hero-stats .dot { opacity: .4; margin: 0 8px; }
+
+/* Simple byline variant (piano, location) */
+.hero-left .hero-by {
+  font-size: .92rem; font-weight: 300;
+  color: rgba(255,255,255,.60); line-height: 1.85;
+  margin: 0 0 48px; max-width: 420px;
+}
+
+/* ── PILLARS ── */
+.pillars-wrap { background: var(--offwhite); border-top: 1px solid var(--offwb); border-bottom: 1px solid var(--offwb); }
+.pillars-inner { max-width: 1100px; margin: 0 auto; padding: 96px 48px; }
+.pillars-head { margin-bottom: 56px; display: flex; justify-content: space-between; align-items: flex-end; gap: 48px; }
+.pillars-head h2 { max-width: 560px; }
+.pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--offwb); border: 1px solid var(--offwb); }
+.pillar { background: var(--white); padding: 42px 36px; }
+.pillar-n { font-size: .58rem; font-weight: 600; letter-spacing: .2em; color: var(--accent); margin-bottom: 18px; }
+.pillar-t { font-size: .9rem; font-weight: 500; letter-spacing: .04em; color: var(--charcoal); margin-bottom: 14px; line-height: 1.4; }
+.pillar-d { font-size: .84rem; font-weight: 300; color: var(--mid); line-height: 1.9; }
+
+/* ── HUMAN MOMENT ── */
+.human-wrap { background: var(--white); border-bottom: 1px solid var(--offwb); }
+.human-inner { max-width: 1200px; margin: 0 auto; padding: 0; display: grid; grid-template-columns: 1fr 1fr; min-height: 520px; align-items: stretch; }
+.human-photo { overflow: hidden; background: var(--offwb); }
+.human-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.human-text { padding: 80px 72px; display: flex; flex-direction: column; justify-content: center; background: var(--offwhite); }
+.human-quote { font-size: 1.4rem; font-weight: 300; color: var(--charcoal); line-height: 1.5; letter-spacing: .01em; margin: 0 0 28px; font-style: italic; }
+.human-attr { font-size: .62rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--slate); margin-bottom: 32px; }
+.human-frame { font-size: .85rem; font-weight: 300; color: var(--mid); line-height: 1.9; padding-top: 28px; border-top: 1px solid var(--offwb); }
+
+/* ── LIGHT WHY SECTION (location pages, no dark) ── */
+.lightwhy-wrap { background: var(--offwhite); border-top: 1px solid var(--offwb); border-bottom: 1px solid var(--offwb); }
+.lightwhy-inner { max-width: 1100px; margin: 0 auto; padding: 96px 48px; }
+.lightwhy-inner h2 { margin-bottom: 52px; max-width: 620px; }
+.lightwhy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 44px; }
+.lw-n { font-size: .58rem; font-weight: 600; letter-spacing: .2em; color: var(--accent); margin-bottom: 14px; }
+.lw-t { font-size: .88rem; font-weight: 500; color: var(--charcoal); margin-bottom: 12px; letter-spacing: .04em; }
+.lw-d { font-size: .84rem; font-weight: 300; color: var(--mid); line-height: 1.9; }
+
+/* ── LESSONS WRAP (homepage) ── */
+.lessons-wrap { background: var(--white); border-bottom: 1px solid var(--offwb); }
+.lessons-inner { max-width: 1100px; margin: 0 auto; padding: 96px 48px; }
+.lessons-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 56px; gap: 48px; }
+.lessons-head h2 { max-width: 520px; }
+.lessons-sub { max-width: 320px; font-size: .85rem; font-weight: 300; color: var(--mid); line-height: 1.9; }
+
+/* ── COMBINED PROOF BLOCK (homepage) ── */
+.proof-block { background: var(--charcoal); }
+.proof-inner { max-width: 1100px; margin: 0 auto; padding: 96px 48px; }
+.proof-inner .section-label { color: var(--slate-lt); opacity: .85; }
+.proof-inner h2 { color: var(--white); margin-bottom: 28px; }
+.proof-body { font-size: .95rem; font-weight: 300; color: rgba(255,255,255,.6); line-height: 1.9; max-width: 680px; margin-bottom: 56px; }
+.proof-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.06); margin-bottom: 32px; }
+.proof-cell { background: var(--charcoal); padding: 32px 16px; text-align: center; }
+.proof-num { font-size: 2rem; font-weight: 200; color: var(--white); line-height: 1; }
+.proof-num-u { color: var(--accent); }
+.proof-lbl { font-size: .58rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-top: 10px; }
+.proof-award { text-align: center; padding-top: 32px; border-top: 1px solid rgba(255,255,255,.1); font-size: .65rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+.proof-award .star { color: var(--accent); margin-right: 12px; }
+
+/* ── OTHER INSTRUMENTS STRIP (piano footer) ── */
+.other-wrap { background: var(--offwhite); border-top: 1px solid var(--offwb); }
+.other-inner { max-width: 1100px; margin: 0 auto; padding: 72px 48px; }
+.other-inner h2 { margin-bottom: 40px; font-size: 1.4rem; }
+.other-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--offwb); border: 1px solid var(--offwb); }
+.ot { background: var(--white); padding: 28px 20px; text-align: center; transition: background .18s; text-decoration: none; display: block; }
+.ot:hover { background: var(--offwhite); }
+.ot-icon { display: block; font-size: 1.3rem; margin-bottom: 12px; }
+.ot-title { font-size: .72rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--charcoal); }
+
+/* ── BC ── */
+.bc { padding: 14px 48px; font-size: .62rem; font-weight: 400; letter-spacing: .1em; color: var(--light); border-bottom: 1px solid var(--offwb); background: var(--white); }
+.bc a { color: var(--slate); text-decoration: none; }
+.bc a:hover { color: var(--charcoal); }
+
+/* ── LOGO ── */
+
+.ft-logo-link{display:flex;justify-content:center;margin-bottom:22px}
+.ft-logo{height:40px;width:auto;display:block;filter:invert(1);mix-blend-mode:screen;opacity:.85}
+/* ── NAV ── */
+nav {
+  background: var(--offwhite);
+  border-bottom: 1px solid var(--offwb);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 68px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  overflow: visible;
+}
+
+.nav-logo-link {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav-logo {
+  height: 52px;
+  width: auto;
+  display: block;
+  mix-blend-mode: darken;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links > li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 68px;
+}
+
+.nav-links a,
+.nav-links span {
+  font-size: .68rem;
+  font-weight: 500;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--mid);
+  text-decoration: none;
+  transition: color .18s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.nav-links a:hover,
+.nav-links span:hover,
+.nav-has-dropdown:hover > span {
+  color: var(--charcoal);
+}
+
+/* dropdown panel */
+.nav-dropdown {
+  position: absolute;
+  top: 68px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 235px;
+  background: var(--offwhite);
+  border: 1px solid var(--offwb);
+  box-shadow: 0 18px 36px rgba(0,0,0,.10);
+  padding: 12px 0;
+  display: none;
+  z-index: 500;
+}
+
+.nav-has-dropdown:hover .nav-dropdown,
+.nav-has-dropdown:focus-within .nav-dropdown {
+  display: block;
+}
+
+.nav-dropdown a {
+  display: block;
+  padding: 10px 18px;
+  font-size: .62rem;
+  line-height: 1.35;
+  letter-spacing: .12em;
+  color: var(--mid);
+  white-space: normal;
+}
+
+.nav-dropdown a:hover {
+  background: var(--white);
+  color: var(--charcoal);
+}
+
+/* CTA */
+.nav-cta a {
+  background: var(--accent) !important;
+  color: var(--white) !important;
+  padding: 11px 20px;
+  transition: background .18s !important;
+  white-space: nowrap;
+}
+
+.nav-cta a:hover {
+  background: var(--accent-dk) !important;
+}
+
+/* ═════════════════════════════════════════
+   MOBILE RESPONSIVE LAYER
+   v2-50: 880/560 breakpoints (was 720/480)
+   Does not modify desktop selectors above 880px
+   ═════════════════════════════════════════ */
+
+/* Hamburger toggle button — hidden on desktop */
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:10px;margin-right:-10px;color:var(--charcoal)}
+.nav-toggle svg{display:block;width:24px;height:24px}
+
+@media (max-width:880px){
+
+  /* ── NAV: hamburger pattern ── */
+  nav{padding:0 22px;height:64px;flex-wrap:wrap}
+  .nav-logo{height:46px}
+  .nav-toggle{display:flex;align-items:center;justify-content:center;order:3;width:42px;height:42px;border:1px solid var(--offwb);background:var(--white);color:var(--charcoal)}
+  .nav-toggle svg{width:22px;height:22px}
+  .nav-links{order:4;flex-basis:100%;flex-direction:column;align-items:stretch;gap:0;background:var(--offwhite);max-height:0;overflow:hidden;transition:max-height .35s ease;border-top:1px solid transparent}
+  nav.nav-open .nav-links{max-height:calc(100vh - 64px);overflow-y:auto;border-top-color:var(--offwb);padding:8px 0 16px}
+  .nav-links > li{height:auto;min-height:48px;border-bottom:1px solid var(--offwb);width:100%;display:block;position:static}
+  .nav-links > li:last-child{border-bottom:none}
+  .nav-links a,.nav-links span{display:block;padding:14px 22px;font-size:.74rem;letter-spacing:.14em;width:100%;white-space:normal;line-height:1.4}
+  .nav-has-dropdown > span{position:relative;cursor:pointer}
+  .nav-has-dropdown > span::after{content:"+";position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:1.3rem;font-weight:300;color:var(--mid);transition:transform .2s}
+  .nav-has-dropdown.dropdown-open > span::after{content:"−"}
+  .nav-dropdown{position:static;transform:none;display:none;box-shadow:none;border:none;background:rgba(0,0,0,.04);min-width:0;padding:4px 0;width:100%}
+  .nav-has-dropdown:hover .nav-dropdown,.nav-has-dropdown:focus-within .nav-dropdown{display:none}
+  .nav-has-dropdown.dropdown-open .nav-dropdown{display:block}
+  .nav-dropdown a{padding:11px 38px;font-size:.66rem;letter-spacing:.1em;color:var(--mid)}
+  .nav-cta a{display:block;text-align:center;margin:8px 22px;border-radius:2px;padding:14px 18px}
+
+  /* ── BREADCRUMB ── */
+  .bc{padding:12px 24px;font-size:.58rem}
+
+  /* ── HERO: shared rules ── */
+  .hero{min-height:auto;padding:64px 24px 56px}
+  .hero h1{font-size:clamp(2rem,8vw,2.6rem);line-height:1.18;margin-bottom:18px}
+  .hero-by,.hero-sub{font-size:.88rem;line-height:1.85;margin-bottom:36px;max-width:none}
+  .hero-ey{font-size:.58rem;letter-spacing:.2em;margin-bottom:20px}
+
+  /* ── HERO SPLIT (about, application pages) ── */
+  .hero-split{grid-template-columns:1fr;min-height:auto}
+  .hero-left{padding:64px 24px}
+  .hero-left h1{font-size:clamp(2rem,10vw,3rem)}
+  .hero-lead{font-size:.92rem;max-width:none}
+  .hero-right{height:300px;order:-1}
+  .hero-right img{height:100%;object-fit:cover}
+  .hero-stats{font-size:.58rem;letter-spacing:.16em;line-height:2}
+
+  /* ── BUTTONS: tap targets ≥ 44px ── */
+  .btn-a,.btn-c,.btn-a-lg{padding:15px 28px;font-size:.7rem;letter-spacing:.16em;display:inline-block;line-height:1.2}
+  .btn-a-lg{padding:17px 32px;margin:0 0 12px 0}
+  .btn-a + .btn-c,.btn-c + .btn-a,.btn-a-lg + .btn-c{margin-top:12px}
+
+  /* ── SECTION PADDING: tighten ── */
+  .intro-inner,.award-inner,.split-inner,.dark-inner,.reviews-inner,.loc-inner,.pillars-inner,.lessons-inner,.locinfo-inner,.how-inner,.cta-inner,.read-inner,.pivot-inner,.close-inner,.pullquote-inner,.timeline-inner,.proof-inner,.identity-inner,.expect-inner,.five-inner,.grid-inner,.schedule-inner,.three-inner,.lightwhy-inner,.format-inner,.human-inner,.gift-options-inner,.other-inner,.faq-inner,.intro-band .intro-inner,.proof-band .proof-inner{padding-left:24px;padding-right:24px;padding-top:56px;padding-bottom:56px}
+
+  /* ── MAJOR CONTENT SPLITS → single column ── */
+  .intro-inner,.split-inner,.human-inner,.award-inner,.gift-options-inner{grid-template-columns:1fr;gap:36px}
+  .award-inner{grid-template-columns:1fr}
+  .intro-img,.intro-img-real{height:300px}
+  .human-photo img{height:300px;width:100%;object-fit:cover}
+
+  /* ── TEXT-HEAVY 3-COL GRIDS → single column ── */
+  .pillars-grid,.reviews-grid,.three-grid,.tile-grid,.lightwhy-grid,.how-grid{grid-template-columns:1fr;gap:20px}
+  .two-grid{grid-template-columns:1fr;gap:24px}
+
+  /* ── 2-COL GRIDS / NUMERIC TILES — stay 2-col at 880, collapse later ── */
+  .levels-grid,.proof-stats,.stats-row,.locinfo-inner,.other-grid,.loc-grid{grid-template-columns:repeat(2,1fr)}
+  .format-tiles{grid-template-columns:repeat(2,1fr);gap:16px}
+
+  /* ── PROOF STRIPS (flex-based) ── */
+  .proof-strip{flex-direction:row;flex-wrap:wrap}
+  .ps-item{flex:1 1 50%;border-right:none;border-bottom:1px solid rgba(255,255,255,.07);padding:22px 16px}
+  .ps-item:nth-child(odd){border-right:1px solid rgba(255,255,255,.07)}
+  .scale-row{grid-template-columns:repeat(2,1fr);padding:0 24px}
+
+  /* ── HEADINGS ── */
+  h2{font-size:1.55rem;line-height:1.22}
+
+  /* ── FOOTER ── */
+  footer{padding:40px 24px}
+  .ft-nav{gap:8px;row-gap:14px}
+  .ft-nav a{padding:6px 8px;font-size:.6rem}
+
+  /* ── IDENTITY/QUOTE block ── */
+  .id-line{font-size:1.4rem;line-height:1.4}
+  .human-quote{font-size:1.15rem}
+
+  /* ── FORM ROWS ── */
+  .form-row{grid-template-columns:1fr;gap:14px}
+
+  /* ── RECITAL SCHEDULE TABLE ── */
+  .schedule-table th:nth-child(2),.schedule-table td:nth-child(2){display:none}
+  .schedule-table td{padding:14px 8px 14px 0;font-size:.82rem}
+
+  /* ── EXPECT GRID ── */
+  .expect-inner{grid-template-columns:1fr}
+
+  /* ── REQUEST-INFO loc tiles 4-up → 2-up ── */
+  section.loc-wrap .loc-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media (max-width:560px){
+  /* ── ALL 2-COL GRIDS → single column ── */
+  .levels-grid,.proof-stats,.stats-row,.locinfo-inner,.other-grid,.loc-grid,.format-tiles,.scale-row,section.loc-wrap .loc-grid{grid-template-columns:1fr}
+  .ps-item{flex-basis:100%;border-right:none!important;border-bottom:1px solid rgba(255,255,255,.07);padding:20px 16px}
+
+  /* ── SECTION PADDING: tighter ── */
+  .intro-inner,.award-inner,.split-inner,.dark-inner,.reviews-inner,.loc-inner,.pillars-inner,.lessons-inner,.cta-inner,.read-inner,.pivot-inner,.close-inner,.pullquote-inner,.timeline-inner,.proof-inner,.identity-inner,.expect-inner,.five-inner,.grid-inner,.schedule-inner,.human-inner,.other-inner,.intro-band .intro-inner{padding-left:22px;padding-right:22px;padding-top:48px;padding-bottom:48px}
+
+  /* ── HEADINGS ── */
+  .hero h1,.hero-left h1{font-size:1.85rem}
+  h2{font-size:1.35rem}
+
+  /* ── BUTTONS: full-width stacked ── */
+  .btn-a,.btn-c,.btn-a-lg{display:block;text-align:center;width:100%;padding-left:18px;padding-right:18px;letter-spacing:.14em}
+  .btn-a + .btn-c,.btn-c + .btn-a,.btn-a-lg + .btn-c,.btn-a-lg + .btn-a-lg{margin-top:12px}
+  .nav-cta a{margin:6px 18px}
+
+  /* ── HERO ── */
+  .hero{padding:56px 22px 48px}
+  .hero-left{padding:56px 22px}
+  .hero-right{height:260px}
+
+  /* ── IMAGES ── */
+  .intro-img,.intro-img-real{height:240px}
+  .human-photo img{height:260px}
+
+  /* ── TILE/CARD INNERS ── */
+  .loc-tile,.ot,.ps-item,.scale-cell{padding:24px 18px}
+}
+
+</style>
+<!-- JSON-LD Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": [
+    "EducationalOrganization",
+    "LocalBusiness"
+  ],
+  "@id": "https://cincinnatischoolofmusic.com/#organization",
+  "name": "Cincinnati School of Music",
+  "alternateName": "CSM",
+  "url": "https://cincinnatischoolofmusic.com",
+  "logo": "https://cincinnatischoolofmusic.com/images/csm-logo.png",
+  "image": "https://cincinnatischoolofmusic.com/images/csm-logo.png",
+  "description": "Cincinnati School of Music is a private music school serving Greater Cincinnati families since 2012. Piano, voice, guitar, drums, strings, and winds at five locations.",
+  "telephone": "+1-513-560-9175",
+  "foundingDate": "2012",
+  "areaServed": [
+    {
+      "@type": "City",
+      "name": "Cincinnati"
+    },
+    {
+      "@type": "City",
+      "name": "Mason"
+    },
+    {
+      "@type": "City",
+      "name": "Maineville"
+    },
+    {
+      "@type": "City",
+      "name": "Middletown"
+    },
+    {
+      "@type": "City",
+      "name": "Montgomery"
+    }
+  ],
+  "department": [
+    {
+      "@type": [
+        "EducationalOrganization",
+        "LocalBusiness"
+      ],
+      "name": "Cincinnati School of Music — Olde Montgomery",
+      "url": "https://cincinnatischoolofmusic.com/olde-montgomery",
+      "telephone": "+1-513-560-9175",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "9865 Montgomery Rd",
+        "addressLocality": "Montgomery",
+        "addressRegion": "OH",
+        "postalCode": "45242",
+        "addressCountry": "US"
+      }
+    },
+    {
+      "@type": [
+        "EducationalOrganization",
+        "LocalBusiness"
+      ],
+      "name": "Cincinnati School of Music — Mason",
+      "url": "https://cincinnatischoolofmusic.com/mason",
+      "telephone": "+1-513-560-9175",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "6682 Tri Way Drive",
+        "addressLocality": "Mason",
+        "addressRegion": "OH",
+        "postalCode": "45040",
+        "addressCountry": "US"
+      }
+    },
+    {
+      "@type": [
+        "EducationalOrganization",
+        "LocalBusiness"
+      ],
+      "name": "Cincinnati School of Music — Anderson",
+      "url": "https://cincinnatischoolofmusic.com/anderson",
+      "telephone": "+1-513-560-9175",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "8315 Beechmont Ave",
+        "addressLocality": "Cincinnati",
+        "addressRegion": "OH",
+        "postalCode": "45255",
+        "addressCountry": "US"
+      }
+    },
+    {
+      "@type": [
+        "EducationalOrganization",
+        "LocalBusiness"
+      ],
+      "name": "Cincinnati School of Music — Maineville",
+      "url": "https://cincinnatischoolofmusic.com/maineville",
+      "telephone": "+1-513-560-9175",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "6400 OH-48, Suite D",
+        "addressLocality": "Maineville",
+        "addressRegion": "OH",
+        "postalCode": "45039",
+        "addressCountry": "US"
+      }
+    },
+    {
+      "@type": [
+        "EducationalOrganization",
+        "LocalBusiness"
+      ],
+      "name": "Cincinnati School of Music — Middletown",
+      "url": "https://cincinnatischoolofmusic.com/middletown",
+      "telephone": "+1-513-560-9175",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "8 Monroe St",
+        "addressLocality": "Middletown",
+        "addressRegion": "OH",
+        "postalCode": "45042",
+        "addressCountry": "US"
+      }
+    }
+  ]
+}
+</script>
+
+<!-- CSM-TRACKING-INJECTED v1 -->
+
+<!-- Site verification -->
+<meta name="norton-safeweb-site-verification" content="t-cj9cdlcf1gq4bqzt5x0fa8z6iad5lsfegpz4aqqhlx7ov2vquytd9di-43zw3wwhl8a-5ikp5qw6rkg54wgdh1rpkfcfrb4sx8z5lx262hmacy0cfi8eot0foqnhgd">
+<meta name="p:domain_verify" content="2aa58cc7e9ac7c157be9615d699f7891">
+<meta name="msvalidate.01" content="85FA914F6119C38215C51EE35017A6AC">
+<meta name="facebook-domain-verification" content="vp9gr2lcef51u8yl82np3lvo3i2lql">
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PNGJK75');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R3FZGNMFEK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-R3FZGNMFEK');
+</script>
+<!-- End Google Analytics 4 -->
+
+<!-- Facebook Pixel -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '314323718729638');
+  fbq('track', 'PageView');
+</script>
+<!-- End Facebook Pixel -->
+
+<!-- Book Intro click tracking (sitewide global listener) -->
+<script>
+(function(){
+  document.addEventListener('click', function(e){
+    var link = e.target.closest && e.target.closest('a');
+    if(!link || !link.href) return;
+    if(link.href.indexOf('opus1.io') === -1) return;
+    // Skip non-booking Opus URLs
+    if(link.href.indexOf('/login') !== -1) return;
+    if(link.href.indexOf('/w/recitals') !== -1) return;
+
+    var location = window.location.pathname || '/';
+
+    // GA4 event
+    if(typeof gtag === 'function'){
+      gtag('event', 'book_intro_click', {
+        link_url: link.href,
+        page_path: location,
+        link_text: (link.textContent || '').trim().slice(0, 80)
+      });
+    }
+    // GTM dataLayer event
+    if(window.dataLayer){
+      window.dataLayer.push({
+        event: 'book_intro_click',
+        link_url: link.href,
+        page_path: location,
+        link_text: (link.textContent || '').trim().slice(0, 80)
+      });
+    }
+    // Facebook Pixel: standard Lead event
+    if(typeof fbq === 'function'){
+      fbq('track', 'Lead', {
+        content_name: 'Book Intro Lesson',
+        content_category: location
+      });
+    }
+  }, true);
+})();
+</script>
+<!-- End Book Intro click tracking -->
+
+</head><body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PNGJK75"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=314323718729638&ev=PageView&noscript=1"></noscript>
+
+
+
+<nav>
+  <a href="/" class="nav-logo-link"><img src="images/csm-logo.png" class="nav-logo" alt="Cincinnati School of Music"></a>
+  <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg></button>
+  <ul class="nav-links">
+    <li class="nav-has-dropdown">
+      <span>Music Lessons</span>
+      <div class="nav-dropdown">
+        <a href="/piano-lessons">Piano</a>
+        <a href="/voice-lessons">Voice</a>
+        <a href="/guitar-lessons">Guitar</a>
+        <a href="/violin-lessons">Strings</a>
+        <a href="/drum-lessons">Drums</a>
+        <a href="/flute-clarinet-lessons">Winds</a>
+        <a href="/adult-lessons">Adult Lessons</a>
+        <a href="/early-childhood-music-discovery-lessons">Music Discovery</a>
+        <a href="/gift-certificate">Gift Certificates</a>
+        <a href="/lessons">FAQ</a>
+      </div>
+    </li>
+    <li><a href="/about-us">About Us</a></li>
+    <li><a href="/testimonials">Success Stories</a></li>
+    <li class="nav-has-dropdown">
+      <span>Student Resources</span>
+      <div class="nav-dropdown">
+        <a href="/recitals">Recitals</a>
+        <a href="/cancel-lessons-form">Cancel / Reschedule Lessons</a>
+        <a href="/holiday-schedule-closures">Holiday Schedule &amp; Closures</a>
+        <a href="/commonly-used-books">Commonly Used Books</a>
+      </div>
+    </li>
+    <li class="nav-has-dropdown">
+      <span>For Teachers</span>
+      <div class="nav-dropdown">
+        <a href="/instrument-maintenance-request-form">Instrument Maintenance Request</a>
+        <a href="https://www.cincinnatimusicteacher.com" target="_blank" rel="noopener">Interested in Teaching at CSM?</a>
+      </div>
+    </li>
+    <li class="nav-has-dropdown">
+      <span>Locations</span>
+      <div class="nav-dropdown">
+        <a href="/olde-montgomery">Olde Montgomery</a>
+        <a href="/mason">Mason</a>
+        <a href="/anderson">Anderson</a>
+        <a href="/middletown">Middletown</a>
+        <a href="/maineville">Maineville</a>
+      </div>
+    </li>
+    <li class="nav-cta"><a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book a Lesson</a></li>
+  </ul>
+</nav>
+
+<section class="hero hero-split">
+  <div class="hero-left">
+    <span class="hero-ey">Voted Best of the North — <em>10 Consecutive Years</em></span>
+    <h1>Music Lessons for <em>Cincinnati Families</em></h1>
+    <p class="hero-lead">With five locations and 60+ teachers, CSM helps Cincinnati families find music lessons that fit their child, their teacher, and their week.</p>
+    <p class="hero-stats">5 locations <span class="dot">·</span> 60+ teachers <span class="dot">·</span> 1,000+ students <span class="dot">·</span> Since 2012</p>
+    <div class="cta-row" style="justify-content:flex-start">
+      <a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson" class="btn-a">Book Your Intro Lesson</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="images/piano_recital.jpg" alt="Student performing at Cincinnati School of Music recital" />
+  </div>
+</section>
+
+<div class="pillars-wrap">
+  <div class="pillars-inner">
+    <div class="pillars-head">
+      <div><span class="section-label">Why Cincinnati Chooses CSM</span><h2>What Families <em>Can Count On.</em></h2></div>
+    </div>
+    <div class="pillars-grid">
+      <div class="pillar">
+        <div class="pillar-n">01</div>
+        <div class="pillar-t">Teachers who pay attention</div>
+        <div class="pillar-d">Our instructors are hired for their ability to teach — and to pay attention to the student in front of them. Not just credentials. Not just technique. Your child works with someone invested in their progress week to week.</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-n">02</div>
+        <div class="pillar-t">Lessons That Keep Moving</div>
+        <div class="pillar-d">Consistent weekly lessons, recital opportunities throughout the year, and teachers who pay attention week to week. Students make progress because music becomes part of the rhythm of family life.</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-n">03</div>
+        <div class="pillar-t">Depth that matters</div>
+        <div class="pillar-d">With five locations and 60+ teachers, CSM has more room to find the right fit — the right instrument, teacher, schedule, and location for each family. That depth is what makes lessons easier to start and easier to continue.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="human-wrap">
+  <div class="human-inner">
+    <div class="human-photo"><img src="images/Anderson_recital.jpg" alt="CSM recital with families watching a student perform" /></div>
+    <div class="human-text">
+      <p class="human-quote">"My son has been going there for about 2 years now and he loves his drum lessons! The staff is friendly and his teacher is very attentive to my son's abilities and needs. My son has performed at two recitals and has done an amazing job!"</p>
+      <div class="human-attr">— Ciro C. · Google Review</div>
+      <p class="human-frame">Recitals throughout the year. Students perform when they are ready — and many end up looking forward to it.</p>
+    </div>
+  </div>
+</div>
+
+<div class="lessons-wrap">
+  <div class="lessons-inner">
+    <div class="lessons-head">
+      <div><span class="section-label">What We Teach</span><h2>Every Instrument. <em>Every Level.</em></h2></div>
+      <p class="lessons-sub">From a child's very first lesson to advanced study, students learn with teachers who know how to meet them where they are.</p>
+    </div>
+    <div class="tile-grid">
+
+      <div class="tile">
+        <div class="tile-img"><img src="images/piano_lesson.JPG" alt="Piano lesson at Cincinnati School of Music" style="object-position:center 30%"></div>
+        <div class="tile-body">
+          <div class="tile-title">Piano Lessons</div>
+          <div class="tile-copy">Give your child the ability to sit down and play any song they love.</div>
+          <a href="/piano-lessons" class="tile-link">Learn More</a>
+        </div>
+      </div>
+
+      <div class="tile">
+        <div class="tile-img"><img src="images/voice_recital_4.jpg" alt="Voice student performing at CSM" style="object-position:center 20%"></div>
+        <div class="tile-body">
+          <div class="tile-title">Voice Lessons</div>
+          <div class="tile-copy">Build the confidence to step into the spotlight and own it.</div>
+          <a href="/voice-lessons" class="tile-link">Learn More</a>
+        </div>
+      </div>
+
+      <div class="tile">
+        <div class="tile-img"><img src="images/guitar_lesson.JPG" alt="Guitar lesson at Cincinnati School of Music"></div>
+        <div class="tile-body">
+          <div class="tile-title">Guitar Lessons</div>
+          <div class="tile-copy">Acoustic and electric guitar for all ages and skill levels.</div>
+          <a href="/guitar-lessons" class="tile-link">Learn More</a>
+        </div>
+      </div>
+
+      <div class="tile">
+        <div class="tile-img"><img src="images/drum_recital_1.jpg" alt="Drum student at CSM recital"></div>
+        <div class="tile-body">
+          <div class="tile-title">Drum Lessons</div>
+          <div class="tile-copy">Private drum instruction for beginners through advanced students.</div>
+          <a href="/drum-lessons" class="tile-link">Learn More</a>
+        </div>
+      </div>
+
+      <div class="tile">
+        <div class="tile-img"><img src="images/violin_lesson_4.JPG" alt="Violin lesson at Cincinnati School of Music" style="object-position:center 25%"></div>
+        <div class="tile-body">
+          <div class="tile-title">Strings</div>
+          <div class="tile-copy">Violin, viola, and cello. Classical through contemporary.</div>
+          <a href="/violin-lessons" class="tile-link">Learn More</a>
+        </div>
+      </div>
+
+      <div class="tile">
+        <div class="tile-img"><img src="images/flute_lesson.JPG" alt="Flute lesson at Cincinnati School of Music" style="object-position:center 35%"></div>
+        <div class="tile-body">
+          <div class="tile-title">Winds</div>
+          <div class="tile-copy">Flute and clarinet for school band students and independent learners alike.</div>
+          <a href="/flute-clarinet-lessons" class="tile-link">Learn More</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="proof-block">
+  <div class="proof-inner">
+    <span class="section-label">Recognition</span>
+    <h2>Ten Years <em>Running.</em></h2>
+    <p class="proof-body">Cincy Magazine readers have voted Cincinnati School of Music "Best of the North" for Music Instruction ten years in a row. Cincinnati families telling other Cincinnati families what to expect when they walk through our doors.</p>
+    <div class="proof-stats">
+      <div class="proof-cell"><div class="proof-num">1,000<span class="proof-num-u">+</span></div><div class="proof-lbl">Active Students</div></div>
+      <div class="proof-cell"><div class="proof-num">65</div><div class="proof-lbl">Expert Teachers</div></div>
+      <div class="proof-cell"><div class="proof-num">5</div><div class="proof-lbl">Locations</div></div>
+      <div class="proof-cell"><div class="proof-num">2012</div><div class="proof-lbl">Founded</div></div>
+    </div>
+    <div class="proof-award"><span class="star">★</span> Cincy Magazine Best of the North &nbsp;·&nbsp; Music Instruction &nbsp;·&nbsp; 10 Consecutive Years</div>
+  </div>
+</div>
+
+<div class="reviews-wrap">
+  <div class="reviews-inner">
+    <span class="section-label">What Families Say</span>
+    <h2>The Families <em>Behind the Award</em></h2>
+    <div class="reviews-grid">
+      <div class="rv-card"><span class="rv-stars">★★★★★</span><p class="rv-text">"Music lessons here have been a game changer for our family. The best thing we have seen is the tremendous growth in the confidence of our children. It is a lifelong gift to give your children, and this is the best place to start."</p><div class="rv-name">— Abbie R. · Google Review</div></div>
+      <div class="rv-card"><span class="rv-stars">★★★★★</span><p class="rv-text">"My son has been going there for about 2 years now and he loves his drum lessons! The staff is friendly and his teacher is very attentive to my son's abilities and needs. My son has performed at two recitals and has done an amazing job!"</p><div class="rv-name">— Ciro C. · Google Review</div></div>
+      <div class="rv-card"><span class="rv-stars">★★★★★</span><p class="rv-text">"We originally started piano lessons 6 years ago with CSM and absolutely adored the entire staff. We found ourselves at another school and returned to CSM. We were met once again with so much care and excellent communication. I'm overjoyed that we found our way back. They are the absolute best."</p><div class="rv-name">— Erica F. · Google Review</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="loc-strip"><div class="loc-inner"><span class="section-label">Find Us</span><h2>Five Locations Across <em>Greater Cincinnati</em></h2><div class="loc-grid"><div class="loc-tile"><div class="loc-name">Montgomery</div><div class="loc-sub">Northeast Cincinnati</div><a href="/olde-montgomery" class="loc-lnk">View Location</a></div><div class="loc-tile"><div class="loc-name">Mason</div><div class="loc-sub">Warren County</div><a href="/mason" class="loc-lnk">View Location</a></div><div class="loc-tile"><div class="loc-name">Anderson</div><div class="loc-sub">Southeast Cincinnati</div><a href="/anderson" class="loc-lnk">View Location</a></div><div class="loc-tile"><div class="loc-name">Maineville</div><div class="loc-sub">NE Warren County</div><a href="/maineville" class="loc-lnk">View Location</a></div><div class="loc-tile"><div class="loc-name">Middletown</div><div class="loc-sub">Butler County</div><a href="/middletown" class="loc-lnk">View Location</a></div></div></div></div>
+
+<div class="cta-wrap">
+  <div class="cta-inner">
+    <span class="section-label">Get Started</span>
+    <h2>Book a <em>First Lesson</em></h2>
+    <p>Start with one intro lesson at any of our five Greater Cincinnati locations.</p>
+    <a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson" class="btn-a-lg">Book Your Intro Lesson</a>
+    <a href="/request-info" class="btn-c">Request Info</a>
+  </div>
+</div>
+
+<footer>
+  <div class="ft-nav"><a href="/piano-lessons">Piano</a><a href="/voice-lessons">Voice</a><a href="/guitar-lessons">Guitar</a><a href="/drum-lessons">Drums</a><a href="/violin-lessons">Strings</a><a href="/flute-clarinet-lessons">Winds</a><a href="/locations">Locations</a><a href="/teachers">Teachers</a><a href="/about-us">About</a><a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book a Lesson</a></div>
+  <div class="ft-award"><em>★</em> Cincy Magazine Best of the North — Music Instruction — 10 Consecutive Years</div>
+  <div class="ft-copy">© 2026 Cincinnati School of Music LLC &nbsp;·&nbsp; <a href="/privacy-policy">Privacy Policy</a> &nbsp;·&nbsp; <a href="/sms-terms">SMS Terms</a></div>
+</footer>
+
+
+<script>
+/* Mobile nav: hamburger toggle + tap-to-expand dropdowns (≤880px) */
+(function(){
+  var nav = document.querySelector('nav');
+  if(!nav) return;
+  var toggle = nav.querySelector('.nav-toggle');
+  if(toggle){
+    toggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      var open = nav.classList.toggle('nav-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+  nav.querySelectorAll('.nav-has-dropdown > span').forEach(function(span){
+    span.addEventListener('click', function(e){
+      if(window.matchMedia('(max-width:880px)').matches){
+        e.preventDefault();
+        var li = span.parentElement;
+        var wasOpen = li.classList.contains('dropdown-open');
+        nav.querySelectorAll('.nav-has-dropdown.dropdown-open').forEach(function(other){
+          if(other !== li) other.classList.remove('dropdown-open');
+        });
+        li.classList.toggle('dropdown-open', !wasOpen);
+      }
+    });
+  });
+})();
+</script>
+
+</body></html>

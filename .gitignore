@@ -1,0 +1,16 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+.idea/
+
+# Local-only artifacts
+*.zip
+*.bak
+*.orig
+
+# Netlify CLI / local dev
+.netlify/
+netlify.toml.local

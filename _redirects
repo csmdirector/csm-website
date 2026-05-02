@@ -1,0 +1,22 @@
+# Cincinnati School of Music — URL redirects
+# Format: from-path  to-path  status-code
+
+# ── Old Squarespace .php URLs → current routes ──
+/lessons.php                       /lessons             301
+/piano-lessons.php                 /piano-lessons       301
+/voice-lessons.php                 /voice-lessons       301
+/guitar-lessons.php                /guitar-lessons      301
+/drum-lessons.php                  /drum-lessons        301
+/violin-lessons-viola-cello.php    /violin-lessons      301
+/testimonials.php                  /testimonials        301
+/request-info.php                  /request-info        301
+/withdraw.php                      /withdraw            301
+/recitals.php                      /recitals            301
+/camps.php                         /summer-camps        301
+/news.php                          /about-us            301
+
+# ── Old /home slug → root ──
+/home                              /                    301
+/home/                             /                    301
+
+# /group-class.php and /virtual-tour.php intentionally not redirected — let 404
