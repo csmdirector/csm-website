@@ -38,7 +38,8 @@ body{font-family:var(--f);background:var(--offwhite);color:var(--charcoal);font-
 
 /* ── NAV ── */
 nav{background:var(--offwhite);border-bottom:1px solid var(--offwb);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;position:sticky;top:0;z-index:200}
-.nav-wm{font-size:.78rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--charcoal);text-decoration:none}
+.nav-wm{display:inline-flex;align-items:center;text-decoration:none}
+.nav-wm img{height:38px;width:auto;display:block}
 .nav-links{display:flex;align-items:center;gap:32px;list-style:none}
 .nav-links a{font-size:.68rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--mid);text-decoration:none;transition:color .18s}
 .nav-links a:hover{color:var(--charcoal)}
@@ -172,10 +173,8 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
 </head>
 <body>
 
-<div class="sample-bar">CSM — Gift Certificates &nbsp;·&nbsp; <em>v2.8</em> &nbsp;·&nbsp; <span>Full Build</span></div>
-
 <nav>
-  <a href="/" class="nav-wm">Cincinnati School of Music</a>
+  <a href="/" class="nav-wm" aria-label="Cincinnati School of Music — Home"><img src="images/CSM_logo.png" alt="Cincinnati School of Music"></a>
   <ul class="nav-links">
     <li><a href="/lessons">Lessons</a></li>
     <li><a href="/locations">Locations</a></li>
