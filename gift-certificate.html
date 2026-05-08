@@ -4,24 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Music Lesson Gift Certificates | Cincinnati School of Music</title>
-<meta name="description" content="Music lesson gift certificates from Cincinnati School of Music. Available for any instrument at any of our five Greater Cincinnati locations.">
-<link rel="canonical" href="https://cincinnatischoolofmusic.com/gift-certificate">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,200;0,300;0,400;0,500;0,600;1,200;1,300&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════════
    CSM BRAND SYSTEM — April 2026
-   Accent    Coral     #f74f57
-   Teal      #3cb5c6  (links, labels, signals)
-   Structure Charcoal    #3D3D3D
+   Accent    Clay Rose   #B96A63  (matured coral)
+   Cool      Slate       #6B7F8D  (secondary only)
+   Structure Charcoal    #4A4A4A  (warm near-black)
    Base      Off-white   #F0EFEE  (warm, not stark)
 ══════════════════════════════════════════ */
 :root {
-  --accent:    #f74f57;
-  --accent-dk: #d93f48;
-  --slate:     #3cb5c6;
-  --slate-lt:  #7dd4df;
-  --charcoal:  #3D3D3D;
+  --accent:    #B96A63;
+  --accent-dk: #A05850;
+  --slate:     #6B7F8D;
+  --slate-lt:  #8BAABC;
+  --charcoal:  #4A4A4A;
   --mid:       #747474;
   --light:     #9A9A9A;
   --offwhite:  #F0EFEE;
@@ -34,8 +32,18 @@ html{scroll-behavior:smooth}
 body{font-family:var(--f);background:var(--offwhite);color:var(--charcoal);font-weight:300;line-height:1.7;-webkit-font-smoothing:antialiased}
 
 /* ── LABEL BAR ── */
+.sample-bar{background:var(--charcoal);color:rgba(255,255,255,.35);text-align:center;padding:8px 20px;font-size:.6rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase}
+.sample-bar em{font-style:normal;color:var(--accent)}
+.sample-bar span{color:var(--slate-lt)}
 
 /* ── NAV ── */
+nav{background:var(--offwhite);border-bottom:1px solid var(--offwb);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;position:sticky;top:0;z-index:200}
+.nav-wm{font-size:.78rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--charcoal);text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:32px;list-style:none}
+.nav-links a{font-size:.68rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--mid);text-decoration:none;transition:color .18s}
+.nav-links a:hover{color:var(--charcoal)}
+.nav-cta a{background:var(--accent)!important;color:var(--white)!important;padding:9px 20px;transition:background .18s!important}
+.nav-cta a:hover{background:var(--accent-dk)!important}
 
 /* ── BREADCRUMB ── */
 .bc{padding:14px 48px;font-size:.62rem;font-weight:400;letter-spacing:.1em;color:var(--light);border-bottom:1px solid var(--offwb);background:var(--white)}
@@ -73,453 +81,108 @@ h2 em{font-style:italic;font-weight:200}
 
 /* ── GIFT OPTIONS ── */
 .gift-options-wrap{background:var(--white);border-bottom:1px solid var(--offwb)}
-.gift-options-inner{max-width:1100px;margin:0 auto;padding:92px 48px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
-.gift-options-copy{}
-.gift-cards-grid{display:flex;flex-direction:column;gap:1px;background:var(--offwb);border:1px solid var(--offwb)}
-.gc-card{background:var(--white);padding:32px 28px}
-.gc-card-gold{background:var(--charcoal)}
-.gc-tier{font-size:.58rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px}
-.gc-tier-silver{color:var(--slate)}
-.gc-tier-gold{color:var(--accent)}
-.gc-title{font-size:1.1rem;font-weight:400;letter-spacing:.04em;color:var(--charcoal);margin-bottom:8px}
-.gc-title-dark{color:var(--white)}
-.gc-desc{font-size:.84rem;font-weight:300;line-height:1.8;color:var(--mid)}
-.gc-desc-dark{color:rgba(255,255,255,.48)}
+.gift-options-inner{max-width:1100px;margin:0 auto;padding:92px 48px}
+.gift-options-head{max-width:680px;margin-bottom:56px}
+.gift-options-head .section-label{margin-bottom:16px}
+.gift-options-head h2{margin-bottom:22px}
+.gift-options-head .body-text{margin-top:0}
+.gift-options-head .body-text + .body-text{margin-top:14px}
 
-/* ── GIFTUP EMBED ── */
-.embed-wrap{background:var(--offwhite);border-top:1px solid var(--offwb)}
-.embed-inner{max-width:1100px;margin:0 auto;padding:92px 48px}
-.embed-inner .section-label{margin-bottom:16px}
-.embed-inner h2{margin-bottom:14px}
-.embed-inner .embed-sub{font-size:.88rem;font-weight:300;color:var(--mid);line-height:1.9;margin-bottom:52px;max-width:580px}
+/* clickable artwork buttons */
+.gift-buttons-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.gift-btn{display:block;background:var(--white);border:1px solid var(--offwb);text-decoration:none;color:inherit;transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease;position:relative;overflow:hidden}
+.gift-btn:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 14px 36px rgba(74,74,74,.09)}
+.gift-btn-art-wrap{position:relative;background:#000;overflow:hidden}
+.gift-btn-art{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;transition:transform .5s ease}
+.gift-btn:hover .gift-btn-art{transform:scale(1.025)}
+.gift-btn-meta{display:flex;justify-content:space-between;align-items:flex-end;padding:24px 28px 26px;gap:20px}
+.gift-btn-meta-l{}
+.gift-btn-tier{display:block;font-size:.58rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
+.gift-btn-title{display:block;font-size:1rem;font-weight:400;letter-spacing:.02em;color:var(--charcoal);line-height:1.35}
+.gift-btn-meta-r{text-align:right;flex-shrink:0}
+.gift-btn-price{display:block;font-size:1.05rem;font-weight:400;color:var(--charcoal);margin-bottom:6px;letter-spacing:.01em}
+.gift-btn-cta{display:inline-flex;align-items:center;gap:8px;font-size:.6rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);transition:gap .28s ease}
+.gift-btn:hover .gift-btn-cta{gap:14px}
+.gift-btn-cta-arrow{display:inline-block;transition:transform .28s ease}
+
+/* fine print under buttons */
+.gift-fineprint{margin-top:36px;font-size:.74rem;font-weight:300;letter-spacing:.04em;color:var(--light);line-height:1.7;text-align:center}
+.gift-fineprint span{color:var(--mid)}
+
+/* BEST VALUE badge on Gold card */
+.gift-btn-badge{position:absolute;top:16px;right:16px;background:var(--accent);color:var(--white);font-size:.54rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;padding:8px 13px;z-index:2;line-height:1}
+
+/* reg-fee note row on cards */
+.gift-btn-note{padding:16px 28px 22px;border-top:1px solid var(--offwb);font-size:.74rem;font-weight:300;color:var(--mid);line-height:1.6;letter-spacing:.005em}
+.gift-btn-note em{font-style:normal;color:var(--accent);font-weight:500}
+
+/* ── WHAT'S INCLUDED ── */
+.includes-wrap{background:var(--offwhite);border-top:1px solid var(--offwb);border-bottom:1px solid var(--offwb)}
+.includes-inner{max-width:1100px;margin:0 auto;padding:88px 48px}
+.includes-inner .section-label{margin-bottom:16px}
+.includes-inner h2{margin-bottom:52px}
+.includes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:48px}
+.includes-cell-h{font-size:.86rem;font-weight:500;letter-spacing:.03em;color:var(--charcoal);margin-bottom:14px;line-height:1.4}
+.includes-cell-b{font-size:.78rem;font-weight:300;line-height:1.75;color:var(--mid);letter-spacing:.005em}
+
+/* ── FAQ ── */
+.faq-wrap{background:var(--white)}
+.faq-inner{max-width:920px;margin:0 auto;padding:92px 48px}
+.faq-inner .section-label{margin-bottom:16px}
+.faq-inner h2{margin-bottom:56px}
+.faq-list{display:flex;flex-direction:column;gap:32px}
+.faq-item{padding-bottom:32px;border-bottom:1px solid var(--offwb)}
+.faq-item:last-child{border-bottom:none;padding-bottom:0}
+.faq-q{font-size:1rem;font-weight:500;letter-spacing:.005em;color:var(--charcoal);margin-bottom:14px;line-height:1.45}
+.faq-a{font-size:.88rem;font-weight:300;line-height:1.9;color:var(--mid);letter-spacing:.005em;max-width:780px}
+
+/* ── MOBILE ── */
+@media (max-width:720px){
+  .gift-options-inner{padding:64px 28px}
+  .gift-options-head{margin-bottom:40px}
+  .gift-buttons-grid{grid-template-columns:1fr;gap:20px}
+  .gift-btn-meta{padding:20px 22px 18px;gap:14px}
+  .gift-btn-title{font-size:.94rem}
+  .gift-btn-price{font-size:.98rem}
+  .gift-btn-note{padding:14px 22px 20px;font-size:.72rem}
+  .gift-btn-badge{top:12px;right:12px;padding:7px 11px;font-size:.52rem}
+  .includes-inner{padding:64px 28px}
+  .includes-inner h2{margin-bottom:40px}
+  .includes-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .faq-inner{padding:64px 28px}
+  .faq-inner h2{margin-bottom:42px}
+  .faq-q{font-size:.94rem}
+  .faq-a{font-size:.84rem}
+}
+@media (max-width:480px){
+  .includes-grid{grid-template-columns:1fr;gap:28px}
+}
 
 /* ── FOOTER ── */
 footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
-.ft-nav{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
-.ft-nav a{font-size:.62rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.60)!important;text-decoration:none!important;transition:color .18s;padding:0 8px}
+.ft-nav{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
+.ft-nav a{font-size:.62rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.28);text-decoration:none;transition:color .18s}
 .ft-nav a:hover{color:var(--slate-lt)}
-.ft-award{font-size:.6rem;font-weight:400;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.45)}
-.ft-award em{font-style:normal;color:var(--accent);opacity:.85}
-.ft-copy{font-size:.58rem;font-weight:300;letter-spacing:.1em;color:rgba(255,255,255,.38)}
-.ft-copy a{color:var(--slate-lt);opacity:.75;text-decoration:none;transition:opacity .18s}
+.ft-award{font-size:.6rem;font-weight:400;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.18)}
+.ft-award em{font-style:normal;color:var(--accent);opacity:.5}
+.ft-copy{font-size:.58rem;font-weight:300;letter-spacing:.1em;color:rgba(255,255,255,.14)}
+.ft-copy a{color:var(--slate-lt);opacity:.4;text-decoration:none;transition:opacity .18s}
 .ft-copy a:hover{opacity:.8}
-
-/* ── LOGO ── */
-
-.ft-logo-link{display:flex;justify-content:center;margin-bottom:22px}
-.ft-logo{height:40px;width:auto;display:block;filter:invert(1);mix-blend-mode:screen;opacity:.85}
-/* ── NAV ── */
-nav {
-  background: var(--offwhite);
-  border-bottom: 1px solid var(--offwb);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 48px;
-  height: 68px;
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  overflow: visible;
-}
-
-.nav-logo-link {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-
-.nav-logo {
-  height: 52px;
-  width: auto;
-  display: block;
-  mix-blend-mode: darken;
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-links > li {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 68px;
-}
-
-.nav-links a,
-.nav-links span {
-  font-size: .68rem;
-  font-weight: 500;
-  letter-spacing: .13em;
-  text-transform: uppercase;
-  color: var(--mid);
-  text-decoration: none;
-  transition: color .18s;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.nav-links a:hover,
-.nav-links span:hover,
-.nav-has-dropdown:hover > span {
-  color: var(--charcoal);
-}
-
-/* dropdown panel */
-.nav-dropdown {
-  position: absolute;
-  top: 68px;
-  left: 50%;
-  transform: translateX(-50%);
-  min-width: 235px;
-  background: var(--offwhite);
-  border: 1px solid var(--offwb);
-  box-shadow: 0 18px 36px rgba(0,0,0,.10);
-  padding: 12px 0;
-  display: none;
-  z-index: 500;
-}
-
-.nav-has-dropdown:hover .nav-dropdown,
-.nav-has-dropdown:focus-within .nav-dropdown {
-  display: block;
-}
-
-.nav-dropdown a {
-  display: block;
-  padding: 10px 18px;
-  font-size: .62rem;
-  line-height: 1.35;
-  letter-spacing: .12em;
-  color: var(--mid);
-  white-space: normal;
-}
-
-.nav-dropdown a:hover {
-  background: var(--white);
-  color: var(--charcoal);
-}
-
-/* CTA */
-.nav-cta a {
-  background: var(--accent) !important;
-  color: var(--white) !important;
-  padding: 11px 20px;
-  transition: background .18s !important;
-  white-space: nowrap;
-}
-
-.nav-cta a:hover {
-  background: var(--accent-dk) !important;
-}
-
-/* ═════════════════════════════════════════
-   MOBILE RESPONSIVE LAYER
-   v2-50: 880/560 breakpoints (was 720/480)
-   Does not modify desktop selectors above 880px
-   ═════════════════════════════════════════ */
-
-/* Hamburger toggle button — hidden on desktop */
-.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:10px;margin-right:-10px;color:var(--charcoal)}
-.nav-toggle svg{display:block;width:24px;height:24px}
-
-@media (max-width:880px){
-
-  /* ── NAV: hamburger pattern ── */
-  nav{padding:0 22px;height:64px;flex-wrap:wrap}
-  .nav-logo{height:46px}
-  .nav-toggle{display:flex;align-items:center;justify-content:center;order:3;width:42px;height:42px;border:1px solid var(--offwb);background:var(--white);color:var(--charcoal)}
-  .nav-toggle svg{width:22px;height:22px}
-  .nav-links{order:4;flex-basis:100%;flex-direction:column;align-items:stretch;gap:0;background:var(--offwhite);max-height:0;overflow:hidden;transition:max-height .35s ease;border-top:1px solid transparent}
-  nav.nav-open .nav-links{max-height:calc(100vh - 64px);overflow-y:auto;border-top-color:var(--offwb);padding:8px 0 16px}
-  .nav-links > li{height:auto;min-height:48px;border-bottom:1px solid var(--offwb);width:100%;display:block;position:static}
-  .nav-links > li:last-child{border-bottom:none}
-  .nav-links a,.nav-links span{display:block;padding:14px 22px;font-size:.74rem;letter-spacing:.14em;width:100%;white-space:normal;line-height:1.4}
-  .nav-has-dropdown > span{position:relative;cursor:pointer}
-  .nav-has-dropdown > span::after{content:"+";position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:1.3rem;font-weight:300;color:var(--mid);transition:transform .2s}
-  .nav-has-dropdown.dropdown-open > span::after{content:"−"}
-  .nav-dropdown{position:static;transform:none;display:none;box-shadow:none;border:none;background:rgba(0,0,0,.04);min-width:0;padding:4px 0;width:100%}
-  .nav-has-dropdown:hover .nav-dropdown,.nav-has-dropdown:focus-within .nav-dropdown{display:none}
-  .nav-has-dropdown.dropdown-open .nav-dropdown{display:block}
-  .nav-dropdown a{padding:11px 38px;font-size:.66rem;letter-spacing:.1em;color:var(--mid)}
-  .nav-cta a{display:block;text-align:center;margin:8px 22px;border-radius:2px;padding:14px 18px}
-
-  /* ── BREADCRUMB ── */
-  .bc{padding:12px 24px;font-size:.58rem}
-
-  /* ── HERO: shared rules ── */
-  .hero{min-height:auto;padding:64px 24px 56px}
-  .hero h1{font-size:clamp(2rem,8vw,2.6rem);line-height:1.18;margin-bottom:18px}
-  .hero-by,.hero-sub{font-size:.88rem;line-height:1.85;margin-bottom:36px;max-width:none}
-  .hero-ey{font-size:.58rem;letter-spacing:.2em;margin-bottom:20px}
-
-  /* ── HERO SPLIT (about, application pages) ── */
-  .hero-split{grid-template-columns:1fr;min-height:auto}
-  .hero-left{padding:64px 24px}
-  .hero-left h1{font-size:clamp(2rem,10vw,3rem)}
-  .hero-lead{font-size:.92rem;max-width:none}
-  .hero-right{height:300px;order:-1}
-  .hero-right img{height:100%;object-fit:cover}
-  .hero-stats{font-size:.58rem;letter-spacing:.16em;line-height:2}
-
-  /* ── BUTTONS: tap targets ≥ 44px ── */
-  .btn-a,.btn-c,.btn-a-lg{padding:15px 28px;font-size:.7rem;letter-spacing:.16em;display:inline-block;line-height:1.2}
-  .btn-a-lg{padding:17px 32px;margin:0 0 12px 0}
-  .btn-a + .btn-c,.btn-c + .btn-a,.btn-a-lg + .btn-c{margin-top:12px}
-
-  /* ── SECTION PADDING: tighten ── */
-  .intro-inner,.award-inner,.split-inner,.dark-inner,.reviews-inner,.loc-inner,.pillars-inner,.lessons-inner,.locinfo-inner,.how-inner,.cta-inner,.read-inner,.pivot-inner,.close-inner,.pullquote-inner,.timeline-inner,.proof-inner,.identity-inner,.expect-inner,.five-inner,.grid-inner,.schedule-inner,.three-inner,.lightwhy-inner,.format-inner,.human-inner,.gift-options-inner,.other-inner,.faq-inner,.intro-band .intro-inner,.proof-band .proof-inner{padding-left:24px;padding-right:24px;padding-top:56px;padding-bottom:56px}
-
-  /* ── MAJOR CONTENT SPLITS → single column ── */
-  .intro-inner,.split-inner,.human-inner,.award-inner,.gift-options-inner{grid-template-columns:1fr;gap:36px}
-  .award-inner{grid-template-columns:1fr}
-  .intro-img,.intro-img-real{height:300px}
-  .human-photo img{height:300px;width:100%;object-fit:cover}
-
-  /* ── TEXT-HEAVY 3-COL GRIDS → single column ── */
-  .pillars-grid,.reviews-grid,.three-grid,.tile-grid,.lightwhy-grid,.how-grid{grid-template-columns:1fr;gap:20px}
-  .two-grid{grid-template-columns:1fr;gap:24px}
-
-  /* ── 2-COL GRIDS / NUMERIC TILES — stay 2-col at 880, collapse later ── */
-  .levels-grid,.proof-stats,.stats-row,.locinfo-inner,.other-grid,.loc-grid{grid-template-columns:repeat(2,1fr)}
-  .format-tiles{grid-template-columns:repeat(2,1fr);gap:16px}
-
-  /* ── PROOF STRIPS (flex-based) ── */
-  .proof-strip{flex-direction:row;flex-wrap:wrap}
-  .ps-item{flex:1 1 50%;border-right:none;border-bottom:1px solid rgba(255,255,255,.07);padding:22px 16px}
-  .ps-item:nth-child(odd){border-right:1px solid rgba(255,255,255,.07)}
-  .scale-row{grid-template-columns:repeat(2,1fr);padding:0 24px}
-
-  /* ── HEADINGS ── */
-  h2{font-size:1.55rem;line-height:1.22}
-
-  /* ── FOOTER ── */
-  footer{padding:40px 24px}
-  .ft-nav{gap:8px;row-gap:14px}
-  .ft-nav a{padding:6px 8px;font-size:.6rem}
-
-  /* ── IDENTITY/QUOTE block ── */
-  .id-line{font-size:1.4rem;line-height:1.4}
-  .human-quote{font-size:1.15rem}
-
-  /* ── FORM ROWS ── */
-  .form-row{grid-template-columns:1fr;gap:14px}
-
-  /* ── RECITAL SCHEDULE TABLE ── */
-  .schedule-table th:nth-child(2),.schedule-table td:nth-child(2){display:none}
-  .schedule-table td{padding:14px 8px 14px 0;font-size:.82rem}
-
-  /* ── EXPECT GRID ── */
-  .expect-inner{grid-template-columns:1fr}
-
-  /* ── REQUEST-INFO loc tiles 4-up → 2-up ── */
-  section.loc-wrap .loc-grid{grid-template-columns:repeat(2,1fr)}
-}
-
-@media (max-width:560px){
-  /* ── ALL 2-COL GRIDS → single column ── */
-  .levels-grid,.proof-stats,.stats-row,.locinfo-inner,.other-grid,.loc-grid,.format-tiles,.scale-row,section.loc-wrap .loc-grid{grid-template-columns:1fr}
-  .ps-item{flex-basis:100%;border-right:none!important;border-bottom:1px solid rgba(255,255,255,.07);padding:20px 16px}
-
-  /* ── SECTION PADDING: tighter ── */
-  .intro-inner,.award-inner,.split-inner,.dark-inner,.reviews-inner,.loc-inner,.pillars-inner,.lessons-inner,.cta-inner,.read-inner,.pivot-inner,.close-inner,.pullquote-inner,.timeline-inner,.proof-inner,.identity-inner,.expect-inner,.five-inner,.grid-inner,.schedule-inner,.human-inner,.other-inner,.intro-band .intro-inner{padding-left:22px;padding-right:22px;padding-top:48px;padding-bottom:48px}
-
-  /* ── HEADINGS ── */
-  .hero h1,.hero-left h1{font-size:1.85rem}
-  h2{font-size:1.35rem}
-
-  /* ── BUTTONS: full-width stacked ── */
-  .btn-a,.btn-c,.btn-a-lg{display:block;text-align:center;width:100%;padding-left:18px;padding-right:18px;letter-spacing:.14em}
-  .btn-a + .btn-c,.btn-c + .btn-a,.btn-a-lg + .btn-c,.btn-a-lg + .btn-a-lg{margin-top:12px}
-  .nav-cta a{margin:6px 18px}
-
-  /* ── HERO ── */
-  .hero{padding:56px 22px 48px}
-  .hero-left{padding:56px 22px}
-  .hero-right{height:260px}
-
-  /* ── IMAGES ── */
-  .intro-img,.intro-img-real{height:240px}
-  .human-photo img{height:260px}
-
-  /* ── TILE/CARD INNERS ── */
-  .loc-tile,.ot,.ps-item,.scale-cell{padding:24px 18px}
-}
-
 </style>
-
-<!-- JSON-LD Schema -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Home",
-      "item": "https://cincinnatischoolofmusic.com/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Gift Certificate",
-      "item": "https://cincinnatischoolofmusic.com/gift-certificate"
-    }
-  ]
-}
-</script>
-
-<!-- CSM-TRACKING-INJECTED v1 -->
-
-<!-- Site verification -->
-<meta name="norton-safeweb-site-verification" content="t-cj9cdlcf1gq4bqzt5x0fa8z6iad5lsfegpz4aqqhlx7ov2vquytd9di-43zw3wwhl8a-5ikp5qw6rkg54wgdh1rpkfcfrb4sx8z5lx262hmacy0cfi8eot0foqnhgd">
-<meta name="p:domain_verify" content="2aa58cc7e9ac7c157be9615d699f7891">
-<meta name="msvalidate.01" content="85FA914F6119C38215C51EE35017A6AC">
-<meta name="facebook-domain-verification" content="vp9gr2lcef51u8yl82np3lvo3i2lql">
-
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PNGJK75');</script>
-<!-- End Google Tag Manager -->
-
-<!-- Google Analytics 4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-R3FZGNMFEK"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-R3FZGNMFEK');
-</script>
-<!-- End Google Analytics 4 -->
-
-<!-- Facebook Pixel -->
-<script>
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', '314323718729638');
-  fbq('track', 'PageView');
-</script>
-<!-- End Facebook Pixel -->
-
-<!-- Book Intro click tracking (sitewide global listener) -->
-<script>
-(function(){
-  document.addEventListener('click', function(e){
-    var link = e.target.closest && e.target.closest('a');
-    if(!link || !link.href) return;
-    if(link.href.indexOf('opus1.io') === -1) return;
-    // Skip non-booking Opus URLs
-    if(link.href.indexOf('/login') !== -1) return;
-    if(link.href.indexOf('/w/recitals') !== -1) return;
-
-    var location = window.location.pathname || '/';
-
-    // GA4 event
-    if(typeof gtag === 'function'){
-      gtag('event', 'book_intro_click', {
-        link_url: link.href,
-        page_path: location,
-        link_text: (link.textContent || '').trim().slice(0, 80)
-      });
-    }
-    // GTM dataLayer event
-    if(window.dataLayer){
-      window.dataLayer.push({
-        event: 'book_intro_click',
-        link_url: link.href,
-        page_path: location,
-        link_text: (link.textContent || '').trim().slice(0, 80)
-      });
-    }
-    // Facebook Pixel: standard Lead event
-    if(typeof fbq === 'function'){
-      fbq('track', 'Lead', {
-        content_name: 'Book Intro Lesson',
-        content_category: location
-      });
-    }
-  }, true);
-})();
-</script>
-<!-- End Book Intro click tracking -->
-
 </head>
 <body>
 
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PNGJK75"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=314323718729638&ev=PageView&noscript=1"></noscript>
-
-
+<div class="sample-bar">CSM — Gift Certificates &nbsp;·&nbsp; <em>v2.8</em> &nbsp;·&nbsp; <span>Full Build</span></div>
 
 <nav>
-  <a href="/" class="nav-logo-link"><img src="images/csm-logo.png" class="nav-logo" alt="Cincinnati School of Music"></a>
-  <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg></button>
+  <a href="/" class="nav-wm">Cincinnati School of Music</a>
   <ul class="nav-links">
-    <li class="nav-has-dropdown">
-      <span>Music Lessons</span>
-      <div class="nav-dropdown">
-        <a href="/piano-lessons">Piano</a>
-        <a href="/voice-lessons">Voice</a>
-        <a href="/guitar-lessons">Guitar</a>
-        <a href="/violin-lessons">Strings</a>
-        <a href="/drum-lessons">Drums</a>
-        <a href="/flute-clarinet-lessons">Winds</a>
-        <a href="/adult-lessons">Adult Lessons</a>
-        <a href="/early-childhood-music-discovery-lessons">Music Discovery</a>
-        <a href="/gift-certificate">Gift Certificates</a>
-        <a href="/lessons">FAQ</a>
-      </div>
-    </li>
-    <li><a href="/about-us">About Us</a></li>
-    <li><a href="/testimonials">Success Stories</a></li>
-    <li class="nav-has-dropdown">
-      <span>Student Resources</span>
-      <div class="nav-dropdown">
-        <a href="/recitals">Recitals</a>
-        <a href="/cancel-lessons-form">Cancel / Reschedule Lessons</a>
-        <a href="/holiday-schedule-closures">Holiday Schedule &amp; Closures</a>
-        <a href="/commonly-used-books">Commonly Used Books</a>
-      </div>
-    </li>
-    <li class="nav-has-dropdown">
-      <span>For Teachers</span>
-      <div class="nav-dropdown">
-        <a href="/instrument-maintenance-request-form">Instrument Maintenance Request</a>
-        <a href="https://www.cincinnatimusicteacher.com" target="_blank" rel="noopener">Interested in Teaching at CSM?</a>
-      </div>
-    </li>
-    <li class="nav-has-dropdown">
-      <span>Locations</span>
-      <div class="nav-dropdown">
-        <a href="/olde-montgomery">Olde Montgomery</a>
-        <a href="/mason">Mason</a>
-        <a href="/anderson">Anderson</a>
-        <a href="/middletown">Middletown</a>
-        <a href="/maineville">Maineville</a>
-      </div>
-    </li>
-    <li class="nav-cta"><a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book a Lesson</a></li>
+    <li><a href="/lessons">Lessons</a></li>
+    <li><a href="/locations">Locations</a></li>
+    <li><a href="/recitals">Recitals</a></li>
+    <li><a href="/teachers">Teachers</a></li>
+    <li><a href="/about">About</a></li>
+    <li class="nav-cta"><a href="/book-intro-lesson">Book a Lesson</a></li>
   </ul>
 </nav>
 
@@ -536,8 +199,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <section class="hero-split">
   <div class="hero-left">
     <span class="hero-ey">Cincinnati School of Music — <em>Est. 2012</em></span>
-    <h1>Give the Gift of <em>Music Lessons</em></h1>
-    <p class="hero-by">One and two-month gift certificates for piano, voice, guitar, drums, strings, and more. Redeemable at all five Greater Cincinnati locations.</p>
+    <h1>Give the Gift of <em>Music</em></h1>
+    <p class="hero-by">For birthdays, holidays, or just because. One and two-month gift certificates for piano, voice, guitar, drums, strings, and more — redeemable at all five Greater Cincinnati locations.</p>
     <div class="cta-row">
       <a href="#purchase" class="btn-a">Purchase a Gift Certificate</a>
     </div>
@@ -550,52 +213,122 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- ═══════════════════════════════════════
      GIFT OPTIONS
-     Two tiers: Silver (1 month) / Gold (2 months)
-     Copy left, tier cards right
+     Two tiers — clickable artwork buttons
+     Direct links to Gift Up hosted checkout
 ═══════════════════════════════════════ -->
-<div class="gift-options-wrap">
+<div class="gift-options-wrap" id="purchase">
   <div class="gift-options-inner">
-    <div class="gift-options-copy">
+    <div class="gift-options-head">
       <span class="section-label">Gift Options</span>
-      <h2>A Simple Way to <em>Start Someone in Music.</em></h2>
-      <p class="body-text" style="margin-top:22px">A Cincinnati School of Music gift certificate gives someone the chance to start — or continue — private music lessons without any up-front commitment from them. It covers a month of lessons for any instrument we teach, at any location that works for their schedule.</p>
-      <p class="body-text" style="margin-top:16px">Certificates are delivered digitally and can be redeemed by contacting any CSM location. The recipient chooses their instrument, location, and lesson schedule. No contracts. Month-to-month from there if they want to keep going.</p>
+      <h2>Two Gift Packages. <em>One Easy Process.</em></h2>
+      <p class="body-text" style="margin-top:22px">A Cincinnati School of Music gift certificate gives your loved one an easy way to see if music is a great outlet for them. Four or eight lessons in any instrument we teach, at any of our five Greater Cincinnati locations.</p>
+      <p class="body-text" style="margin-top:14px">Delivered digitally and ready to schedule whenever they are.</p>
     </div>
-    <div class="gift-cards-grid">
-      <div class="gc-card">
-        <div class="gc-tier gc-tier-silver">Silver — One Month</div>
-        <div class="gc-title">One month of private lessons</div>
-        <div class="gc-desc">Four lessons for any instrument at any CSM location. Covers piano, voice, guitar, drums, strings, woodwinds, and more. Valid for students of any age or skill level.</div>
+
+    <div class="gift-buttons-grid">
+      <!-- Silver — 4 Lessons -->
+      <a class="gift-btn" href="https://giftup.app/place-order/ca1bb02f-a08d-4bb7-8f22-7568bb8453e0?platform=hosted&productId=af6caa93-5a79-4f72-2100-08deac207125&language=en-US" aria-label="Purchase Silver gift certificate — four private music lessons, $168">
+        <div class="gift-btn-art-wrap">
+          <img class="gift-btn-art" src="images/gift-cert-4-lessons.png" alt="Cincinnati School of Music gift certificate — four lessons" />
+        </div>
+        <div class="gift-btn-meta">
+          <div class="gift-btn-meta-l">
+            <span class="gift-btn-tier">Silver — One Month</span>
+            <span class="gift-btn-title">Four Private Lessons</span>
+          </div>
+          <div class="gift-btn-meta-r">
+            <span class="gift-btn-price">$168</span>
+            <span class="gift-btn-cta">Purchase <span class="gift-btn-cta-arrow">→</span></span>
+          </div>
+        </div>
+        <div class="gift-btn-note"><em>A good start.</em> Four lessons — enough to introduce someone to music lessons.</div>
+      </a>
+
+      <!-- Gold — 8 Lessons -->
+      <a class="gift-btn" href="https://giftup.app/place-order/ca1bb02f-a08d-4bb7-8f22-7568bb8453e0?platform=hosted&productId=15c9ef41-394c-42d9-4090-08dea5707ec0&language=en-US" aria-label="Purchase Gold gift certificate — eight private music lessons, $336">
+        <div class="gift-btn-art-wrap">
+          <img class="gift-btn-art" src="images/gift-cert-8-lessons.png" alt="Cincinnati School of Music gift certificate — eight lessons" />
+        </div>
+        <div class="gift-btn-meta">
+          <div class="gift-btn-meta-l">
+            <span class="gift-btn-tier">Gold — Two Months</span>
+            <span class="gift-btn-title">Eight Private Lessons</span>
+          </div>
+          <div class="gift-btn-meta-r">
+            <span class="gift-btn-price">$336</span>
+            <span class="gift-btn-cta">Purchase <span class="gift-btn-cta-arrow">→</span></span>
+          </div>
+        </div>
+        <div class="gift-btn-note"><em>A great start.</em> Eight lessons — enough to actually begin.</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     WHAT'S INCLUDED
+     Four-up reassurance grid
+═══════════════════════════════════════ -->
+<div class="includes-wrap">
+  <div class="includes-inner">
+    <span class="section-label">Every Certificate</span>
+    <h2>What's <em>Included</em></h2>
+    <div class="includes-grid">
+      <div class="includes-cell">
+        <div class="includes-cell-h">Any Instrument</div>
+        <div class="includes-cell-b">Piano, voice, guitar, drums, violin, viola, cello, flute, clarinet, saxophone — whatever the recipient wants to learn.</div>
       </div>
-      <div class="gc-card gc-card-gold">
-        <div class="gc-tier gc-tier-gold">Gold — Two Months</div>
-        <div class="gc-title gc-title-dark">Two months of private lessons</div>
-        <div class="gc-desc gc-desc-dark">Eight lessons across two months. Enough time to find a groove, settle into a routine, and see what consistent instruction does for a student. The most popular gift option.</div>
+      <div class="includes-cell">
+        <div class="includes-cell-h">Any Location</div>
+        <div class="includes-cell-b">Five Greater Cincinnati locations: Anderson Township, Mason, Maineville, Middletown, and Montgomery.</div>
+      </div>
+      <div class="includes-cell">
+        <div class="includes-cell-h">Any Age, Any Level</div>
+        <div class="includes-cell-b">From three-year-olds in Music Discovery Lessons to adult learners returning to music after years away.</div>
+      </div>
+      <div class="includes-cell">
+        <div class="includes-cell-h">Delivered Instantly</div>
+        <div class="includes-cell-b">Sent by email immediately after purchase. Include a personal message and choose when it's delivered.</div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════
-     GIFTUP PURCHASE EMBED
-     Site ID: ca1bb02f-a08d-4bb7-8f22-7568bb8453e0
-     Anchor: #purchase
+     FAQ — Common Questions
+     Trust scaffolding for parent research mode
 ═══════════════════════════════════════ -->
-<div class="embed-wrap" id="purchase">
-  <div class="embed-inner">
-    <span class="section-label">Purchase</span>
-    <h2>Choose a Certificate &amp; <em>Check Out</em></h2>
-    <p class="embed-sub">Select silver (one month) or gold (two months). Complete your purchase and the recipient receives a digital certificate by email. Redeemable for private lessons at any of our five locations.</p>
-
-    <!-- Giftup embed -->
-    <div class="gift-up-target" data-site-id="ca1bb02f-a08d-4bb7-8f22-7568bb8453e0" data-platform="Other"></div>
-    <script src="https://app.giftup.app/dist/gift-up.js" type="module"></script>
-
+<div class="faq-wrap">
+  <div class="faq-inner">
+    <span class="section-label">Common Questions</span>
+    <h2>Things Gift-Givers <em>Often Ask</em></h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">What happens after I purchase?</div>
+        <div class="faq-a">The certificate is delivered by email immediately — to the recipient if you'd like, or to you to forward or print and present yourself. You can include a personal message. The recipient holds onto the certificate until they're ready to schedule their first lesson.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What can a gift certificate be used for?</div>
+        <div class="faq-a">Private music lessons in any instrument we teach — piano, voice, guitar, drums, strings, woodwinds, and more. Redeemable at any of our five Greater Cincinnati locations with one of our 60+ teachers, subject to availability.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What's the difference between Silver and Gold?</div>
+        <div class="faq-a">Silver is the four-lesson package — a good start, enough to introduce someone to music lessons. Gold is the eight-lesson package — a great start, with enough time to actually begin. Both cover 30-minute private lessons in any instrument we teach, at any of our five Greater Cincinnati locations.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How are lessons scheduled?</div>
+        <div class="faq-a">The recipient (or parent) simply contacts our office to get scheduled and have the gift certificate applied.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">When does a gift certificate expire?</div>
+        <div class="faq-a">Gift certificates are valid for one year from the date of purchase. The recipient should plan to schedule their first lesson within that window.</div>
+      </div>
+    </div>
   </div>
 </div>
 
 <footer>
-  <div class="ft-nav">
+  <nav class="ft-nav">
     <a href="/piano-lessons">Piano</a>
     <a href="/voice-lessons">Voice</a>
     <a href="/guitar-lessons">Guitar</a>
@@ -604,43 +337,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="/flute-clarinet-lessons">Winds</a>
     <a href="/locations">Locations</a>
     <a href="/teachers">Teachers</a>
-    <a href="/about-us">About</a>
-    <a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book a Lesson</a>
-  </div>
+    <a href="/about">About</a>
+    <a href="/book-intro-lesson">Book a Lesson</a>
+  </nav>
   <div class="ft-award"><em>★</em> Cincy Magazine Best of the North — Music Instruction — 10 Consecutive Years</div>
   <div class="ft-copy">© 2026 Cincinnati School of Music LLC &nbsp;·&nbsp; <a href="/privacy-policy">Privacy Policy</a> &nbsp;·&nbsp; <a href="/sms-terms">SMS Terms</a></div>
 </footer>
-
-
-
-<script>
-/* Mobile nav: hamburger toggle + tap-to-expand dropdowns (≤880px) */
-(function(){
-  var nav = document.querySelector('nav');
-  if(!nav) return;
-  var toggle = nav.querySelector('.nav-toggle');
-  if(toggle){
-    toggle.addEventListener('click', function(e){
-      e.stopPropagation();
-      var open = nav.classList.toggle('nav-open');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-  }
-  nav.querySelectorAll('.nav-has-dropdown > span').forEach(function(span){
-    span.addEventListener('click', function(e){
-      if(window.matchMedia('(max-width:880px)').matches){
-        e.preventDefault();
-        var li = span.parentElement;
-        var wasOpen = li.classList.contains('dropdown-open');
-        nav.querySelectorAll('.nav-has-dropdown.dropdown-open').forEach(function(other){
-          if(other !== li) other.classList.remove('dropdown-open');
-        });
-        li.classList.toggle('dropdown-open', !wasOpen);
-      }
-    });
-  });
-})();
-</script>
 
 </body>
 </html>
