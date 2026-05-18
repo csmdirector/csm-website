@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Teacher Makeup Teaching Day Request | Cincinnati School of Music</title>
+  <meta name="description" content="Submit a Makeup Teaching Day request as a CSM teacher.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #f0efee;
+      color: #3d3d3d;
+      font-family: Jost, "Avenir Next", Avenir, system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    nav {
+      background: #f0efee;
+      height: 68px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .nav-inner {
+      max-width: 1240px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .logo {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.125rem;
+      text-transform: uppercase;
+      color: #3d3d3d;
+      text-decoration: none;
+    }
+
+    .bc {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 48px 0;
+      font-size: 0.875rem;
+      color: #3d3d3d;
+    }
+    .bc a { color: #3cb5c6; text-decoration: none; font-weight: 300; }
+    .bc a:hover { text-decoration: underline; }
+
+    .page-wrap { background: #ffffff; }
+    .page-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 64px 48px 104px;
+      background: #ffffff;
+    }
+
+    h1 {
+      font-size: 2.88rem;
+      font-weight: 300;
+      color: #3d3d3d;
+      line-height: 1.15;
+      margin-bottom: 40px;
+      letter-spacing: -0.01em;
+    }
+    h1 em { font-style: italic; font-weight: 200; }
+
+    h2 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.125rem;
+      text-transform: uppercase;
+      color: #3d3d3d;
+      margin-top: 48px;
+      margin-bottom: 16px;
+    }
+
+    p { font-size: 0.92rem; line-height: 1.7; margin-bottom: 18px; }
+    p.lede {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #3d3d3d;
+      margin-bottom: 36px;
+      font-weight: 300;
+    }
+
+    a { color: #3cb5c6; text-decoration: none; font-weight: 300; }
+    a:hover { text-decoration: underline; }
+    strong { font-weight: 500; }
+
+    /* Form */
+    form { display: flex; flex-direction: column; gap: 22px; margin-top: 16px; }
+    form label.field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: #3d3d3d;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    fieldset {
+      border: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    fieldset legend {
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      margin-bottom: 8px;
+      padding: 0;
+    }
+    fieldset > label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-weight: 300;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      cursor: pointer;
+      color: #3d3d3d;
+    }
+    fieldset > label input { margin-top: 4px; flex-shrink: 0; accent-color: #3cb5c6; }
+
+    input[type=text], input[type=email], input[type=date], select {
+      padding: 11px 14px;
+      border: 1px solid #d1cfcd;
+      background: #ffffff;
+      font-family: inherit;
+      font-size: 1rem;
+      color: #3d3d3d;
+      border-radius: 3px;
+      font-weight: 300;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3cb5c6;
+      box-shadow: 0 0 0 3px rgba(60,181,198,0.15);
+    }
+    small {
+      font-size: 0.78rem;
+      color: #8a8784;
+      font-weight: 300;
+      margin-top: 2px;
+    }
+    .conditional { display: none; }
+    .conditional.show { display: flex; }
+
+    button[type=submit] {
+      align-self: flex-start;
+      padding: 15px 38px;
+      background: #3cb5c6;
+      color: #ffffff;
+      border: none;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.125rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 3px;
+      margin-top: 16px;
+      transition: background 0.15s;
+    }
+    button[type=submit]:hover { background: #2ea1b2; }
+    button[type=submit]:disabled { background: #b8b6b3; cursor: not-allowed; }
+
+    /* Disclaimer callout */
+    .callout {
+      background: #fdf6e7;
+      border-left: 3px solid #d9a441;
+      padding: 18px 22px;
+      margin: 32px 0 8px;
+      border-radius: 0 3px 3px 0;
+    }
+    .callout p { margin: 0; font-size: 0.92rem; line-height: 1.6; color: #5a4a2a; }
+    .callout strong { font-weight: 600; color: #3d3d3d; }
+
+    /* Thank-you state */
+    .thank-you {
+      padding: 36px 32px;
+      background: #f0efee;
+      border-radius: 6px;
+      margin-top: 16px;
+    }
+    .thank-you h3 {
+      font-size: 1.6rem;
+      font-weight: 300;
+      margin-bottom: 14px;
+      color: #3d3d3d;
+    }
+    .thank-you p { font-size: 0.95rem; margin-bottom: 12px; }
+    .thank-you p:last-child { margin-bottom: 0; }
+
+    /* Full policy disclosure */
+    details.full-policy {
+      margin-top: 80px;
+      padding-top: 32px;
+      border-top: 1px solid #e5e3e0;
+    }
+    details.full-policy summary {
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.125rem;
+      text-transform: uppercase;
+      color: #3cb5c6;
+      list-style: none;
+      padding: 8px 0;
+    }
+    details.full-policy summary::-webkit-details-marker { display: none; }
+    details.full-policy summary::after { content: "  +"; font-weight: 300; }
+    details.full-policy[open] summary::after { content: "  \2013"; }
+    .policy-body { margin-top: 28px; }
+    .policy-body h3 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.125rem;
+      text-transform: uppercase;
+      color: #3d3d3d;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+    .policy-body h3:first-child { margin-top: 0; }
+    .policy-body p, .policy-body li { font-size: 0.92rem; line-height: 1.7; }
+    .policy-body p { margin-bottom: 14px; }
+    .policy-body ul { padding-left: 1.4rem; margin-bottom: 14px; }
+    .policy-body li { margin-bottom: 6px; }
+
+    footer {
+      background: #f0efee;
+      padding: 36px 48px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: #8a8784;
+      letter-spacing: 0.05em;
+    }
+    footer a { color: #8a8784; }
+
+    @media (max-width: 720px) {
+      .page-inner { padding: 48px 24px 80px; }
+      .nav-inner { padding: 0 24px; }
+      .bc { padding: 16px 24px 0; }
+      h1 { font-size: 2.2rem; margin-bottom: 28px; }
+      footer { padding: 28px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="https://cincinnatischoolofmusic.com" class="logo">Cincinnati School of Music</a>
+    </div>
+  </nav>
+
+  <div class="bc">
+    <a href="https://cincinnatischoolofmusic.com">Home</a> &nbsp;/&nbsp; Teacher Makeup Teaching Day Request
+  </div>
+
+  <main class="page-wrap">
+    <div class="page-inner">
+
+      <h1>Teacher <em>Makeup Teaching Day Request</em></h1>
+
+      <p class="lede">For CSM teachers requesting an approved Makeup Teaching Day. The office reviews each request and confirms before any family communication.</p>
+
+      <h2>Before You Submit</h2>
+      <p>Makeup Teaching Days are additional availability for students who already have makeup credits on their account. They are not a replacement for a cancelled lesson, a teacher absence, or a closure.</p>
+      <p>Teachers may request up to two (2) Makeup Teaching Days per calendar year. The proposed date must be within 14 days of today.</p>
+      <p>Do not contact families about your request until the office has confirmed it.</p>
+
+      <div class="callout">
+        <p><strong>Requests are not guaranteed to be approved.</strong> Makeup Teaching Days are a courtesy scheduling option extended to teachers by CSM, based on studio availability and room or instrument resources. Submitting this form is a request, not a confirmation.</p>
+      </div>
+
+      <h2>Request Form</h2>
+      <form name="teacher-makeup-day-request" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" id="request-form">
+        <input type="hidden" name="form-name" value="teacher-makeup-day-request">
+        <p hidden><label>Leave this field empty: <input name="bot-field"></label></p>
+
+        <label class="field">Teacher Name
+          <input type="text" name="teacher-name" required autocomplete="name">
+        </label>
+
+        <label class="field">Teacher Email
+          <input type="email" name="teacher-email" required autocomplete="email">
+        </label>
+
+        <label class="field">Instrument(s) You Teach
+          <input type="text" name="instruments" required placeholder="e.g., Piano, Guitar">
+        </label>
+
+        <label class="field">Proposed Date
+          <input type="date" name="proposed-date" required id="proposed-date">
+          <small>Must be within 14 days from today.</small>
+        </label>
+
+        <label class="field">Location
+          <select name="location" required>
+            <option value="">Select a location</option>
+            <option>Montgomery</option>
+            <option>Mason</option>
+            <option>Anderson</option>
+            <option>Maineville</option>
+            <option>Middletown</option>
+          </select>
+        </label>
+
+        <label class="field">Time Block
+          <input type="text" name="time-block" required placeholder="e.g., 4:00 PM to 7:00 PM">
+        </label>
+
+        <fieldset>
+          <legend>Have you already used a Makeup Teaching Day this calendar year?</legend>
+          <label><input type="radio" name="used-this-year" value="No" required id="used-no"> No</label>
+          <label><input type="radio" name="used-this-year" value="Yes" id="used-yes"> Yes</label>
+        </fieldset>
+
+        <label class="field conditional" id="earlier-date-field">If yes, what was the date of your earlier Makeup Teaching Day?
+          <input type="date" name="earlier-date">
+        </label>
+
+        <fieldset>
+          <legend>Please check all boxes to confirm:</legend>
+          <label><input type="checkbox" name="ack-not-guaranteed" value="Yes" required> I understand this request is not guaranteed to be approved, and that Makeup Teaching Days are a courtesy scheduling option based on availability and room or instrument resources.</label>
+          <label><input type="checkbox" name="ack-within-14" value="Yes" required> This date is within 14 days from today.</label>
+          <label><input type="checkbox" name="ack-not-tied-to-absence" value="Yes" required> This request is not tied to a teacher absence or a cancelled lesson.</label>
+          <label><input type="checkbox" name="ack-not-30-day-closure" value="Yes" required> This date is not within 30 days of an unexpected studio-wide closure.</label>
+          <label><input type="checkbox" name="ack-not-2-already" value="Yes" required> I have not already used 2 Makeup Teaching Days this calendar year.</label>
+          <label><input type="checkbox" name="ack-no-family-contact" value="Yes" required> I will not contact families about this until the office confirms approval.</label>
+        </fieldset>
+
+        <button type="submit">Submit Request</button>
+      </form>
+
+      <details class="full-policy">
+        <summary>Read the full Makeup Teaching Days policy</summary>
+        <div class="policy-body">
+
+          <h3>Purpose</h3>
+          <p>Makeup Teaching Days provide occasional additional availability for students who currently have makeup credits on their account. These days help reduce accumulated makeup balances while maintaining consistent scheduling procedures across all CSM locations.</p>
+          <p>Makeup Teaching Days are not used to replace missed lessons from teacher absences or compensate for closures.</p>
+
+          <h3>Teacher Absences</h3>
+          <p>Teacher absences follow the standard CSM absence process:</p>
+          <ul>
+            <li>The absence is logged.</li>
+            <li>The office issues the appropriate tuition credit or refund when applicable.</li>
+            <li>Families are notified by the office.</li>
+          </ul>
+          <p>Students do not receive makeup credits for teacher absences. Teachers do not schedule replacement dates for cancelled lessons.</p>
+
+          <h3>Makeup Teaching Day Limit</h3>
+          <p>Teachers may request up to two (2) Makeup Teaching Days per calendar year. Approval is not automatic and depends on studio availability and operational considerations.</p>
+
+          <h3>Separation from Teacher Absences</h3>
+          <p>Makeup Teaching Days may not be requested in connection with a specific teacher absence. Teachers should not propose, schedule, or offer makeup teaching days as a replacement for cancelled lessons. All teacher absences continue to follow the standard CSM absence process.</p>
+
+          <h3>Use of Makeup Teaching Days</h3>
+          <p>Makeup Teaching Days may be used only for students who already have makeup credits on their account. These days:</p>
+          <ul>
+            <li>do not create new makeup credits</li>
+            <li>do not change tuition or billing</li>
+            <li>do not replace missed lessons</li>
+            <li>follow the standard cancellation policy</li>
+          </ul>
+
+          <h3>Restrictions</h3>
+          <p>Makeup Teaching Days may not:</p>
+          <ul>
+            <li>be tied to a specific teacher absence</li>
+            <li>be presented as compensation for a missed lesson</li>
+            <li>be scheduled within 30 days of an unexpected studio-wide closure</li>
+            <li>be communicated to families before approval</li>
+          </ul>
+
+          <h3>Scheduling Window</h3>
+          <p>Makeup Teaching Days may only be scheduled within 14 days of the proposed date. Requests submitted earlier than 14 days will not be approved. This ensures accurate room availability and reduces last-minute cancellations.</p>
+
+          <h3>Request Process</h3>
+          <p>Teachers must submit a Makeup Teaching Day request through the standard request process. Requests must include:</p>
+          <ul>
+            <li>proposed date</li>
+            <li>location</li>
+            <li>time block</li>
+          </ul>
+          <p>Management will review requests based on studio availability, operational impact, and scheduling demand. Once approved, the office schedules the day through Opus. Teachers do not schedule students directly.</p>
+
+          <h3>Communication with Families</h3>
+          <p>When referring to these days, staff and teachers should describe them as: <strong>"Additional availability for students with existing makeup credits."</strong> They should not be described as making up a missed lesson from a teacher absence or weather closure.</p>
+
+          <h3>Policy Goal</h3>
+          <p>This structure ensures consistent scheduling procedures across locations while providing occasional additional opportunities for students to redeem existing makeup credits. Makeup Teaching Days are intended to function as an occasional pressure-release opportunity, not a routine expectation.</p>
+
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 Cincinnati School of Music LLC
+  </footer>
+
+  <script>
+    (function(){
+      // Set date input bounds: today through today+14
+      var dateInput = document.getElementById('proposed-date');
+      var today = new Date();
+      today.setHours(0,0,0,0);
+      var maxDate = new Date(today.getTime() + 14*24*60*60*1000);
+      function fmt(d){ return d.toISOString().split('T')[0]; }
+      dateInput.min = fmt(today);
+      dateInput.max = fmt(maxDate);
+
+      // Conditional "If yes" field
+      var usedYes = document.getElementById('used-yes');
+      var usedNo = document.getElementById('used-no');
+      var earlierField = document.getElementById('earlier-date-field');
+      function syncConditional(){
+        if (usedYes.checked) earlierField.classList.add('show');
+        else earlierField.classList.remove('show');
+      }
+      usedYes.addEventListener('change', syncConditional);
+      usedNo.addEventListener('change', syncConditional);
+
+      // Submit handler with inline thank-you
+      var form = document.getElementById('request-form');
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        var btn = form.querySelector('button[type=submit]');
+        btn.disabled = true;
+        btn.textContent = 'Submitting...';
+
+        var data = new URLSearchParams(new FormData(form)).toString();
+        fetch('/', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: data
+        }).then(function(res){
+          if (res.ok){
+            var thankYou = document.createElement('div');
+            thankYou.className = 'thank-you';
+            thankYou.innerHTML = '<h3>Request received</h3>' +
+              '<p>Thank you. The office will review your request and respond by email within two business days.</p>' +
+              '<p>Approval is not guaranteed. The office will confirm based on studio availability and room or instrument resources.</p>' +
+              '<p>Please do not contact families about this date until you receive confirmation.</p>';
+            form.parentNode.replaceChild(thankYou, form);
+            window.scrollTo({top: thankYou.offsetTop - 80, behavior: 'smooth'});
+          } else {
+            btn.disabled = false;
+            btn.textContent = 'Submit Request';
+            alert('Submission could not be saved. Please try again, or email info@cincinnatischoolofmusic.com.');
+          }
+        }).catch(function(){
+          btn.disabled = false;
+          btn.textContent = 'Submit Request';
+          alert('Submission could not be saved. Please try again, or email info@cincinnatischoolofmusic.com.');
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>
