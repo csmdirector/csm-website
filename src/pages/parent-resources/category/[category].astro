@@ -1,0 +1,49 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { matchesTaxonomy, slugify, uniqueSorted } from '../../../lib/resourceTaxonomy';
+
+export async function getStaticPaths() {
+  const resources = await getCollection('parent-resources', ({ data }) => data.status === 'published');
+  const categories = uniqueSorted(resources.flatMap((entry) => entry.data.categories));
+
+  return categories.map((category) => ({
+    params: { category: slugify(category) },
+    props: { category }
+  }));
+}
+
+const { category } = Astro.props;
+const resources = await getCollection('parent-resources', ({ data }) => data.status === 'published');
+const filteredResources = resources.filter((entry) => matchesTaxonomy(entry.data.categories, slugify(category)));
+---
+<Base
+  title={`${category} Resources | Cincinnati School of Music`}
+  description={`Parent resources from Cincinnati School of Music about ${category.toLowerCase()}.`}
+  canonicalPath={`/parent-resources/category/${slugify(category)}/`}
+>
+  <section class="page-shell">
+    <div class="page-inner">
+      <span class="section-label">Parent Resource Category</span>
+      <h1>{category}</h1>
+      <p class="taxonomy-intro">Resources for families looking for practical guidance around {category.toLowerCase()}.</p>
+      <div class="cards">
+        {filteredResources.map((resource) => (
+          <a class="resource-card" href={`/parent-resources/${resource.id}/`}>
+            <span>{resource.data.categories[0] || 'Parent Resource'}</span>
+            <h2>{resource.data.title}</h2>
+            <p>{resource.data.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+  <style>
+    .taxonomy-intro{max-width:640px;margin-bottom:36px}
+    .cards{display:grid;grid-template-columns:1fr;gap:1px;background:var(--offwb);border:1px solid var(--offwb)}
+    .resource-card{display:block;background:var(--white);padding:32px;text-decoration:none;transition:background .18s}
+    .resource-card:hover{background:var(--offwhite)}
+    .resource-card span{display:block;font-size:.58rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);margin-bottom:12px}
+    .resource-card h2{font-size:1.35rem;margin-bottom:10px}
+  </style>
+</Base>

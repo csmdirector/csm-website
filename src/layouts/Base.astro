@@ -1,0 +1,125 @@
+---
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import TrackingHead from '../components/TrackingHead.astro';
+import TrackingNoScript from '../components/TrackingNoScript.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonicalPath = Astro.url.pathname,
+  noindex = false
+} = Astro.props;
+
+const site = 'https://cincinnatischoolofmusic.com';
+const normalizedPath = canonicalPath === '/' ? '/' : canonicalPath.replace(/\/$/, '');
+const canonicalUrl = normalizedPath === '/' ? `${site}/` : `${site}${normalizedPath}`;
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    <link rel="canonical" href={canonicalUrl}>
+    {noindex && <meta name="robots" content="noindex,nofollow">}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,200;0,300;0,400;0,500;0,600;1,200;1,300&display=swap" rel="stylesheet">
+    <TrackingHead />
+    <style is:global>
+      :root {
+        --accent: #f74f57;
+        --accent-dk: #d93f48;
+        --slate: #3cb5c6;
+        --slate-lt: #7dd4df;
+        --charcoal: #3D3D3D;
+        --mid: #747474;
+        --light: #9A9A9A;
+        --offwhite: #F0EFEE;
+        --offwb: #E6E4E1;
+        --white: #FFFFFF;
+        --f: 'Jost','Avenir Next','Avenir',system-ui,sans-serif;
+      }
+      *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+      html{scroll-behavior:smooth}
+      body{font-family:var(--f);background:var(--offwhite);color:var(--charcoal);font-weight:300;line-height:1.7;-webkit-font-smoothing:antialiased}
+      a{color:inherit}
+      nav{background:var(--offwhite);border-bottom:1px solid var(--offwb);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;position:sticky;top:0;z-index:200;overflow:visible}
+      .nav-logo-link{display:flex;align-items:center;height:100%;text-decoration:none;flex-shrink:0}
+      .nav-logo{height:52px;width:auto;display:block;mix-blend-mode:darken}
+      .nav-links{display:flex;align-items:center;gap:28px;list-style:none;margin:0;padding:0}
+      .nav-links>li{position:relative;display:flex;align-items:center;height:68px}
+      .nav-links a,.nav-links span{font-size:.68rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--mid);text-decoration:none;transition:color .18s;cursor:pointer;white-space:nowrap}
+      .nav-links a:hover,.nav-links span:hover,.nav-has-dropdown:hover>span{color:var(--charcoal)}
+      .nav-dropdown{position:absolute;top:68px;left:50%;transform:translateX(-50%);min-width:240px;background:var(--white);border:1px solid var(--offwb);box-shadow:0 12px 30px rgba(0,0,0,.08);padding:10px 0;display:none;z-index:300}
+      .nav-has-dropdown:hover .nav-dropdown,.nav-has-dropdown:focus-within .nav-dropdown{display:block}
+      .nav-dropdown a{display:block;padding:10px 18px;font-size:.62rem;letter-spacing:.12em;color:var(--mid)}
+      .nav-dropdown a:hover{background:var(--offwhite);color:var(--charcoal)}
+      .nav-cta a{background:var(--accent);color:var(--white);padding:12px 18px}
+      .nav-cta a:hover{background:var(--accent-dk);color:var(--white)}
+      .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:10px;margin-right:-10px;color:var(--charcoal)}
+      .nav-toggle svg{display:block;width:24px;height:24px}
+      .section-label{display:block;font-size:.62rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);margin-bottom:16px}
+      .page-shell{background:var(--white)}
+      .page-inner{max-width:1040px;margin:0 auto;padding:88px 48px 104px}
+      .page-inner.narrow{max-width:820px}
+      h1,h2,h3{font-weight:300;color:var(--charcoal);letter-spacing:.02em;line-height:1.2}
+      h1{font-size:clamp(2rem,3.4vw,3.2rem);margin-bottom:18px}
+      h2{font-size:clamp(1.5rem,2.4vw,2.3rem);margin-bottom:18px}
+      h1 em,h2 em{font-style:italic;font-weight:200}
+      p{font-size:.92rem;color:var(--mid);line-height:1.9}
+      .btn-a,.btn-c{display:inline-block;text-decoration:none;font-size:.68rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;transition:all .18s}
+      .btn-a{background:var(--accent);color:var(--white);padding:15px 40px}
+      .btn-a:hover{background:var(--accent-dk)}
+      .btn-c{border:1px solid var(--slate);color:var(--slate);padding:14px 34px}
+      .btn-c:hover{background:var(--slate);color:var(--white)}
+      footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+      .ft-nav{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+      .ft-nav a{font-size:.62rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.60);text-decoration:none;transition:color .18s;padding:0 8px}
+      .ft-nav a:hover{color:var(--slate-lt)}
+      .ft-award{font-size:.6rem;font-weight:400;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+      .ft-award em{font-style:normal;color:var(--accent);opacity:.85}
+      .ft-copy{font-size:.58rem;font-weight:300;letter-spacing:.1em;color:rgba(255,255,255,.38)}
+      .ft-copy a{color:var(--slate-lt);opacity:.75;text-decoration:none;transition:opacity .18s}
+      .ft-copy a:hover{opacity:.8}
+      @media (max-width:880px){
+        nav{height:auto;min-height:64px;padding:0 24px;flex-wrap:wrap}
+        .nav-logo{height:46px}
+        .nav-toggle{display:flex;align-items:center;justify-content:center;order:3;width:42px;height:42px;border:1px solid var(--offwb);background:var(--white);color:var(--charcoal)}
+        .nav-toggle svg{width:22px;height:22px}
+        .nav-links{order:4;flex-basis:100%;flex-direction:column;align-items:stretch;gap:0;background:var(--offwhite);max-height:0;overflow:hidden;transition:max-height .35s ease;border-top:1px solid transparent}
+        nav.nav-open .nav-links{max-height:calc(100vh - 64px);overflow-y:auto;border-top-color:var(--offwb);padding:8px 0 16px}
+        .nav-links>li{height:auto;min-height:48px;border-bottom:1px solid var(--offwb);width:100%;display:block;position:static}
+        .nav-links a,.nav-links span{display:block;padding:14px 22px;font-size:.74rem;letter-spacing:.14em;width:100%;white-space:normal;line-height:1.4}
+        .nav-has-dropdown>span{position:relative;cursor:pointer}
+        .nav-has-dropdown>span::after{content:"+";position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:1.3rem;font-weight:300;color:var(--mid);transition:transform .2s}
+        .nav-has-dropdown.dropdown-open>span::after{content:"-"}
+        .nav-dropdown{position:static;transform:none;display:none;box-shadow:none;border:none;background:rgba(0,0,0,.04);min-width:0;padding:4px 0;width:100%}
+        .nav-has-dropdown:hover .nav-dropdown,.nav-has-dropdown:focus-within .nav-dropdown{display:none}
+        .nav-has-dropdown.dropdown-open .nav-dropdown{display:block}
+        .nav-dropdown a{padding:11px 38px;font-size:.66rem;letter-spacing:.1em;color:var(--mid)}
+        .nav-cta a{display:block;text-align:center;margin:8px 22px;padding:14px 18px}
+        .page-inner{padding:56px 24px 72px}
+        footer{padding:40px 24px}
+        .ft-nav{gap:8px;row-gap:14px}
+        .ft-nav a{padding:6px 8px;font-size:.6rem}
+      }
+    </style>
+  </head>
+  <body>
+    <TrackingNoScript />
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

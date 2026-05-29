@@ -2,7 +2,9 @@
 
 Production source for [cincinnatischoolofmusic.com](https://cincinnatischoolofmusic.com).
 
-Static site — plain HTML, no build step, no framework. Hosted on Netlify.
+Static-first site hosted on Netlify.
+
+The existing production pages are still plain HTML at the repository root. They are intentionally preserved as-is while new sections are built with Astro. Do not migrate or refactor existing pages unless there is a specific reason.
 
 ## Branches
 
@@ -13,13 +15,58 @@ Static site — plain HTML, no build step, no framework. Hosted on Netlify.
 
 ```
 .
-├── *.html              — 33 page files at the root (each URL maps directly)
-├── images/             — all site imagery
+├── *.html              — existing page files at the root (each URL maps directly)
+├── images/             — existing site imagery
+├── src/                — Astro layouts, components, and content collections for new sections
+├── scripts/            — build-time preservation checks/copy scripts
 ├── _redirects          — Netlify URL redirects (legacy .php URLs, /home, etc.)
+├── astro.config.mjs    — Astro static-site build config
+├── netlify.toml        — Netlify build/publish config
+├── package.json        — build scripts and dependencies
 └── README.md           — this file
 ```
 
 URLs map directly to filenames: `piano-lessons.html` is served at `/piano-lessons`.
+
+## Architecture rule
+
+Existing pages remain the source of truth for current public URLs. The Astro build is for new sections only:
+
+- Parent Resource Hub
+- Smart Intro Intake
+- Musical Ascent
+- MDL
+- Teacher Resource Area
+
+The build command runs Astro, then copies the existing root `.html` files, `_redirects`, and `images/` into `dist` unchanged. This preserves current URLs, metadata, tracking, and static assets while allowing new Astro-built sections to be added under `src/`.
+
+## Local development
+
+Install dependencies:
+
+```
+npm install
+```
+
+Run Astro for new sections:
+
+```
+npm run dev
+```
+
+Build the Netlify output:
+
+```
+npm run build
+```
+
+Verify preserved static output:
+
+```
+npm run check:preserved
+```
+
+`dist/` is generated output and should not be committed.
 
 ## Making a change
 

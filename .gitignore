@@ -10,6 +10,10 @@ Thumbs.db
 *.zip
 *.bak
 *.orig
+node_modules/
+dist/
+.npm-cache/
+.astro/
 
 # Netlify CLI / local dev
 .netlify/

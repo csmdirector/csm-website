@@ -1,0 +1,80 @@
+<nav>
+  <a href="/" class="nav-logo-link"><img src="/images/csm-logo.png" class="nav-logo" alt="Cincinnati School of Music"></a>
+  <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+  </button>
+  <ul class="nav-links">
+    <li class="nav-has-dropdown">
+      <span>Music Lessons</span>
+      <div class="nav-dropdown">
+        <a href="/piano-lessons">Piano</a>
+        <a href="/voice-lessons">Voice</a>
+        <a href="/guitar-lessons">Guitar</a>
+        <a href="/violin-lessons">Strings</a>
+        <a href="/drum-lessons">Drums</a>
+        <a href="/flute-clarinet-lessons">Winds</a>
+        <a href="/adult-lessons">Adult Lessons</a>
+        <a href="/early-childhood-music-discovery-lessons">Music Discovery</a>
+        <a href="/gift-certificate">Gift Certificates</a>
+        <a href="/lessons">FAQ</a>
+      </div>
+    </li>
+    <li><a href="/about-us">About Us</a></li>
+    <li><a href="/testimonials">Success Stories</a></li>
+    <li class="nav-has-dropdown">
+      <span>Student Resources</span>
+      <div class="nav-dropdown">
+        <a href="/recitals">Recitals</a>
+        <a href="/cancel-lessons-form">Cancel / Reschedule Lessons</a>
+        <a href="/holiday-schedule-closures">Holiday Schedule &amp; Closures</a>
+        <a href="/commonly-used-books">Commonly Used Books</a>
+      </div>
+    </li>
+    <li class="nav-has-dropdown">
+      <span>For Teachers</span>
+      <div class="nav-dropdown">
+        <a href="/instrument-maintenance-request-form">Instrument Maintenance Request</a>
+        <a href="https://www.cincinnatimusicteacher.com" target="_blank" rel="noopener">Interested in Teaching at CSM?</a>
+      </div>
+    </li>
+    <li class="nav-has-dropdown">
+      <span>Locations</span>
+      <div class="nav-dropdown">
+        <a href="/olde-montgomery">Olde Montgomery</a>
+        <a href="/mason">Mason</a>
+        <a href="/anderson">Anderson</a>
+        <a href="/middletown">Middletown</a>
+        <a href="/maineville">Maineville</a>
+      </div>
+    </li>
+    <li class="nav-cta"><a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book a Lesson</a></li>
+  </ul>
+</nav>
+
+<script>
+  (function(){
+    var nav = document.querySelector('nav');
+    if(!nav) return;
+    var toggle = nav.querySelector('.nav-toggle');
+    if(toggle){
+      toggle.addEventListener('click', function(e){
+        e.stopPropagation();
+        var open = nav.classList.toggle('nav-open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    }
+    nav.querySelectorAll('.nav-has-dropdown > span').forEach(function(span){
+      span.addEventListener('click', function(e){
+        if(window.matchMedia('(max-width:880px)').matches){
+          e.preventDefault();
+          var li = span.parentElement;
+          var wasOpen = li.classList.contains('dropdown-open');
+          nav.querySelectorAll('.nav-has-dropdown.dropdown-open').forEach(function(other){
+            if(other !== li) other.classList.remove('dropdown-open');
+          });
+          li.classList.toggle('dropdown-open', !wasOpen);
+        }
+      });
+    });
+  })();
+</script>

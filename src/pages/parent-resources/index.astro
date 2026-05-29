@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { slugify, uniqueSorted } from '../../lib/resourceTaxonomy';
+
+const resources = (await getCollection('parent-resources'))
+  .filter((entry) => entry.data.status === 'published')
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const featured = resources.filter((entry) => entry.data.featured);
+const categories = uniqueSorted(resources.flatMap((entry) => entry.data.categories));
+const tags = uniqueSorted(resources.flatMap((entry) => entry.data.tags));
+---
+<Base
+  title="Parent Resource Hub | Cincinnati School of Music"
+  description="Practical music lesson guidance for Cincinnati families, including first lessons, teacher fit, practice, recitals, instruments, and student confidence."
+  canonicalPath="/parent-resources/"
+>
+  <section class="hub-hero">
+    <div class="hub-inner">
+      <span class="section-label">Parent Resource Hub</span>
+      <h1>Clear guidance for music lesson decisions.</h1>
+      <p>Practical answers for parents choosing lessons, helping students practice, preparing for recitals, and finding the right fit at CSM.</p>
+      <div class="hub-actions">
+        <a class="btn-a" href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book Intro</a>
+        <a class="btn-c" href="/smart-intro-intake/">Lesson Fit Finder</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-shell">
+    <div class="page-inner">
+      <div class="hub-grid">
+        <aside class="hub-taxonomy" aria-label="Resource filters">
+          <div>
+            <span class="section-label">Categories</span>
+            <nav class="taxonomy-list">
+              {categories.map((category) => (
+                <a href={`/parent-resources/category/${slugify(category)}/`}>{category}</a>
+              ))}
+            </nav>
+          </div>
+          <div>
+            <span class="section-label">Tags</span>
+            <nav class="taxonomy-list">
+              {tags.map((tag) => (
+                <a href={`/parent-resources/tag/${slugify(tag)}/`}>{tag}</a>
+              ))}
+            </nav>
+          </div>
+        </aside>
+
+        <div class="resource-list">
+          <div class="resource-head">
+            <span class="section-label">Featured</span>
+            <h2>Start Here</h2>
+          </div>
+          <div class="cards">
+            {(featured.length ? featured : resources).map((resource) => (
+              <a class="resource-card" href={`/parent-resources/${resource.id}/`}>
+                <span>{resource.data.categories[0] || 'Parent Resource'}</span>
+                <h3>{resource.data.title}</h3>
+                <p>{resource.data.description}</p>
+                <div class="card-meta">
+                  {resource.data.tags.slice(0, 3).map((tag) => <small>{tag}</small>)}
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <section class="hub-cta" aria-labelledby="hub-cta-title">
+        <div>
+          <span class="section-label">Need Help Choosing?</span>
+          <h2 id="hub-cta-title">Find the right first step.</h2>
+          <p>Use the Lesson Fit Finder when you want guided help, or book an intro lesson when you are ready to begin.</p>
+        </div>
+        <div class="hub-actions">
+          <a class="btn-a" href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book Intro</a>
+          <a class="btn-c" href="/smart-intro-intake/">Lesson Fit Finder</a>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <style>
+    .hub-hero{background:var(--charcoal);color:var(--white)}
+    .hub-inner{max-width:1040px;margin:0 auto;padding:96px 48px}
+    .hub-hero .section-label{color:var(--slate-lt)}
+    .hub-hero h1{color:var(--white);max-width:700px}
+    .hub-hero p{color:rgba(255,255,255,.66);max-width:620px;margin-bottom:34px}
+    .hub-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .hub-grid{display:grid;grid-template-columns:260px 1fr;gap:56px;align-items:start}
+    .hub-taxonomy{display:flex;flex-direction:column;gap:40px;border-right:1px solid var(--offwb);padding-right:32px}
+    .taxonomy-list{display:flex;flex-direction:column;gap:1px;border:1px solid var(--offwb);background:var(--offwb)}
+    .taxonomy-list a{background:var(--white);color:var(--mid);font-size:.72rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:13px 15px;transition:background .18s,color .18s}
+    .taxonomy-list a:hover{background:var(--offwhite);color:var(--charcoal)}
+    .resource-head{margin-bottom:24px}
+    .cards{display:grid;grid-template-columns:1fr;gap:1px;background:var(--offwb);border:1px solid var(--offwb)}
+    .resource-card{display:block;background:var(--white);padding:32px;text-decoration:none;transition:background .18s}
+    .resource-card:hover{background:var(--offwhite)}
+    .resource-card span{display:block;font-size:.58rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);margin-bottom:12px}
+    .resource-card h3{font-size:1.35rem;margin-bottom:10px}
+    .resource-card p{margin-bottom:18px}
+    .card-meta{display:flex;flex-wrap:wrap;gap:8px}
+    .card-meta small{border:1px solid var(--offwb);color:var(--light);font-size:.58rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;padding:6px 8px}
+    .hub-cta{border-top:1px solid var(--offwb);margin-top:72px;padding-top:48px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center}
+    .hub-cta p{max-width:560px}
+    @media(max-width:880px){
+      .hub-inner{padding:64px 24px}
+      .hub-grid{grid-template-columns:1fr;gap:40px}
+      .hub-taxonomy{border-right:none;border-bottom:1px solid var(--offwb);padding-right:0;padding-bottom:40px}
+      .hub-cta{grid-template-columns:1fr}
+    }
+  </style>
+</Base>

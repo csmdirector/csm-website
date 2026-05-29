@@ -1,0 +1,48 @@
+---
+import { getCollection, render } from 'astro:content';
+import ResourceLayout from '../../layouts/ResourceLayout.astro';
+
+export async function getStaticPaths() {
+  const resources = await getCollection('parent-resources', ({ data }) => data.status === 'published');
+
+  return resources.map((resource) => ({
+    params: { slug: resource.id },
+    props: { resource }
+  }));
+}
+
+const { resource } = Astro.props;
+const { Content } = await render(resource);
+const allResources = await getCollection('parent-resources', ({ data }) => data.status === 'published');
+
+const relatedResources = allResources
+  .filter((entry) => entry.id !== resource.id)
+  .filter((entry) => {
+    if (resource.data.related.includes(entry.id)) return true;
+    return entry.data.categories.some((category) => resource.data.categories.includes(category)) ||
+      entry.data.tags.some((tag) => resource.data.tags.includes(tag));
+  })
+  .slice(0, 3)
+  .map((entry) => ({
+    title: entry.data.title,
+    description: entry.data.description,
+    href: `/parent-resources/${entry.id}/`,
+    categories: entry.data.categories
+  }));
+---
+<ResourceLayout
+  title={resource.data.title}
+  seoTitle={resource.data.seoTitle}
+  description={resource.data.seoDescription || resource.data.description}
+  canonicalPath={resource.data.canonicalPath || `/parent-resources/${resource.id}`}
+  categories={resource.data.categories}
+  tags={resource.data.tags}
+  instruments={resource.data.instruments}
+  publishDate={resource.data.publishDate}
+  updatedDate={resource.data.updatedDate}
+  relatedResources={relatedResources}
+  ctaLabel={resource.data.ctaLabel}
+  ctaHref={resource.data.ctaHref}
+>
+  <Content />
+</ResourceLayout>

@@ -1,0 +1,78 @@
+<!-- CSM-TRACKING-INJECTED v1 -->
+
+<!-- Site verification -->
+<meta name="norton-safeweb-site-verification" content="t-cj9cdlcf1gq4bqzt5x0fa8z6iad5lsfegpz4aqqhlx7ov2vquytd9di-43zw3wwhl8a-5ikp5qw6rkg54wgdh1rpkfcfrb4sx8z5lx262hmacy0cfi8eot0foqnhgd">
+<meta name="p:domain_verify" content="2aa58cc7e9ac7c157be9615d699f7891">
+<meta name="msvalidate.01" content="85FA914F6119C38215C51EE35017A6AC">
+<meta name="facebook-domain-verification" content="vp9gr2lcef51u8yl82np3lvo3i2lql">
+
+<!-- Google Tag Manager -->
+<script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PNGJK75');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R3FZGNMFEK"></script>
+<script is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-R3FZGNMFEK');
+</script>
+<!-- End Google Analytics 4 -->
+
+<!-- Facebook Pixel -->
+<script is:inline>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '314323718729638');
+  fbq('track', 'PageView');
+</script>
+<!-- End Facebook Pixel -->
+
+<!-- Book Intro click tracking (sitewide global listener) -->
+<script is:inline>
+(function(){
+  document.addEventListener('click', function(e){
+    var link = e.target.closest && e.target.closest('a');
+    if(!link || !link.href) return;
+    if(link.href.indexOf('opus1.io') === -1) return;
+    if(link.href.indexOf('/login') !== -1) return;
+    if(link.href.indexOf('/w/recitals') !== -1) return;
+
+    var location = window.location.pathname || '/';
+
+    if(typeof gtag === 'function'){
+      gtag('event', 'book_intro_click', {
+        link_url: link.href,
+        page_path: location,
+        link_text: (link.textContent || '').trim().slice(0, 80)
+      });
+    }
+    if(window.dataLayer){
+      window.dataLayer.push({
+        event: 'book_intro_click',
+        link_url: link.href,
+        page_path: location,
+        link_text: (link.textContent || '').trim().slice(0, 80)
+      });
+    }
+    if(typeof fbq === 'function'){
+      fbq('track', 'Lead', {
+        content_name: 'Book Intro Lesson',
+        content_category: location
+      });
+    }
+  }, true);
+})();
+</script>
+<!-- End Book Intro click tracking -->

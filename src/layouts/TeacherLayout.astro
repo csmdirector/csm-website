@@ -1,0 +1,24 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+}
+
+const { title, description, canonicalPath } = Astro.props;
+---
+<Base title={`${title} | Cincinnati School of Music`} description={description} canonicalPath={canonicalPath} noindex={true}>
+  <section class="page-shell">
+    <div class="page-inner narrow">
+      <span class="section-label">Teacher Resource</span>
+      <h1>{title}</h1>
+      <p class="teacher-description">{description}</p>
+      <slot />
+    </div>
+  </section>
+  <style>
+    .teacher-description{margin-bottom:40px}
+  </style>
+</Base>
