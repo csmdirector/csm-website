@@ -54,7 +54,7 @@ const canonicalUrl = normalizedPath === '/' ? `${site}/` : `${site}${normalizedP
       a{color:inherit}
       nav{background:var(--offwhite);border-bottom:1px solid var(--offwb);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;position:sticky;top:0;z-index:200;overflow:visible}
       .nav-logo-link{display:flex;align-items:center;height:100%;text-decoration:none;flex-shrink:0}
-      .nav-logo{height:52px;width:auto;display:block;mix-blend-mode:darken}
+      .nav-logo{height:60px;width:auto;display:block}
       .nav-links{display:flex;align-items:center;gap:28px;list-style:none;margin:0;padding:0}
       .nav-links>li{position:relative;display:flex;align-items:center;height:68px}
       .nav-links a,.nav-links span{font-size:.68rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--mid);text-decoration:none;transition:color .18s;cursor:pointer;white-space:nowrap}
@@ -92,7 +92,7 @@ const canonicalUrl = normalizedPath === '/' ? `${site}/` : `${site}${normalizedP
       .ft-copy a:hover{opacity:.8}
       @media (max-width:880px){
         nav{height:auto;min-height:64px;padding:0 24px;flex-wrap:wrap}
-        .nav-logo{height:46px}
+        .nav-logo{height:52px}
         .nav-toggle{display:flex;align-items:center;justify-content:center;order:3;width:42px;height:42px;border:1px solid var(--offwb);background:var(--white);color:var(--charcoal)}
         .nav-toggle svg{width:22px;height:22px}
         .nav-links{order:4;flex-basis:100%;flex-direction:column;align-items:stretch;gap:0;background:var(--offwhite);max-height:0;overflow:hidden;transition:max-height .35s ease;border-top:1px solid transparent}
