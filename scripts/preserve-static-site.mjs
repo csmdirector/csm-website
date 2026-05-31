@@ -1,8 +1,24 @@
-import { cp, mkdir, readdir } from 'node:fs/promises';
+import { cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const root = process.cwd();
 const dist = path.join(root, 'dist');
+const hardcodedGa4Pattern = /\n?<!-- Google Analytics 4 -->\n<script async src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-R3FZGNMFEK"><\/script>\n<script>\n\s*window\.dataLayer = window\.dataLayer \|\| \[\];\n\s*function gtag\(\)\{dataLayer\.push\(arguments\);\}\n\s*gtag\('js', new Date\(\)\);\n\s*gtag\('config', 'G-R3FZGNMFEK'\);\n<\/script>\n<!-- End Google Analytics 4 -->\n?/g;
+const directGtagEventPattern = /\n\s*if\(typeof gtag === 'function'\)\{\n\s*gtag\('event', 'book_intro_click', \{\n\s*link_url: link\.href,\n\s*page_path: location,\n\s*link_text: \(link\.textContent \|\| ''\)\.trim\(\)\.slice\(0, 80\)\n\s*\}\);\n\s*\}/g;
+
+function sanitizeLegacyHtml(html) {
+  return html
+    .replace(hardcodedGa4Pattern, '\n')
+    .replace(directGtagEventPattern, '');
+}
+
+async function copySanitizedHtml(file) {
+  const source = path.join(root, file);
+  const output = path.join(dist, file);
+  const html = await readFile(source, 'utf8');
+
+  await writeFile(output, sanitizeLegacyHtml(html), 'utf8');
+}
 
 await mkdir(dist, { recursive: true });
 
@@ -12,7 +28,7 @@ const htmlFiles = entries
   .map((entry) => entry.name);
 
 for (const file of htmlFiles) {
-  await cp(path.join(root, file), path.join(dist, file));
+  await copySanitizedHtml(file);
 }
 
 await cp(path.join(root, '_redirects'), path.join(dist, '_redirects'));
@@ -21,4 +37,4 @@ await cp(path.join(root, 'images'), path.join(dist, 'images'), {
   force: true
 });
 
-console.log(`Preserved ${htmlFiles.length} existing HTML pages, _redirects, and images/ in dist.`);
+console.log(`Preserved ${htmlFiles.length} existing HTML pages, _redirects, and images/ in dist with legacy hardcoded GA4 removed from HTML output.`);
