@@ -14,16 +14,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-PNGJK75');</script>
 <!-- End Google Tag Manager -->
 
-<!-- Google Analytics 4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-R3FZGNMFEK"></script>
-<script is:inline>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-R3FZGNMFEK');
-</script>
-<!-- End Google Analytics 4 -->
-
 <!-- Facebook Pixel -->
 <script is:inline>
   !function(f,b,e,v,n,t,s)
@@ -51,13 +41,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     var location = window.location.pathname || '/';
 
-    if(typeof gtag === 'function'){
-      gtag('event', 'book_intro_click', {
-        link_url: link.href,
-        page_path: location,
-        link_text: (link.textContent || '').trim().slice(0, 80)
-      });
-    }
     if(window.dataLayer){
       window.dataLayer.push({
         event: 'book_intro_click',
