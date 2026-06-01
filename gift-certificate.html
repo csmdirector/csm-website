@@ -101,23 +101,21 @@ h2 em{font-style:italic;font-weight:200}
 .gift-btn{display:block;background:var(--white);border:1px solid var(--offwb);text-decoration:none;color:inherit;transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease;position:relative;overflow:hidden}
 .gift-btn:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 14px 36px rgba(74,74,74,.09)}
 .gift-btn-art-wrap{position:relative;background:#111;overflow:hidden}
-.gift-card-preview{position:relative;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:4/3;padding:30px;background:linear-gradient(135deg,#101010 0%,#171615 48%,#0b0b0b 100%);color:#F4F1EA;transition:transform .5s ease}
-.gift-card-preview::before{content:'';position:absolute;inset:14px;border:1px solid rgba(244,241,234,.22);pointer-events:none}
-.gift-card-preview::after{content:'';position:absolute;right:-16%;bottom:-26%;width:62%;aspect-ratio:1;border:1px solid rgba(199,216,232,.18);border-radius:50%;pointer-events:none}
+.gift-card-preview{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:space-between;aspect-ratio:4/3;padding:34px 38px 30px;background:#252525;color:#F4F1EA;text-align:center;transition:transform .5s ease}
+.gift-card-preview::before{content:'';position:absolute;inset:14px;border:1px solid rgba(199,216,232,.45);pointer-events:none}
 .gift-btn:hover .gift-card-preview{transform:scale(1.025)}
-.gift-card-preview.is-gold{background:linear-gradient(135deg,#11100e 0%,#191713 48%,#0c0b0a 100%)}
-.gift-card-preview.is-gold::before{border-color:rgba(203,185,139,.24)}
-.gift-card-preview.is-gold::after{border-color:rgba(203,185,139,.14)}
-.gift-card-top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;gap:26px}
-.gift-card-logo{width:min(178px,42%);height:auto;display:block}
-.gift-card-lessons{font-size:.58rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#C7D8E8;text-align:right;line-height:1.45;padding-top:3px}
-.gift-card-preview.is-gold .gift-card-lessons{color:#CBB98B}
-.gift-card-main{position:relative;z-index:1;max-width:420px;margin-top:auto}
-.gift-card-kicker{display:block;font-size:.58rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:rgba(244,241,234,.56);margin-bottom:12px}
-.gift-card-headline{display:block;font-family:Georgia,'Times New Roman',serif;font-size:clamp(2rem,4.6vw,3.35rem);font-weight:400;line-height:.98;letter-spacing:.02em;color:#F4F1EA}
-.gift-card-foot{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:20px;border-top:1px solid rgba(244,241,234,.2);padding-top:16px;margin-top:28px;font-size:.58rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,241,234,.62)}
-.gift-card-accent{color:#C7D8E8}
-.gift-card-preview.is-gold .gift-card-accent{color:#CBB98B}
+.gift-card-preview.is-gold::before{border-color:rgba(200,191,174,.45)}
+.gift-card-top{position:relative;z-index:1;display:flex;justify-content:center;align-items:center;width:100%}
+.gift-card-logo{width:min(210px,58%);height:auto;display:block}
+.gift-card-main{position:relative;z-index:1;width:100%;max-width:420px;margin:auto 0}
+.gift-card-kicker{display:block;font-family:Georgia,'Times New Roman',serif;font-size:clamp(2.05rem,4.3vw,3.25rem);font-weight:400;line-height:1.03;letter-spacing:.01em;color:#FFFFFF;margin-bottom:12px}
+.gift-card-headline{display:block;font-size:.7rem;font-weight:500;line-height:1.45;letter-spacing:.14em;text-transform:uppercase;color:#F4F1EA}
+.gift-card-foot{position:relative;z-index:1;width:100%;border-top:1px solid rgba(199,216,232,.45);padding-top:16px;color:#F4F1EA}
+.gift-card-preview.is-gold .gift-card-foot{border-top-color:rgba(200,191,174,.45)}
+.gift-card-package{display:flex;justify-content:center;align-items:baseline;gap:16px;font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;line-height:1.35;color:#FFFFFF}
+.gift-card-price{color:#C7D8E8;letter-spacing:.08em}
+.gift-card-preview.is-gold .gift-card-price{color:#C8BFAE}
+.gift-card-detail{display:block;margin-top:8px;font-size:.55rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,241,234,.62)}
 .gift-btn-meta{display:flex;justify-content:space-between;align-items:flex-end;padding:24px 28px 26px;gap:20px}
 .gift-btn-meta-l{}
 .gift-btn-tier{display:block;font-size:.58rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
@@ -185,10 +183,10 @@ h2 em{font-style:italic;font-weight:200}
   .gift-options-inner{padding:64px 28px}
   .gift-options-head{margin-bottom:40px}
   .gift-buttons-grid{grid-template-columns:1fr;gap:20px}
-  .gift-card-preview{padding:24px}
-  .gift-card-logo{width:min(156px,45%)}
-  .gift-card-headline{font-size:clamp(1.8rem,10vw,3rem)}
-  .gift-card-foot{align-items:flex-start;flex-direction:column;gap:7px;margin-top:22px}
+  .gift-card-preview{padding:30px 28px 26px}
+  .gift-card-logo{width:min(190px,60%)}
+  .gift-card-kicker{font-size:clamp(2rem,8vw,3rem)}
+  .gift-card-package{gap:12px;font-size:.68rem}
   .gift-btn-meta{padding:20px 22px 18px;gap:14px}
   .gift-btn-title{font-size:.94rem}
   .gift-btn-price{font-size:.98rem}
@@ -327,15 +325,17 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
           <div class="gift-card-preview" aria-hidden="true">
             <div class="gift-card-top">
               <img class="gift-card-logo" src="/images/CSM_2.0_Full_Lockup_White.svg" alt="">
-              <span class="gift-card-lessons">4<br>Lessons</span>
             </div>
             <div class="gift-card-main">
               <span class="gift-card-kicker">Gift Certificate</span>
-              <span class="gift-card-headline">The Gift<br>of Music</span>
+              <span class="gift-card-headline">The Gift of Music</span>
             </div>
             <div class="gift-card-foot">
-              <span>Cincinnati School of Music</span>
-              <span class="gift-card-accent">cincinnatischoolofmusic.com</span>
+              <div class="gift-card-package">
+                <span>4 Lessons</span>
+                <span class="gift-card-price">$168</span>
+              </div>
+              <span class="gift-card-detail">30-minute private lessons</span>
             </div>
           </div>
         </div>
@@ -358,15 +358,17 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
           <div class="gift-card-preview is-gold" aria-hidden="true">
             <div class="gift-card-top">
               <img class="gift-card-logo" src="/images/CSM_2.0_Full_Lockup_White.svg" alt="">
-              <span class="gift-card-lessons">8<br>Lessons</span>
             </div>
             <div class="gift-card-main">
               <span class="gift-card-kicker">Gift Certificate</span>
-              <span class="gift-card-headline">The Gift<br>of Music</span>
+              <span class="gift-card-headline">The Gift of Music</span>
             </div>
             <div class="gift-card-foot">
-              <span>Cincinnati School of Music</span>
-              <span class="gift-card-accent">cincinnatischoolofmusic.com</span>
+              <div class="gift-card-package">
+                <span>8 Lessons</span>
+                <span class="gift-card-price">$336</span>
+              </div>
+              <span class="gift-card-detail">30-minute private lessons</span>
             </div>
           </div>
         </div>
