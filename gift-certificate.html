@@ -37,14 +37,21 @@ body{font-family:var(--f);background:var(--offwhite);color:var(--charcoal);font-
 .sample-bar span{color:var(--slate-lt)}
 
 /* ── NAV ── */
-nav{background:var(--offwhite);border-bottom:1px solid var(--offwb);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;position:sticky;top:0;z-index:200}
-.nav-wm{display:inline-flex;align-items:center;text-decoration:none}
-.nav-wm img{height:38px;width:auto;display:block}
-.nav-links{display:flex;align-items:center;gap:32px;list-style:none}
-.nav-links a{font-size:.68rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--mid);text-decoration:none;transition:color .18s}
-.nav-links a:hover{color:var(--charcoal)}
-.nav-cta a{background:var(--accent)!important;color:var(--white)!important;padding:9px 20px;transition:background .18s!important}
+nav{background:var(--offwhite);border-bottom:1px solid var(--offwb);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;position:sticky;top:0;z-index:200;overflow:visible}
+.nav-logo-link{display:flex;align-items:center;height:100%;text-decoration:none;flex-shrink:0}
+.nav-logo{height:60px;width:auto;display:block}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none;margin:0;padding:0}
+.nav-links>li{position:relative;display:flex;align-items:center;height:68px}
+.nav-links a,.nav-links span{font-size:.68rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--mid);text-decoration:none;transition:color .18s;cursor:pointer;white-space:nowrap}
+.nav-links a:hover,.nav-links span:hover,.nav-has-dropdown:hover>span{color:var(--charcoal)}
+.nav-dropdown{position:absolute;top:68px;left:50%;transform:translateX(-50%);min-width:235px;background:var(--offwhite);border:1px solid var(--offwb);box-shadow:0 18px 36px rgba(0,0,0,.10);padding:12px 0;display:none;z-index:500}
+.nav-has-dropdown:hover .nav-dropdown,.nav-has-dropdown:focus-within .nav-dropdown{display:block}
+.nav-dropdown a{display:block;padding:10px 18px;font-size:.62rem;line-height:1.35;letter-spacing:.12em;color:var(--mid);white-space:normal}
+.nav-dropdown a:hover{background:var(--white);color:var(--charcoal)}
+.nav-cta a{background:var(--accent)!important;color:var(--white)!important;padding:11px 20px;transition:background .18s!important;white-space:nowrap}
 .nav-cta a:hover{background:var(--accent-dk)!important}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:10px;margin-right:-10px;color:var(--charcoal)}
+.nav-toggle svg{display:block;width:24px;height:24px}
 
 /* ── BREADCRUMB ── */
 .bc{padding:14px 48px;font-size:.62rem;font-weight:400;letter-spacing:.1em;color:var(--light);border-bottom:1px solid var(--offwb);background:var(--white)}
@@ -138,6 +145,27 @@ h2 em{font-style:italic;font-weight:200}
 .faq-a{font-size:.88rem;font-weight:300;line-height:1.9;color:var(--mid);letter-spacing:.005em;max-width:780px}
 
 /* ── MOBILE ── */
+@media (max-width:880px){
+  nav{height:auto;min-height:64px;padding:0 22px;flex-wrap:wrap}
+  .nav-logo{height:52px}
+  .nav-toggle{display:flex;align-items:center;justify-content:center;order:3;width:42px;height:42px;border:1px solid var(--offwb);background:var(--white);color:var(--charcoal)}
+  .nav-toggle svg{width:22px;height:22px}
+  .nav-links{order:4;flex-basis:100%;flex-direction:column;align-items:stretch;gap:0;background:var(--offwhite);max-height:0;overflow:hidden;transition:max-height .35s ease;border-top:1px solid transparent}
+  nav.nav-open .nav-links{max-height:calc(100vh - 64px);overflow-y:auto;border-top-color:var(--offwb);padding:8px 0 16px}
+  .nav-links>li{height:auto;min-height:48px;border-bottom:1px solid var(--offwb);width:100%;display:block;position:static}
+  .nav-links>li:last-child{border-bottom:none}
+  .nav-links a,.nav-links span{display:block;padding:14px 22px;font-size:.74rem;letter-spacing:.14em;width:100%;white-space:normal;line-height:1.4}
+  .nav-has-dropdown>span{position:relative;cursor:pointer}
+  .nav-has-dropdown>span::after{content:"+";position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:1.3rem;font-weight:300;color:var(--mid);transition:transform .2s}
+  .nav-has-dropdown.dropdown-open>span::after{content:"-"}
+  .nav-dropdown{position:static;transform:none;display:none;box-shadow:none;border:none;background:rgba(0,0,0,.04);min-width:0;padding:4px 0;width:100%}
+  .nav-has-dropdown:hover .nav-dropdown,.nav-has-dropdown:focus-within .nav-dropdown{display:none}
+  .nav-has-dropdown.dropdown-open .nav-dropdown{display:block}
+  .nav-dropdown a{padding:11px 38px;font-size:.66rem;letter-spacing:.1em;color:var(--mid)}
+  .nav-cta a{display:block;text-align:center;margin:8px 22px;padding:14px 18px}
+  .bc{padding:12px 24px;font-size:.58rem}
+}
+
 @media (max-width:720px){
   .gift-options-inner{padding:64px 28px}
   .gift-options-head{margin-bottom:40px}
@@ -161,14 +189,19 @@ h2 em{font-style:italic;font-weight:200}
 
 /* ── FOOTER ── */
 footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
-.ft-nav{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
-.ft-nav a{font-size:.62rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.28);text-decoration:none;transition:color .18s}
-.ft-nav a:hover{color:var(--slate-lt)}
-.ft-award{font-size:.6rem;font-weight:400;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.18)}
-.ft-award em{font-style:normal;color:var(--accent);opacity:.5}
-.ft-copy{font-size:.58rem;font-weight:300;letter-spacing:.1em;color:rgba(255,255,255,.14)}
-.ft-copy a{color:var(--slate-lt);opacity:.4;text-decoration:none;transition:opacity .18s}
-.ft-copy a:hover{opacity:.8}
+.ft-nav{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;background:transparent;border:0;padding:0;height:auto;position:static}
+.ft-nav a{font-size:.62rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:#F4F1EA;text-decoration:none;transition:color .18s,opacity .18s;opacity:.82}
+.ft-nav a:hover{color:#C7D8E8;opacity:1}
+.ft-award{font-size:.6rem;font-weight:400;letter-spacing:.13em;text-transform:uppercase;color:#AFA8A0}
+.ft-award em{font-style:normal;color:#C7D8E8;opacity:.7}
+.ft-copy{font-size:.58rem;font-weight:300;letter-spacing:.1em;color:rgba(255,255,255,.48)}
+.ft-copy a{color:#C7D8E8;opacity:.72;text-decoration:none;transition:opacity .18s}
+.ft-copy a:hover{opacity:1}
+@media (max-width:880px){
+  footer{padding:40px 24px}
+  .ft-nav{gap:8px;row-gap:14px}
+  .ft-nav a{padding:6px 8px;font-size:.6rem}
+}
 </style>
 
 <!-- Google Tag Manager --> <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-PNGJK75');</script> <!-- End Google Tag Manager -->
@@ -179,13 +212,52 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
 
 
 <nav>
-  <a href="/" class="nav-wm" aria-label="Cincinnati School of Music — Home"><img src="images/CSM_2.0_Full_Lockup_Black.svg" alt="Cincinnati School of Music"></a>
+  <a href="/" class="nav-logo-link"><img src="images/CSM_2.0_Full_Lockup_Black.svg" class="nav-logo" alt="Cincinnati School of Music"></a>
+  <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg></button>
   <ul class="nav-links">
-    <li><a href="/lessons">Lessons</a></li>
-    <li><a href="/locations">Locations</a></li>
-    <li><a href="/recitals">Recitals</a></li>
-    <li><a href="/teachers">Teachers</a></li>
-    <li><a href="/about-us">About</a></li>
+    <li class="nav-has-dropdown">
+      <span>Music Lessons</span>
+      <div class="nav-dropdown">
+        <a href="/piano-lessons">Piano</a>
+        <a href="/voice-lessons">Voice</a>
+        <a href="/guitar-lessons">Guitar</a>
+        <a href="/violin-lessons">Strings</a>
+        <a href="/drum-lessons">Drums</a>
+        <a href="/flute-clarinet-lessons">Winds</a>
+        <a href="/adult-lessons">Adult Lessons</a>
+        <a href="/early-childhood-music-discovery-lessons">Music Discovery</a>
+        <a href="/gift-certificate">Gift Certificates</a>
+        <a href="/lessons">FAQ</a>
+      </div>
+    </li>
+    <li><a href="/about-us">About Us</a></li>
+    <li><a href="/testimonials">Success Stories</a></li>
+    <li class="nav-has-dropdown">
+      <span>Student Resources</span>
+      <div class="nav-dropdown">
+        <a href="/recitals">Recitals</a>
+        <a href="/cancel-lessons-form">Cancel / Reschedule Lessons</a>
+        <a href="/holiday-schedule-closures">Holiday Schedule &amp; Closures</a>
+        <a href="/commonly-used-books">Commonly Used Books</a>
+      </div>
+    </li>
+    <li class="nav-has-dropdown">
+      <span>For Teachers</span>
+      <div class="nav-dropdown">
+        <a href="/instrument-maintenance-request-form">Instrument Maintenance Request</a>
+        <a href="https://www.cincinnatimusicteacher.com" target="_blank" rel="noopener">Interested in Teaching at CSM?</a>
+      </div>
+    </li>
+    <li class="nav-has-dropdown">
+      <span>Locations</span>
+      <div class="nav-dropdown">
+        <a href="/olde-montgomery">Olde Montgomery</a>
+        <a href="/mason">Mason</a>
+        <a href="/anderson">Anderson</a>
+        <a href="/middletown">Middletown</a>
+        <a href="/maineville">Maineville</a>
+      </div>
+    </li>
     <li class="nav-cta"><a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book a Lesson</a></li>
   </ul>
 </nav>
@@ -334,7 +406,7 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
 <footer>
   
   <div class="ft-logo" style="display:flex;justify-content:center;margin-bottom:18px;"><img src="/images/CSM_2.0_Full_Lockup_White.svg" alt="Cincinnati School of Music" loading="lazy" style="width:min(260px,70vw);height:auto;margin:0 auto;"></div>
-<nav class="ft-nav">
+  <div class="ft-nav">
     <a href="/piano-lessons">Piano</a>
     <a href="/voice-lessons">Voice</a>
     <a href="/guitar-lessons">Guitar</a>
@@ -343,12 +415,40 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
     <a href="/flute-clarinet-lessons">Winds</a>
     <a href="/locations">Locations</a>
     <a href="/teachers">Teachers</a>
-    <a href="/about">About</a>
-    <a href="/book-intro-lesson">Book a Lesson</a>
-  </nav>
+    <a href="/about-us">About</a>
+    <a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book a Lesson</a>
+  </div>
   <div class="ft-award"><em>★</em> Cincy Magazine Best of the North — Music Instruction — 10 Consecutive Years</div>
   <div class="ft-copy">© 2026 Cincinnati School of Music LLC &nbsp;·&nbsp; <a href="/privacy-policy">Privacy Policy</a> &nbsp;·&nbsp; <a href="/sms-terms">SMS Terms</a></div>
 </footer>
+
+<script>
+(function(){
+  var nav = document.querySelector('nav');
+  if(!nav) return;
+  var toggle = nav.querySelector('.nav-toggle');
+  if(toggle){
+    toggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      var open = nav.classList.toggle('nav-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+  nav.querySelectorAll('.nav-has-dropdown > span').forEach(function(span){
+    span.addEventListener('click', function(e){
+      if(window.matchMedia('(max-width:880px)').matches){
+        e.preventDefault();
+        var li = span.parentElement;
+        var wasOpen = li.classList.contains('dropdown-open');
+        nav.querySelectorAll('.nav-has-dropdown.dropdown-open').forEach(function(other){
+          if(other !== li) other.classList.remove('dropdown-open');
+        });
+        li.classList.toggle('dropdown-open', !wasOpen);
+      }
+    });
+  });
+})();
+</script>
 
 </body>
 </html>

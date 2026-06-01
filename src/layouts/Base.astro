@@ -82,14 +82,14 @@ const canonicalUrl = normalizedPath === '/' ? `${site}/` : `${site}${normalizedP
       .btn-c{border:1px solid var(--slate);color:var(--slate);padding:14px 34px}
       .btn-c:hover{background:var(--slate);color:var(--white)}
       footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
-      .ft-nav{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
-      .ft-nav a{font-size:.62rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.60);text-decoration:none;transition:color .18s;padding:0 8px}
-      .ft-nav a:hover{color:var(--slate-lt)}
-      .ft-award{font-size:.6rem;font-weight:400;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.45)}
-      .ft-award em{font-style:normal;color:var(--accent);opacity:.85}
-      .ft-copy{font-size:.58rem;font-weight:300;letter-spacing:.1em;color:rgba(255,255,255,.38)}
-      .ft-copy a{color:var(--slate-lt);opacity:.75;text-decoration:none;transition:opacity .18s}
-      .ft-copy a:hover{opacity:.8}
+      .ft-nav{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;background:transparent;border:0;padding:0;height:auto;position:static}
+      .ft-nav a{font-size:.62rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:#F4F1EA;text-decoration:none;transition:color .18s,opacity .18s;padding:0 8px;opacity:.82}
+      .ft-nav a:hover{color:#C7D8E8;opacity:1}
+      .ft-award{font-size:.6rem;font-weight:400;letter-spacing:.13em;text-transform:uppercase;color:#AFA8A0}
+      .ft-award em{font-style:normal;color:#C7D8E8;opacity:.7}
+      .ft-copy{font-size:.58rem;font-weight:300;letter-spacing:.1em;color:rgba(255,255,255,.48)}
+      .ft-copy a{color:#C7D8E8;opacity:.72;text-decoration:none;transition:opacity .18s}
+      .ft-copy a:hover{opacity:1}
       @media (max-width:880px){
         nav{height:auto;min-height:64px;padding:0 24px;flex-wrap:wrap}
         .nav-logo{height:52px}
