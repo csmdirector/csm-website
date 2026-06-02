@@ -104,18 +104,18 @@ h2 em{font-style:italic;font-weight:200}
 .gift-card-preview{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:24px;aspect-ratio:4/3;padding:38px 42px 30px;background:#24272A;color:#F4F1EA;text-align:center;transition:transform .5s ease}
 .gift-card-preview::before{content:'';position:absolute;inset:14px;border:1px solid rgba(199,216,232,.62);pointer-events:none}
 .gift-btn:hover .gift-card-preview{transform:scale(1.025)}
-.gift-card-preview.is-gold{background:#282520}
-.gift-card-preview.is-gold::before{border-color:rgba(200,191,174,.62)}
+.gift-card-preview.is-fortissimo{background:#2A2427}
+.gift-card-preview.is-fortissimo::before{border-color:rgba(231,200,209,.62)}
 .gift-card-top{position:relative;z-index:1;display:flex;justify-content:center;align-items:center;width:100%}
 .gift-card-logo{width:min(168px,46%);height:auto;display:block}
 .gift-card-main{position:relative;z-index:1;width:100%;max-width:420px;margin:0}
 .gift-card-kicker{display:block;font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.8rem,3.5vw,2.75rem);font-weight:400;line-height:1.08;letter-spacing:.01em;color:#FFFFFF;margin-bottom:12px}
 .gift-card-headline{display:block;font-size:.7rem;font-weight:500;line-height:1.45;letter-spacing:.14em;text-transform:uppercase;color:#F4F1EA}
 .gift-card-foot{position:relative;z-index:1;width:100%;border-top:1px solid rgba(199,216,232,.62);padding-top:16px;margin-top:auto;color:#F4F1EA}
-.gift-card-preview.is-gold .gift-card-foot{border-top-color:rgba(200,191,174,.62)}
+.gift-card-preview.is-fortissimo .gift-card-foot{border-top-color:rgba(231,200,209,.62)}
 .gift-card-package{display:flex;justify-content:center;align-items:baseline;gap:16px;font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;line-height:1.35;color:#FFFFFF}
 .gift-card-price{color:#D4E2EE;letter-spacing:.08em}
-.gift-card-preview.is-gold .gift-card-price{color:#D0C5B2}
+.gift-card-preview.is-fortissimo .gift-card-price{color:#E7C8D1}
 .gift-card-detail{display:block;margin-top:8px;font-size:.55rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,241,234,.62)}
 .gift-btn-meta{display:flex;justify-content:space-between;align-items:flex-end;padding:24px 28px 26px;gap:20px}
 .gift-btn-meta-l{}
@@ -131,7 +131,7 @@ h2 em{font-style:italic;font-weight:200}
 .gift-fineprint{margin-top:36px;font-size:.74rem;font-weight:300;letter-spacing:.04em;color:var(--light);line-height:1.7;text-align:center}
 .gift-fineprint span{color:var(--mid)}
 
-/* BEST VALUE badge on Gold card */
+/* optional feature badge on gift cards */
 .gift-btn-badge{position:absolute;top:16px;right:16px;background:var(--accent);color:var(--white);font-size:.54rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;padding:8px 13px;z-index:2;line-height:1}
 
 /* reg-fee note row on cards */
@@ -320,8 +320,8 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
     </div>
 
     <div class="gift-buttons-grid">
-      <!-- Silver — 4 Lessons -->
-      <a class="gift-btn" href="https://giftup.app/place-order/ca1bb02f-a08d-4bb7-8f22-7568bb8453e0?platform=hosted&productId=af6caa93-5a79-4f72-2100-08deac207125&language=en-US" aria-label="Purchase Silver gift certificate — four private music lessons, $168">
+      <!-- Forte: 4 Lessons -->
+      <a class="gift-btn" href="https://giftup.app/place-order/ca1bb02f-a08d-4bb7-8f22-7568bb8453e0?platform=hosted&productId=af6caa93-5a79-4f72-2100-08deac207125&language=en-US" aria-label="Purchase Forte gift certificate, four private music lessons, $168">
         <div class="gift-btn-art-wrap">
           <div class="gift-card-preview" aria-hidden="true">
             <div class="gift-card-top">
@@ -333,16 +333,17 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
             </div>
             <div class="gift-card-foot">
               <div class="gift-card-package">
+                <span>Forte</span>
                 <span>4 Lessons</span>
                 <span class="gift-card-price">$168</span>
               </div>
-              <span class="gift-card-detail">30-minute private lessons</span>
+              <span class="gift-card-detail">Four 30-minute private lessons</span>
             </div>
           </div>
         </div>
         <div class="gift-btn-meta">
           <div class="gift-btn-meta-l">
-            <span class="gift-btn-tier">Silver — One Month</span>
+            <span class="gift-btn-tier">Forte, Four Lessons</span>
             <span class="gift-btn-title">Four Private Lessons</span>
           </div>
           <div class="gift-btn-meta-r">
@@ -350,13 +351,13 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
             <span class="gift-btn-cta">Purchase <span class="gift-btn-cta-arrow">→</span></span>
           </div>
         </div>
-        <div class="gift-btn-note"><em>A good start.</em> Four lessons — enough to introduce someone to music lessons.</div>
+        <div class="gift-btn-note"><em>Forte includes four private lessons.</em> A simple way to introduce someone to music lessons without a long commitment.</div>
       </a>
 
-      <!-- Gold — 8 Lessons -->
-      <a class="gift-btn" href="https://giftup.app/place-order/ca1bb02f-a08d-4bb7-8f22-7568bb8453e0?platform=hosted&productId=15c9ef41-394c-42d9-4090-08dea5707ec0&language=en-US" aria-label="Purchase Gold gift certificate — eight private music lessons, $336">
+      <!-- Fortissimo: 8 Lessons -->
+      <a class="gift-btn" href="https://giftup.app/place-order/ca1bb02f-a08d-4bb7-8f22-7568bb8453e0?platform=hosted&productId=15c9ef41-394c-42d9-4090-08dea5707ec0&language=en-US" aria-label="Purchase Fortissimo gift certificate, eight private music lessons, $336">
         <div class="gift-btn-art-wrap">
-          <div class="gift-card-preview is-gold" aria-hidden="true">
+          <div class="gift-card-preview is-fortissimo" aria-hidden="true">
             <div class="gift-card-top">
               <img class="gift-card-logo" src="images/CSM_2.0_Full_Lockup_White.svg" alt="">
             </div>
@@ -366,16 +367,17 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
             </div>
             <div class="gift-card-foot">
               <div class="gift-card-package">
+                <span>Fortissimo</span>
                 <span>8 Lessons</span>
                 <span class="gift-card-price">$336</span>
               </div>
-              <span class="gift-card-detail">30-minute private lessons</span>
+              <span class="gift-card-detail">Eight 30-minute private lessons</span>
             </div>
           </div>
         </div>
         <div class="gift-btn-meta">
           <div class="gift-btn-meta-l">
-            <span class="gift-btn-tier">Gold — Two Months</span>
+            <span class="gift-btn-tier">Fortissimo, Eight Lessons</span>
             <span class="gift-btn-title">Eight Private Lessons</span>
           </div>
           <div class="gift-btn-meta-r">
@@ -383,7 +385,7 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
             <span class="gift-btn-cta">Purchase <span class="gift-btn-cta-arrow">→</span></span>
           </div>
         </div>
-        <div class="gift-btn-note"><em>A great start.</em> Eight lessons — enough to actually begin.</div>
+        <div class="gift-btn-note"><em>Fortissimo includes eight private lessons.</em> More time to settle in, meet their teacher, and begin building momentum.</div>
       </a>
     </div>
   </div>
@@ -436,8 +438,8 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
         <div class="faq-a">Private music lessons in any instrument we teach — piano, voice, guitar, drums, strings, woodwinds, and more. Redeemable at any of our five Greater Cincinnati locations with one of our 60+ teachers, subject to availability.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">What's the difference between Silver and Gold?</div>
-        <div class="faq-a">Silver is the four-lesson package — a good start, enough to introduce someone to music lessons. Gold is the eight-lesson package — a great start, with enough time to actually begin. Both cover 30-minute private lessons in any instrument we teach, at any of our five Greater Cincinnati locations.</div>
+        <div class="faq-q">What's the difference between Forte and Fortissimo?</div>
+        <div class="faq-a">Forte is the four-lesson package, a simple way to introduce someone to music lessons without a long commitment. Fortissimo is the eight-lesson package, giving the recipient more time to settle in, meet their teacher, and begin building momentum. Both cover 30-minute private lessons in any instrument we teach, at any of our five Greater Cincinnati locations.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">How are lessons scheduled?</div>
