@@ -1,0 +1,293 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base
+  title="Find the Right Lesson Fit | Cincinnati School of Music"
+  description="A short guided intake for families who want help choosing a music lesson starting point at Cincinnati School of Music."
+  canonicalPath="/smart-intro-intake/"
+  noindex={true}
+>
+  <section class="intake-hero">
+    <div class="intake-hero-inner">
+      <span class="section-label">Smart Intro Intake</span>
+      <h1>Find a good first step for music lessons.</h1>
+      <p>
+        Answer a few quick questions. We will use your answers to help confirm the right instrument,
+        location, and next step before you book.
+      </p>
+    </div>
+  </section>
+
+  <section class="page-shell">
+    <div class="page-inner intake-shell">
+      <div class="intake-card">
+        <div class="progress-wrap" aria-label="Intake progress">
+          <div class="progress-meta">
+            <span id="stepLabel">Step 1 of 5</span>
+            <span id="stepTitle">Student</span>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+
+        <form
+          name="smart-intro-intake"
+          method="POST"
+          action="/smart-intro-intake/thank-you/"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          id="intakeForm"
+        >
+          <input type="hidden" name="form-name" value="smart-intro-intake" />
+          <p class="hidden-field">
+            <label>Do not fill this out if you are human: <input name="bot-field" /></label>
+          </p>
+
+          <fieldset class="intake-step is-active" data-step-title="Student">
+            <legend>Who are lessons for?</legend>
+            <p class="step-intro">A little context helps us avoid giving every family the same answer.</p>
+            <label>
+              Student age
+              <select name="student_age" data-required>
+                <option value="">Choose one</option>
+                <option>3-5</option>
+                <option>6-8</option>
+                <option>9-12</option>
+                <option>13-17</option>
+                <option>Adult</option>
+              </select>
+            </label>
+            <label>
+              Who is filling this out?
+              <select name="relationship" data-required>
+                <option value="">Choose one</option>
+                <option>Parent or guardian</option>
+                <option>Adult student</option>
+                <option>Gift giver</option>
+                <option>Other family member</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset class="intake-step" data-step-title="Instrument">
+            <legend>What are you considering?</legend>
+            <p class="step-intro">It is okay if you are not sure yet. Many families are not.</p>
+            <label>
+              Instrument or lesson area
+              <select name="instrument_interest" data-required>
+                <option value="">Choose one</option>
+                <option>Piano</option>
+                <option>Voice</option>
+                <option>Guitar</option>
+                <option>Drums</option>
+                <option>Strings</option>
+                <option>Flute, clarinet, or saxophone</option>
+                <option>Early childhood music</option>
+                <option>Not sure yet</option>
+              </select>
+            </label>
+            <label>
+              Lesson experience
+              <select name="lesson_experience" data-required>
+                <option value="">Choose one</option>
+                <option>Brand new to lessons</option>
+                <option>Some past lessons</option>
+                <option>Currently taking lessons somewhere else</option>
+                <option>Returning after time away</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset class="intake-step" data-step-title="Goals">
+            <legend>What would make lessons feel worthwhile?</legend>
+            <p class="step-intro">There is not one right answer. This just helps us understand the student.</p>
+            <label>
+              Main goal
+              <select name="main_goal" data-required>
+                <option value="">Choose one</option>
+                <option>Try music and see if it is a good fit</option>
+                <option>Build confidence</option>
+                <option>Learn songs they enjoy</option>
+                <option>Prepare for school music or auditions</option>
+                <option>Return to an instrument</option>
+                <option>Something else</option>
+              </select>
+            </label>
+            <label>
+              Anything we should know?
+              <textarea name="student_context" rows="4" placeholder="Examples: shy beginner, loves singing, needs a patient teacher, busy sports schedule"></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset class="intake-step" data-step-title="Location">
+            <legend>Where would lessons work best?</legend>
+            <p class="step-intro">Location and schedule often matter as much as instrument choice.</p>
+            <label>
+              Preferred location
+              <select name="preferred_location" data-required>
+                <option value="">Choose one</option>
+                <option>Olde Montgomery</option>
+                <option>Mason</option>
+                <option>Anderson</option>
+                <option>Maineville</option>
+                <option>Middletown</option>
+                <option>Not sure yet</option>
+              </select>
+            </label>
+            <label>
+              Best general time
+              <select name="preferred_time" data-required>
+                <option value="">Choose one</option>
+                <option>Weekday afternoons</option>
+                <option>Weekday evenings</option>
+                <option>Saturday</option>
+                <option>Flexible</option>
+                <option>Not sure yet</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset class="intake-step" data-step-title="Contact">
+            <legend>Where should we send the next step?</legend>
+            <p class="step-intro">
+              We will not promise a teacher match from this form. Our office can use this to help confirm
+              the right teacher, location, and schedule.
+            </p>
+            <label>
+              Your name
+              <input type="text" name="parent_name" autocomplete="name" data-required />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" autocomplete="email" data-required />
+            </label>
+            <label>
+              Phone
+              <input type="tel" name="phone" autocomplete="tel" />
+            </label>
+          </fieldset>
+
+          <div class="form-error" id="formError" aria-live="polite"></div>
+
+          <div class="intake-actions">
+            <button type="button" class="btn-back" id="backButton">Back</button>
+            <button type="button" class="btn-a" id="nextButton">Next</button>
+            <button type="submit" class="btn-a submit-button" id="submitButton">Send Intake</button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="intake-note" aria-labelledby="intake-note-title">
+        <span class="section-label">What Happens Next</span>
+        <h2 id="intake-note-title">A real person reviews it.</h2>
+        <p>
+          This is a starting point, not an automated teacher match. After the form is submitted,
+          CSM can help confirm whether an Intro Lesson is the best next step.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <style>
+    .intake-hero{background:var(--charcoal);color:var(--white)}
+    .intake-hero-inner{max-width:1040px;margin:0 auto;padding:86px 48px 74px}
+    .intake-hero .section-label{color:var(--slate-lt)}
+    .intake-hero h1{color:var(--white);max-width:720px}
+    .intake-hero p{color:rgba(255,255,255,.68);max-width:620px}
+    .intake-shell{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:48px;align-items:start}
+    .intake-card{border:1px solid var(--offwb);background:var(--white);padding:34px}
+    .progress-wrap{margin-bottom:30px}
+    .progress-meta{display:flex;justify-content:space-between;gap:18px;margin-bottom:10px;font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
+    .progress-track{height:6px;background:var(--offwb);overflow:hidden}
+    .progress-bar{height:100%;width:20%;background:var(--accent);transition:width .2s ease}
+    form{display:block}
+    .hidden-field{display:none}
+    .intake-step{display:none;border:0}
+    .intake-step.is-active{display:block}
+    legend{font-size:clamp(1.45rem,2.2vw,2rem);font-weight:300;line-height:1.25;color:var(--charcoal);margin-bottom:10px}
+    .step-intro{margin-bottom:26px;max-width:620px}
+    label{display:block;font-size:.64rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:22px}
+    select,input,textarea{display:block;width:100%;margin-top:8px;border:1px solid var(--offwb);background:var(--offwhite);color:var(--charcoal);font:inherit;font-size:.95rem;font-weight:300;letter-spacing:0;text-transform:none;padding:13px 14px;border-radius:0}
+    textarea{resize:vertical;min-height:110px}
+    select:focus,input:focus,textarea:focus{outline:2px solid rgba(60,181,198,.25);border-color:var(--slate);background:var(--white)}
+    .form-error{min-height:24px;color:var(--accent-dk);font-size:.8rem;font-weight:400;margin:4px 0 18px}
+    .intake-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .intake-actions .btn-a{border:0;cursor:pointer}
+    .btn-back{border:1px solid var(--offwb);background:var(--white);color:var(--mid);font-size:.68rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:14px 30px;cursor:pointer;transition:all .18s}
+    .btn-back:hover{border-color:var(--slate);color:var(--charcoal)}
+    .btn-back[hidden],.submit-button[hidden],#nextButton[hidden]{display:none}
+    .intake-note{border-left:1px solid var(--offwb);padding-left:32px}
+    .intake-note h2{font-size:1.55rem}
+    @media(max-width:880px){
+      .intake-hero-inner{padding:64px 24px}
+      .intake-shell{grid-template-columns:1fr;gap:36px}
+      .intake-card{padding:26px 22px}
+      .intake-note{border-left:0;border-top:1px solid var(--offwb);padding-left:0;padding-top:32px}
+      .progress-meta{flex-direction:column;gap:4px}
+    }
+  </style>
+
+  <script>
+    (function(){
+      var form = document.getElementById('intakeForm');
+      if(!form) return;
+
+      var steps = Array.prototype.slice.call(form.querySelectorAll('.intake-step'));
+      var backButton = document.getElementById('backButton');
+      var nextButton = document.getElementById('nextButton');
+      var submitButton = document.getElementById('submitButton');
+      var stepLabel = document.getElementById('stepLabel');
+      var stepTitle = document.getElementById('stepTitle');
+      var progressBar = document.getElementById('progressBar');
+      var formError = document.getElementById('formError');
+      var currentStep = 0;
+
+      function setStep(index){
+        currentStep = index;
+        steps.forEach(function(step, stepIndex){
+          step.classList.toggle('is-active', stepIndex === currentStep);
+        });
+        stepLabel.textContent = 'Step ' + (currentStep + 1) + ' of ' + steps.length;
+        stepTitle.textContent = steps[currentStep].getAttribute('data-step-title') || '';
+        progressBar.style.width = (((currentStep + 1) / steps.length) * 100) + '%';
+        backButton.hidden = currentStep === 0;
+        nextButton.hidden = currentStep === steps.length - 1;
+        submitButton.hidden = currentStep !== steps.length - 1;
+        formError.textContent = '';
+      }
+
+      function validateCurrentStep(){
+        var fields = Array.prototype.slice.call(steps[currentStep].querySelectorAll('[data-required]'));
+        var invalid = fields.find(function(field){
+          return !String(field.value || '').trim();
+        });
+        if(invalid){
+          formError.textContent = 'Please answer this before moving on.';
+          invalid.focus();
+          return false;
+        }
+        formError.textContent = '';
+        return true;
+      }
+
+      nextButton.addEventListener('click', function(){
+        if(validateCurrentStep() && currentStep < steps.length - 1){
+          setStep(currentStep + 1);
+        }
+      });
+
+      backButton.addEventListener('click', function(){
+        if(currentStep > 0) setStep(currentStep - 1);
+      });
+
+      form.addEventListener('submit', function(event){
+        if(!validateCurrentStep()){
+          event.preventDefault();
+        }
+      });
+
+      setStep(0);
+    })();
+  </script>
+</Base>
