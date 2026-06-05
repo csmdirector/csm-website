@@ -2,24 +2,23 @@
 import Base from '../../layouts/Base.astro';
 ---
 <Base
-  title="Smart Intro Intake Received | Cincinnati School of Music"
-  description="Confirmation that Cincinnati School of Music received a Smart Intro Intake submission."
+  title="Intro Lesson Next Step | Cincinnati School of Music"
+  description="Continue from the Smart Intro Intake to book an Intro Lesson with Cincinnati School of Music."
   canonicalPath="/smart-intro-intake/thank-you/"
   noindex={true}
 >
   <section class="page-shell">
     <div class="page-inner narrow thank-you">
-      <span class="section-label">Intake Received</span>
-      <h1>Thanks. We have your answers.</h1>
+      <span class="section-label">Next Step</span>
+      <h1>Continue to your Intro Lesson booking.</h1>
       <p>
-        Based on your answers, an Intro Lesson may be the best next step. Our office can help confirm
-        the right teacher, location, and schedule before anything is finalized.
+        Thanks. Your answers give our office context if booking gets interrupted.
       </p>
       <p>
-        This is not an automated teacher match. A real person should review the details first.
+        The next step is Opus, where Cincinnati School of Music handles the actual Intro Lesson booking.
       </p>
       <div class="thank-you-actions">
-        <a class="btn-a" href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book an Intro Lesson</a>
+        <a class="btn-a" id="thankYouBookingLink" href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book an Intro Lesson</a>
         <a class="btn-c" href="/parent-resources/">Visit Parent Resources</a>
       </div>
     </div>
@@ -30,4 +29,22 @@ import Base from '../../layouts/Base.astro';
     .thank-you p{margin-bottom:18px}
     .thank-you-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
   </style>
+
+  <script>
+    (function(){
+      var link = document.getElementById('thankYouBookingLink');
+      if(!link) return;
+      var keys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
+      try {
+        var stored = JSON.parse(window.localStorage.getItem('csmSmartIntroAttribution') || '{}') || {};
+        var url = new URL(link.href);
+        keys.forEach(function(key){
+          if(stored[key]){
+            url.searchParams.set(key, stored[key]);
+          }
+        });
+        link.href = url.toString();
+      } catch (error) {}
+    })();
+  </script>
 </Base>

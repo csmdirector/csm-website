@@ -2,18 +2,18 @@
 import Base from '../../layouts/Base.astro';
 ---
 <Base
-  title="Find the Right Lesson Fit | Cincinnati School of Music"
-  description="A short guided intake for families who want help choosing a music lesson starting point at Cincinnati School of Music."
+  title="Find the Right Intro Lesson | Cincinnati School of Music"
+  description="A short guided path for families choosing a $42 Intro Lesson at Cincinnati School of Music."
   canonicalPath="/smart-intro-intake/"
   noindex={true}
 >
   <section class="intake-hero">
     <div class="intake-hero-inner">
-      <span class="section-label">Smart Intro Intake</span>
-      <h1>Find a good first step for music lessons.</h1>
+      <span class="section-label">Intro Lesson Finder</span>
+      <h1>Start with the right Intro Lesson.</h1>
       <p>
-        Answer a few quick questions. We will use your answers to help confirm the right instrument,
-        location, and next step before you book.
+        Start with a $42 Intro Lesson - a one-time private lesson to meet the teacher,
+        try the fit, and see how lessons feel before enrolling.
       </p>
     </div>
   </section>
@@ -23,8 +23,8 @@ import Base from '../../layouts/Base.astro';
       <div class="intake-card">
         <div class="progress-wrap" aria-label="Intake progress">
           <div class="progress-meta">
-            <span id="stepLabel">Step 1 of 5</span>
-            <span id="stepTitle">Student</span>
+            <span id="stepLabel">Step 1 of 7</span>
+            <span id="stepTitle">Instrument</span>
           </div>
           <div class="progress-track" aria-hidden="true">
             <div class="progress-bar" id="progressBar"></div>
@@ -40,132 +40,232 @@ import Base from '../../layouts/Base.astro';
           id="intakeForm"
         >
           <input type="hidden" name="form-name" value="smart-intro-intake" />
+          <input type="hidden" name="recommended_opus_url" id="recommendedOpusUrl" />
+          <input type="hidden" name="recommendation_summary" id="recommendationSummary" />
+          <input type="hidden" name="attribution_payload" id="attributionPayload" />
+          <input type="hidden" name="utm_source" data-attribution-field="utm_source" />
+          <input type="hidden" name="utm_medium" data-attribution-field="utm_medium" />
+          <input type="hidden" name="utm_campaign" data-attribution-field="utm_campaign" />
+          <input type="hidden" name="utm_content" data-attribution-field="utm_content" />
+          <input type="hidden" name="utm_term" data-attribution-field="utm_term" />
+          <input type="hidden" name="gclid" data-attribution-field="gclid" />
+          <input type="hidden" name="gbraid" data-attribution-field="gbraid" />
+          <input type="hidden" name="wbraid" data-attribution-field="wbraid" />
+          <input type="hidden" name="landing_path" data-attribution-field="landing_path" />
+          <input type="hidden" name="referrer" data-attribution-field="referrer" />
           <p class="hidden-field">
             <label>Do not fill this out if you are human: <input name="bot-field" /></label>
           </p>
 
-          <fieldset class="intake-step is-active" data-step-title="Student">
-            <legend>Who are lessons for?</legend>
-            <p class="step-intro">A little context helps us avoid giving every family the same answer.</p>
-            <label>
-              Student age
-              <select name="student_age" data-required>
-                <option value="">Choose one</option>
-                <option>3-5</option>
-                <option>6-8</option>
-                <option>9-12</option>
-                <option>13-17</option>
-                <option>Adult</option>
-              </select>
-            </label>
-            <label>
-              Who is filling this out?
-              <select name="relationship" data-required>
-                <option value="">Choose one</option>
-                <option>Parent or guardian</option>
-                <option>Adult student</option>
-                <option>Gift giver</option>
-                <option>Other family member</option>
-              </select>
-            </label>
+          <fieldset class="intake-step is-active" data-step-title="Instrument">
+            <legend>What kind of lesson are you looking for?</legend>
+            <p class="step-intro">
+              This helps us avoid dropping you into every teacher schedule at once.
+            </p>
+            <div class="choice-grid">
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Piano" data-required />
+                <span>Piano</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Voice" />
+                <span>Voice</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Guitar" />
+                <span>Guitar</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Drums" />
+                <span>Drums</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Strings" />
+                <span>Strings</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Winds" />
+                <span>Flute, clarinet, or saxophone</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Early childhood music" />
+                <span>Early childhood music</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Not sure yet" />
+                <span>Not sure yet</span>
+              </label>
+            </div>
           </fieldset>
 
-          <fieldset class="intake-step" data-step-title="Instrument">
-            <legend>What are you considering?</legend>
-            <p class="step-intro">It is okay if you are not sure yet. Many families are not.</p>
-            <label>
-              Instrument or lesson area
-              <select name="instrument_interest" data-required>
-                <option value="">Choose one</option>
-                <option>Piano</option>
-                <option>Voice</option>
-                <option>Guitar</option>
-                <option>Drums</option>
-                <option>Strings</option>
-                <option>Flute, clarinet, or saxophone</option>
-                <option>Early childhood music</option>
-                <option>Not sure yet</option>
-              </select>
-            </label>
-            <label>
-              Lesson experience
-              <select name="lesson_experience" data-required>
-                <option value="">Choose one</option>
-                <option>Brand new to lessons</option>
-                <option>Some past lessons</option>
-                <option>Currently taking lessons somewhere else</option>
-                <option>Returning after time away</option>
-              </select>
-            </label>
+          <fieldset class="intake-step" data-step-title="Student">
+            <legend>Who is the Intro Lesson for?</legend>
+            <p class="step-intro">
+              Age helps us point you toward the right starting point, especially for very young beginners.
+            </p>
+            <div class="choice-grid">
+              <label class="choice-card">
+                <input type="radio" name="student_age" value="3-5" data-required />
+                <span>Ages 3-5</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="student_age" value="6-8" />
+                <span>Ages 6-8</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="student_age" value="9-12" />
+                <span>Ages 9-12</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="student_age" value="13-17" />
+                <span>Ages 13-17</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="student_age" value="Adult" />
+                <span>Adult student</span>
+              </label>
+            </div>
           </fieldset>
 
-          <fieldset class="intake-step" data-step-title="Goals">
-            <legend>What would make lessons feel worthwhile?</legend>
-            <p class="step-intro">There is not one right answer. This just helps us understand the student.</p>
-            <label>
-              Main goal
-              <select name="main_goal" data-required>
-                <option value="">Choose one</option>
-                <option>Try music and see if it is a good fit</option>
-                <option>Build confidence</option>
-                <option>Learn songs they enjoy</option>
-                <option>Prepare for school music or auditions</option>
-                <option>Return to an instrument</option>
-                <option>Something else</option>
-              </select>
-            </label>
-            <label>
-              Anything we should know?
-              <textarea name="student_context" rows="4" placeholder="Examples: shy beginner, loves singing, needs a patient teacher, busy sports schedule"></textarea>
-            </label>
+          <fieldset class="intake-step" data-step-title="Experience">
+            <legend>How much lesson experience do they have?</legend>
+            <p class="step-intro">
+              Beginners and returning students often need different kinds of first conversations.
+            </p>
+            <div class="choice-grid">
+              <label class="choice-card">
+                <input type="radio" name="lesson_experience" value="Brand new to lessons" data-required />
+                <span>Brand new to lessons</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="lesson_experience" value="Some past lessons" />
+                <span>Some past lessons</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="lesson_experience" value="Currently taking lessons elsewhere" />
+                <span>Currently taking lessons somewhere else</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="lesson_experience" value="Returning after time away" />
+                <span>Returning after time away</span>
+              </label>
+            </div>
           </fieldset>
 
           <fieldset class="intake-step" data-step-title="Location">
-            <legend>Where would lessons work best?</legend>
-            <p class="step-intro">Location and schedule often matter as much as instrument choice.</p>
-            <label>
-              Preferred location
-              <select name="preferred_location" data-required>
-                <option value="">Choose one</option>
-                <option>Olde Montgomery</option>
-                <option>Mason</option>
-                <option>Anderson</option>
-                <option>Maineville</option>
-                <option>Middletown</option>
-                <option>Not sure yet</option>
+            <legend>Which location would work best?</legend>
+            <p class="step-intro">
+              We will use this to narrow the booking path when a location-specific option is available.
+            </p>
+            <div class="choice-grid">
+              <label class="choice-card">
+                <input type="radio" name="preferred_location" value="Olde Montgomery" data-required />
+                <span>Olde Montgomery</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_location" value="Mason" />
+                <span>Mason</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_location" value="Anderson" />
+                <span>Anderson</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_location" value="Maineville" />
+                <span>Maineville</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_location" value="Middletown" />
+                <span>Middletown</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_location" value="Flexible or not sure" />
+                <span>Flexible or not sure</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="intake-step" data-step-title="Schedule">
+            <legend>What schedule usually works?</legend>
+            <p class="step-intro">
+              This helps families avoid opening a booking list that clearly will not fit their week.
+            </p>
+            <div class="choice-grid">
+              <label class="choice-card">
+                <input type="radio" name="preferred_time" value="Weekday afternoons" data-required />
+                <span>Weekday afternoons</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_time" value="Weekday evenings" />
+                <span>Weekday evenings</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_time" value="Saturday" />
+                <span>Saturday</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_time" value="Flexible" />
+                <span>Flexible</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_time" value="Not sure yet" />
+                <span>Not sure yet</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="intake-step" data-step-title="Teacher Fit">
+            <legend>Anything that would help the teacher fit?</legend>
+            <p class="step-intro">
+              This is optional. We will not promise an exact teacher match from these answers, but they can help our office guide the next step.
+            </p>
+            <label class="field-label">
+              Teacher fit preference
+              <select name="teacher_fit_preference">
+                <option value="">No strong preference</option>
+                <option>Patient and gentle for a nervous beginner</option>
+                <option>Structured and goal-oriented</option>
+                <option>Creative and flexible</option>
+                <option>Good with young children</option>
+                <option>Good with teens</option>
+                <option>Experience supporting different learning needs</option>
               </select>
             </label>
-            <label>
-              Best general time
-              <select name="preferred_time" data-required>
-                <option value="">Choose one</option>
-                <option>Weekday afternoons</option>
-                <option>Weekday evenings</option>
-                <option>Saturday</option>
-                <option>Flexible</option>
-                <option>Not sure yet</option>
-              </select>
+            <label class="field-label">
+              Anything else we should know?
+              <textarea name="student_context" rows="4" placeholder="Examples: shy beginner, busy sports schedule, wants to sing pop songs, returning after years away"></textarea>
             </label>
           </fieldset>
 
-          <fieldset class="intake-step" data-step-title="Contact">
-            <legend>Where should we send the next step?</legend>
-            <p class="step-intro">
-              We will not promise a teacher match from this form. Our office can use this to help confirm
-              the right teacher, location, and schedule.
+          <fieldset class="intake-step" data-step-title="Next Step">
+            <legend>Your recommended next step</legend>
+            <div class="recommendation-box" id="recommendationBox" aria-live="polite">
+              <span class="section-label">Intro Lesson</span>
+              <h2 id="recommendationTitle">A $42 Intro Lesson is the best starting point.</h2>
+              <p id="recommendationBody">
+                We will use your answers to point you toward the clearest booking path available.
+              </p>
+              <dl class="recommendation-list" id="recommendationList"></dl>
+            </div>
+
+            <div class="contact-grid">
+              <label class="field-label">
+                Your name
+                <input type="text" name="parent_name" autocomplete="name" data-required />
+              </label>
+              <label class="field-label">
+                Email
+                <input type="email" name="email" autocomplete="email" data-required />
+              </label>
+              <label class="field-label">
+                Phone
+                <input type="tel" name="phone" autocomplete="tel" />
+              </label>
+            </div>
+            <p class="handoff-note">
+              We save this so a real person can help if booking gets interrupted. After this step,
+              you will continue to the CSM booking page in Opus.
             </p>
-            <label>
-              Your name
-              <input type="text" name="parent_name" autocomplete="name" data-required />
-            </label>
-            <label>
-              Email
-              <input type="email" name="email" autocomplete="email" data-required />
-            </label>
-            <label>
-              Phone
-              <input type="tel" name="phone" autocomplete="tel" />
-            </label>
           </fieldset>
 
           <div class="form-error" id="formError" aria-live="polite"></div>
@@ -173,17 +273,21 @@ import Base from '../../layouts/Base.astro';
           <div class="intake-actions">
             <button type="button" class="btn-back" id="backButton">Back</button>
             <button type="button" class="btn-a" id="nextButton">Next</button>
-            <button type="submit" class="btn-a submit-button" id="submitButton">Send Intake</button>
+            <button type="submit" class="btn-a submit-button" id="submitButton">Save and Continue to Booking</button>
+            <a class="btn-c direct-booking-link" id="directBookingLink" href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Open Booking Page</a>
           </div>
         </form>
       </div>
 
       <aside class="intake-note" aria-labelledby="intake-note-title">
-        <span class="section-label">What Happens Next</span>
-        <h2 id="intake-note-title">A real person reviews it.</h2>
+        <span class="section-label">What This Does</span>
+        <h2 id="intake-note-title">Less guessing before Opus.</h2>
         <p>
-          This is a starting point, not an automated teacher match. After the form is submitted,
-          CSM can help confirm whether an Intro Lesson is the best next step.
+          The Intro Lesson is a one-time private lesson. It helps the student meet the teacher,
+          try the fit, and see how lessons feel before enrolling.
+        </p>
+        <p>
+          This guide narrows the starting point. Opus still handles the actual booking.
         </p>
       </aside>
     </div>
@@ -194,37 +298,57 @@ import Base from '../../layouts/Base.astro';
     .intake-hero-inner{max-width:1040px;margin:0 auto;padding:86px 48px 74px}
     .intake-hero .section-label{color:var(--slate-lt)}
     .intake-hero h1{color:var(--white);max-width:720px}
-    .intake-hero p{color:rgba(255,255,255,.68);max-width:620px}
+    .intake-hero p{color:rgba(255,255,255,.72);max-width:690px}
     .intake-shell{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:48px;align-items:start}
     .intake-card{border:1px solid var(--offwb);background:var(--white);padding:34px}
     .progress-wrap{margin-bottom:30px}
     .progress-meta{display:flex;justify-content:space-between;gap:18px;margin-bottom:10px;font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
     .progress-track{height:6px;background:var(--offwb);overflow:hidden}
-    .progress-bar{height:100%;width:20%;background:var(--accent);transition:width .2s ease}
+    .progress-bar{height:100%;width:14.285%;background:var(--accent);transition:width .2s ease}
     form{display:block}
     .hidden-field{display:none}
     .intake-step{display:none;border:0}
     .intake-step.is-active{display:block}
     legend{font-size:clamp(1.45rem,2.2vw,2rem);font-weight:300;line-height:1.25;color:var(--charcoal);margin-bottom:10px}
-    .step-intro{margin-bottom:26px;max-width:620px}
-    label{display:block;font-size:.64rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:22px}
-    select,input,textarea{display:block;width:100%;margin-top:8px;border:1px solid var(--offwb);background:var(--offwhite);color:var(--charcoal);font:inherit;font-size:.95rem;font-weight:300;letter-spacing:0;text-transform:none;padding:13px 14px;border-radius:0}
+    .step-intro{margin-bottom:26px;max-width:660px}
+    .choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .choice-card{display:flex;align-items:center;gap:12px;min-height:58px;border:1px solid var(--offwb);background:var(--offwhite);padding:14px 16px;cursor:pointer;transition:all .18s}
+    .choice-card:hover{border-color:var(--slate);background:var(--white)}
+    .choice-card input{appearance:none;width:16px;height:16px;border:1px solid var(--light);border-radius:50%;background:var(--white);flex:0 0 auto;margin:0}
+    .choice-card input:checked{border:5px solid var(--accent)}
+    .choice-card:has(input:checked){border-color:var(--accent);background:rgba(247,79,87,.06)}
+    .choice-card span{font-size:.9rem;font-weight:400;color:var(--charcoal);line-height:1.35}
+    .field-label{display:block;font-size:.64rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:22px}
+    select,input[type="text"],input[type="email"],input[type="tel"],textarea{display:block;width:100%;margin-top:8px;border:1px solid var(--offwb);background:var(--offwhite);color:var(--charcoal);font:inherit;font-size:.95rem;font-weight:300;letter-spacing:0;text-transform:none;padding:13px 14px;border-radius:0}
     textarea{resize:vertical;min-height:110px}
     select:focus,input:focus,textarea:focus{outline:2px solid rgba(60,181,198,.25);border-color:var(--slate);background:var(--white)}
+    .recommendation-box{border:1px solid var(--offwb);background:var(--offwhite);padding:24px;margin-bottom:24px}
+    .recommendation-box h2{font-size:clamp(1.25rem,2vw,1.65rem);margin-bottom:10px}
+    .recommendation-list{display:grid;grid-template-columns:max-content 1fr;gap:8px 16px;margin-top:18px}
+    .recommendation-list dt{font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
+    .recommendation-list dd{font-size:.86rem;color:var(--mid)}
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+    .contact-grid .field-label:last-child{grid-column:1 / -1}
+    .handoff-note{font-size:.82rem;margin-top:4px}
     .form-error{min-height:24px;color:var(--accent-dk);font-size:.8rem;font-weight:400;margin:4px 0 18px}
     .intake-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
     .intake-actions .btn-a{border:0;cursor:pointer}
     .btn-back{border:1px solid var(--offwb);background:var(--white);color:var(--mid);font-size:.68rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:14px 30px;cursor:pointer;transition:all .18s}
     .btn-back:hover{border-color:var(--slate);color:var(--charcoal)}
+    .direct-booking-link{display:none}
     .btn-back[hidden],.submit-button[hidden],#nextButton[hidden]{display:none}
     .intake-note{border-left:1px solid var(--offwb);padding-left:32px}
     .intake-note h2{font-size:1.55rem}
+    .intake-note p + p{margin-top:16px}
     @media(max-width:880px){
       .intake-hero-inner{padding:64px 24px}
       .intake-shell{grid-template-columns:1fr;gap:36px}
       .intake-card{padding:26px 22px}
       .intake-note{border-left:0;border-top:1px solid var(--offwb);padding-left:0;padding-top:32px}
       .progress-meta{flex-direction:column;gap:4px}
+      .choice-grid{grid-template-columns:1fr}
+      .contact-grid{grid-template-columns:1fr}
+      .recommendation-list{grid-template-columns:1fr;gap:2px 0}
     }
   </style>
 
@@ -232,6 +356,11 @@ import Base from '../../layouts/Base.astro';
     (function(){
       var form = document.getElementById('intakeForm');
       if(!form) return;
+
+      var OPUS_DEFAULT_URL = 'https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson';
+      var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
+      var ATTRIBUTION_STORAGE_KEY = 'csmSmartIntroAttribution';
+      var STATE_STORAGE_KEY = 'csmSmartIntroState';
 
       var steps = Array.prototype.slice.call(form.querySelectorAll('.intake-step'));
       var backButton = document.getElementById('backButton');
@@ -241,7 +370,166 @@ import Base from '../../layouts/Base.astro';
       var stepTitle = document.getElementById('stepTitle');
       var progressBar = document.getElementById('progressBar');
       var formError = document.getElementById('formError');
+      var directBookingLink = document.getElementById('directBookingLink');
+      var recommendedOpusUrl = document.getElementById('recommendedOpusUrl');
+      var recommendationSummary = document.getElementById('recommendationSummary');
+      var attributionPayload = document.getElementById('attributionPayload');
+      var recommendationTitle = document.getElementById('recommendationTitle');
+      var recommendationBody = document.getElementById('recommendationBody');
+      var recommendationList = document.getElementById('recommendationList');
       var currentStep = 0;
+
+      function getStoredJson(key){
+        try {
+          return JSON.parse(window.localStorage.getItem(key) || '{}') || {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function setStoredJson(key, value){
+        try {
+          window.localStorage.setItem(key, JSON.stringify(value));
+        } catch (error) {}
+      }
+
+      function captureAttribution(){
+        var params = new URLSearchParams(window.location.search);
+        var stored = getStoredJson(ATTRIBUTION_STORAGE_KEY);
+        ATTRIBUTION_KEYS.forEach(function(key){
+          var value = params.get(key);
+          if(value && value.trim()){
+            stored[key] = value.trim();
+          }
+        });
+        if(!stored.landing_path){
+          stored.landing_path = window.location.pathname + window.location.search;
+        }
+        if(document.referrer && !stored.referrer){
+          stored.referrer = document.referrer;
+        }
+        setStoredJson(ATTRIBUTION_STORAGE_KEY, stored);
+        return stored;
+      }
+
+      function getAttribution(){
+        return getStoredJson(ATTRIBUTION_STORAGE_KEY);
+      }
+
+      function appendAttribution(url){
+        var attribution = getAttribution();
+        var outbound = new URL(url, window.location.origin);
+        ATTRIBUTION_KEYS.forEach(function(key){
+          if(attribution[key]){
+            outbound.searchParams.set(key, attribution[key]);
+          }
+        });
+        return outbound.toString();
+      }
+
+      function readFormValue(name){
+        var checked = form.querySelector('[name="' + name + '"]:checked');
+        if(checked) return checked.value;
+        var field = form.elements[name];
+        return field ? String(field.value || '').trim() : '';
+      }
+
+      function getRecommendation(){
+        var instrument = readFormValue('instrument_interest');
+        var location = readFormValue('preferred_location');
+        var age = readFormValue('student_age');
+        var experience = readFormValue('lesson_experience');
+        var time = readFormValue('preferred_time');
+        var teacherFit = readFormValue('teacher_fit_preference');
+
+        var title = 'A $42 Intro Lesson is the best starting point.';
+        var body = 'This will take you to the CSM booking page in Opus. Your answers help narrow the starting point and give our office context if booking gets interrupted.';
+
+        if(instrument && instrument !== 'Not sure yet'){
+          title = 'Start with a $42 ' + instrument + ' Intro Lesson.';
+        }
+        if(instrument === 'Early childhood music' || age === '3-5'){
+          title = 'Start with a $42 Intro Lesson for a young beginner.';
+          body = 'For younger students, the first lesson is mostly about comfort, attention, and fit. Opus will handle the booking, and our office can help if the schedule is not obvious.';
+        }
+        if(instrument === 'Not sure yet'){
+          title = 'Start with a $42 Intro Lesson and let us help narrow it.';
+          body = 'If the instrument is not settled yet, choose the closest available starting point in Opus or let our office follow up with guidance.';
+        }
+
+        return {
+          title: title,
+          body: body,
+          url: appendAttribution(OPUS_DEFAULT_URL),
+          summary: [
+            instrument ? 'Instrument: ' + instrument : '',
+            age ? 'Student age: ' + age : '',
+            experience ? 'Experience: ' + experience : '',
+            location ? 'Location: ' + location : '',
+            time ? 'Schedule: ' + time : '',
+            teacherFit ? 'Teacher fit: ' + teacherFit : ''
+          ].filter(Boolean).join(' | ')
+        };
+      }
+
+      function updateAttributionFields(){
+        var attribution = getAttribution();
+        form.querySelectorAll('[data-attribution-field]').forEach(function(field){
+          var key = field.getAttribute('data-attribution-field');
+          field.value = attribution[key] || '';
+        });
+        attributionPayload.value = JSON.stringify(attribution);
+      }
+
+      function updateRecommendation(){
+        var recommendation = getRecommendation();
+        recommendationTitle.textContent = recommendation.title;
+        recommendationBody.textContent = recommendation.body;
+        directBookingLink.href = recommendation.url;
+        recommendedOpusUrl.value = recommendation.url;
+        recommendationSummary.value = recommendation.summary;
+
+        var items = [
+          ['Instrument', readFormValue('instrument_interest') || 'Not selected'],
+          ['Student', readFormValue('student_age') || 'Not selected'],
+          ['Experience', readFormValue('lesson_experience') || 'Not selected'],
+          ['Location', readFormValue('preferred_location') || 'Not selected'],
+          ['Schedule', readFormValue('preferred_time') || 'Not selected']
+        ];
+        recommendationList.innerHTML = items.map(function(item){
+          return '<dt>' + item[0] + '</dt><dd>' + item[1] + '</dd>';
+        }).join('');
+      }
+
+      function saveState(){
+        var data = {};
+        Array.prototype.slice.call(form.elements).forEach(function(field){
+          if(!field.name || field.name === 'form-name' || field.name === 'bot-field') return;
+          if((field.type === 'radio' || field.type === 'checkbox') && !field.checked) return;
+          data[field.name] = field.value;
+        });
+        setStoredJson(STATE_STORAGE_KEY, { step: currentStep, values: data });
+      }
+
+      function restoreState(){
+        var stored = getStoredJson(STATE_STORAGE_KEY);
+        if(stored.values){
+          Object.keys(stored.values).forEach(function(name){
+            var value = stored.values[name];
+            var fields = Array.prototype.slice.call(form.querySelectorAll('[name="' + name + '"]'));
+            fields.forEach(function(field){
+              if(field.type === 'radio' || field.type === 'checkbox'){
+                field.checked = field.value === value;
+              } else {
+                field.value = value;
+              }
+            });
+          });
+        }
+        if(Number.isInteger(stored.step) && stored.step >= 0 && stored.step < steps.length){
+          currentStep = stored.step;
+        }
+      }
 
       function setStep(index){
         currentStep = index;
@@ -254,12 +542,19 @@ import Base from '../../layouts/Base.astro';
         backButton.hidden = currentStep === 0;
         nextButton.hidden = currentStep === steps.length - 1;
         submitButton.hidden = currentStep !== steps.length - 1;
+        directBookingLink.style.display = currentStep === steps.length - 1 ? 'inline-block' : 'none';
         formError.textContent = '';
+        updateAttributionFields();
+        updateRecommendation();
+        saveState();
       }
 
       function validateCurrentStep(){
-        var fields = Array.prototype.slice.call(steps[currentStep].querySelectorAll('[data-required]'));
-        var invalid = fields.find(function(field){
+        var requiredGroups = Array.prototype.slice.call(steps[currentStep].querySelectorAll('[data-required]'));
+        var invalid = requiredGroups.find(function(field){
+          if(field.type === 'radio'){
+            return !form.querySelector('[name="' + field.name + '"]:checked');
+          }
           return !String(field.value || '').trim();
         });
         if(invalid){
@@ -270,6 +565,27 @@ import Base from '../../layouts/Base.astro';
         formError.textContent = '';
         return true;
       }
+
+      function submitToNetlify(){
+        updateAttributionFields();
+        updateRecommendation();
+        var formData = new FormData(form);
+        return fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(formData).toString()
+        });
+      }
+
+      form.addEventListener('change', function(){
+        updateRecommendation();
+        saveState();
+      });
+
+      form.addEventListener('input', function(){
+        updateRecommendation();
+        saveState();
+      });
 
       nextButton.addEventListener('click', function(){
         if(validateCurrentStep() && currentStep < steps.length - 1){
@@ -282,12 +598,23 @@ import Base from '../../layouts/Base.astro';
       });
 
       form.addEventListener('submit', function(event){
-        if(!validateCurrentStep()){
-          event.preventDefault();
-        }
+        event.preventDefault();
+        if(!validateCurrentStep()) return;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Opening Booking...';
+        submitToNetlify()
+          .catch(function(){})
+          .finally(function(){
+            try {
+              window.localStorage.removeItem(STATE_STORAGE_KEY);
+            } catch (error) {}
+            window.location.href = recommendedOpusUrl.value || appendAttribution(OPUS_DEFAULT_URL);
+          });
       });
 
-      setStep(0);
+      captureAttribution();
+      restoreState();
+      setStep(currentStep);
     })();
   </script>
 </Base>
