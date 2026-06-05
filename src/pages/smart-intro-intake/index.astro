@@ -40,6 +40,7 @@ import Base from '../../layouts/Base.astro';
           id="intakeForm"
         >
           <input type="hidden" name="form-name" value="smart-intro-intake" />
+          <input type="hidden" name="routing_outcome" id="routingOutcome" />
           <input type="hidden" name="recommended_opus_url" id="recommendedOpusUrl" />
           <input type="hidden" name="recommendation_summary" id="recommendationSummary" />
           <input type="hidden" name="attribution_payload" id="attributionPayload" />
@@ -248,6 +249,12 @@ import Base from '../../layouts/Base.astro';
               <dl class="recommendation-list" id="recommendationList"></dl>
             </div>
 
+            <div class="help-actions" id="helpActions">
+              <a class="btn-c" href="tel:5135609175">Call CSM</a>
+              <a class="btn-c" href="sms:5135609175">Text CSM</a>
+              <a class="btn-c" href="mailto:info@cincinnatischoolofmusic.com">Email CSM</a>
+            </div>
+
             <div class="contact-grid">
               <label class="field-label">
                 Your name
@@ -264,7 +271,7 @@ import Base from '../../layouts/Base.astro';
             </div>
             <p class="handoff-note">
               We save this so a real person can help if booking gets interrupted. After this step,
-              you will continue to the CSM booking page in Opus.
+              you will continue to the clearest booking or help path.
             </p>
           </fieldset>
 
@@ -327,6 +334,8 @@ import Base from '../../layouts/Base.astro';
     .recommendation-list{display:grid;grid-template-columns:max-content 1fr;gap:8px 16px;margin-top:18px}
     .recommendation-list dt{font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
     .recommendation-list dd{font-size:.86rem;color:var(--mid)}
+    .help-actions{display:none;flex-wrap:wrap;gap:10px;margin:-4px 0 24px}
+    .help-actions.is-visible{display:flex}
     .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
     .contact-grid .field-label:last-child{grid-column:1 / -1}
     .handoff-note{font-size:.82rem;margin-top:4px}
@@ -358,9 +367,17 @@ import Base from '../../layouts/Base.astro';
       if(!form) return;
 
       var OPUS_DEFAULT_URL = 'https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson';
+      var OPUS_LEAD_URL = 'https://cincinnatischoolofmusic.opus1.io/lead';
       var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
       var ATTRIBUTION_STORAGE_KEY = 'csmSmartIntroAttribution';
       var STATE_STORAGE_KEY = 'csmSmartIntroState';
+      var PIANO_LOCATION_URLS = {
+        'Olde Montgomery': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-montgomery',
+        'Mason': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-mason',
+        'Anderson': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-anderson',
+        'Maineville': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-maineville',
+        'Middletown': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-middletown'
+      };
 
       var steps = Array.prototype.slice.call(form.querySelectorAll('.intake-step'));
       var backButton = document.getElementById('backButton');
@@ -371,6 +388,8 @@ import Base from '../../layouts/Base.astro';
       var progressBar = document.getElementById('progressBar');
       var formError = document.getElementById('formError');
       var directBookingLink = document.getElementById('directBookingLink');
+      var helpActions = document.getElementById('helpActions');
+      var routingOutcome = document.getElementById('routingOutcome');
       var recommendedOpusUrl = document.getElementById('recommendedOpusUrl');
       var recommendationSummary = document.getElementById('recommendationSummary');
       var attributionPayload = document.getElementById('attributionPayload');
@@ -424,6 +443,30 @@ import Base from '../../layouts/Base.astro';
             outbound.searchParams.set(key, attribution[key]);
           }
         });
+        if(attribution.landing_path){
+          outbound.searchParams.set('landing_path', attribution.landing_path);
+        }
+        if(attribution.referrer){
+          outbound.searchParams.set('referrer', attribution.referrer);
+        }
+        return outbound.toString();
+      }
+
+      function appendLeadContext(url){
+        var outbound = new URL(url, window.location.origin);
+        var context = {
+          instrument: readFormValue('instrument_interest'),
+          location: readFormValue('preferred_location'),
+          student_age: readFormValue('student_age'),
+          lesson_experience: readFormValue('lesson_experience'),
+          schedule: readFormValue('preferred_time'),
+          teacher_fit: readFormValue('teacher_fit_preference')
+        };
+        Object.keys(context).forEach(function(key){
+          if(context[key]){
+            outbound.searchParams.set(key, context[key]);
+          }
+        });
         return outbound.toString();
       }
 
@@ -444,24 +487,37 @@ import Base from '../../layouts/Base.astro';
 
         var title = 'A $42 Intro Lesson is the best starting point.';
         var body = 'This will take you to the CSM booking page in Opus. Your answers help narrow the starting point and give our office context if booking gets interrupted.';
+        var outcome = 'self-booking';
+        var url = OPUS_DEFAULT_URL;
 
-        if(instrument && instrument !== 'Not sure yet'){
+        if(location === 'Flexible or not sure' || instrument === 'Not sure yet'){
+          outcome = 'staff-help';
+          url = OPUS_LEAD_URL;
+          title = 'No problem - CSM can help you narrow it down.';
+          body = 'No problem - if you are not sure which location or teacher is the best fit, our office can help you narrow it down before you book. Tell us a little about what you are looking for, and we will help point you toward the right Intro Lesson option.';
+        } else if(instrument === 'Piano' && PIANO_LOCATION_URLS[location]){
+          url = PIANO_LOCATION_URLS[location];
+          title = 'Start with a $42 Piano Intro Lesson in ' + location + '.';
+          body = 'This will take you to the location-specific Piano Intro Lesson booking page in Opus, so you are not dropped into every teacher and location at once.';
+        } else if(instrument && instrument !== 'Not sure yet'){
           title = 'Start with a $42 ' + instrument + ' Intro Lesson.';
         }
-        if(instrument === 'Early childhood music' || age === '3-5'){
+        if(outcome !== 'staff-help' && (instrument === 'Early childhood music' || age === '3-5')){
           title = 'Start with a $42 Intro Lesson for a young beginner.';
           body = 'For younger students, the first lesson is mostly about comfort, attention, and fit. Opus will handle the booking, and our office can help if the schedule is not obvious.';
         }
-        if(instrument === 'Not sure yet'){
+        if(outcome === 'staff-help' && instrument === 'Not sure yet'){
           title = 'Start with a $42 Intro Lesson and let us help narrow it.';
-          body = 'If the instrument is not settled yet, choose the closest available starting point in Opus or let our office follow up with guidance.';
+          body = 'No problem - if you are not sure which lesson area, location, or teacher is the best fit, our office can help you narrow it down before you book. Tell us a little about what you are looking for, and we will help point you toward the right Intro Lesson option.';
         }
 
         return {
           title: title,
           body: body,
-          url: appendAttribution(OPUS_DEFAULT_URL),
+          outcome: outcome,
+          url: outcome === 'staff-help' ? appendLeadContext(appendAttribution(url)) : appendAttribution(url),
           summary: [
+            outcome ? 'Routing outcome: ' + outcome : '',
             instrument ? 'Instrument: ' + instrument : '',
             age ? 'Student age: ' + age : '',
             experience ? 'Experience: ' + experience : '',
@@ -486,8 +542,11 @@ import Base from '../../layouts/Base.astro';
         recommendationTitle.textContent = recommendation.title;
         recommendationBody.textContent = recommendation.body;
         directBookingLink.href = recommendation.url;
+        directBookingLink.textContent = readFormValue('instrument_interest') === 'Piano' ? 'See Piano Intro Times' : 'Open Booking Page';
+        routingOutcome.value = recommendation.outcome;
         recommendedOpusUrl.value = recommendation.url;
         recommendationSummary.value = recommendation.summary;
+        helpActions.classList.toggle('is-visible', recommendation.outcome === 'staff-help');
 
         var items = [
           ['Instrument', readFormValue('instrument_interest') || 'Not selected'],
@@ -542,7 +601,19 @@ import Base from '../../layouts/Base.astro';
         backButton.hidden = currentStep === 0;
         nextButton.hidden = currentStep === steps.length - 1;
         submitButton.hidden = currentStep !== steps.length - 1;
-        directBookingLink.style.display = currentStep === steps.length - 1 ? 'inline-block' : 'none';
+        if(currentStep === steps.length - 1){
+          var recommendation = getRecommendation();
+          if(recommendation.outcome === 'staff-help'){
+            submitButton.textContent = 'Have the Office Help Me Choose';
+          } else if(readFormValue('instrument_interest') === 'Piano'){
+            submitButton.textContent = 'See Piano Intro Times';
+          } else {
+            submitButton.textContent = 'Continue to Booking';
+          }
+          directBookingLink.style.display = recommendation.outcome === 'staff-help' ? 'none' : 'inline-block';
+        } else {
+          directBookingLink.style.display = 'none';
+        }
         formError.textContent = '';
         updateAttributionFields();
         updateRecommendation();
@@ -601,7 +672,7 @@ import Base from '../../layouts/Base.astro';
         event.preventDefault();
         if(!validateCurrentStep()) return;
         submitButton.disabled = true;
-        submitButton.textContent = 'Opening Booking...';
+        submitButton.textContent = getRecommendation().outcome === 'staff-help' ? 'Opening Help Form...' : 'Opening Booking...';
         submitToNetlify()
           .catch(function(){})
           .finally(function(){

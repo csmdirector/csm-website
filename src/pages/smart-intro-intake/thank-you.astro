@@ -10,15 +10,18 @@ import Base from '../../layouts/Base.astro';
   <section class="page-shell">
     <div class="page-inner narrow thank-you">
       <span class="section-label">Next Step</span>
-      <h1>Continue to your Intro Lesson booking.</h1>
-      <p>
+      <h1 id="thankYouTitle">Continue to your Intro Lesson booking.</h1>
+      <p id="thankYouLead">
         Thanks. Your answers give our office context if booking gets interrupted.
       </p>
-      <p>
+      <p id="thankYouBody">
         The next step is Opus, where Cincinnati School of Music handles the actual Intro Lesson booking.
       </p>
       <div class="thank-you-actions">
         <a class="btn-a" id="thankYouBookingLink" href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book an Intro Lesson</a>
+        <a class="btn-c help-link" id="thankYouCallLink" href="tel:5135609175">Call CSM</a>
+        <a class="btn-c help-link" id="thankYouTextLink" href="sms:5135609175">Text CSM</a>
+        <a class="btn-c help-link" id="thankYouEmailLink" href="mailto:info@cincinnatischoolofmusic.com">Email CSM</a>
         <a class="btn-c" href="/parent-resources/">Visit Parent Resources</a>
       </div>
     </div>
@@ -28,23 +31,39 @@ import Base from '../../layouts/Base.astro';
     .thank-you{padding-top:104px}
     .thank-you p{margin-bottom:18px}
     .thank-you-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+    .help-link{display:none}
+    .thank-you.is-help .help-link{display:inline-block}
+    .thank-you.is-help #thankYouBookingLink{display:none}
   </style>
 
   <script>
     (function(){
       var link = document.getElementById('thankYouBookingLink');
-      if(!link) return;
       var keys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
+      var params = new URLSearchParams(window.location.search);
+      var isHelp = params.get('help') === '1';
       try {
         var stored = JSON.parse(window.localStorage.getItem('csmSmartIntroAttribution') || '{}') || {};
-        var url = new URL(link.href);
-        keys.forEach(function(key){
-          if(stored[key]){
-            url.searchParams.set(key, stored[key]);
-          }
-        });
-        link.href = url.toString();
+        if(link){
+          var url = new URL(link.href);
+          keys.forEach(function(key){
+            if(stored[key]){
+              url.searchParams.set(key, stored[key]);
+            }
+          });
+          link.href = url.toString();
+        }
       } catch (error) {}
+      if(isHelp){
+        var shell = document.querySelector('.thank-you');
+        var title = document.getElementById('thankYouTitle');
+        var lead = document.getElementById('thankYouLead');
+        var body = document.getElementById('thankYouBody');
+        if(shell) shell.classList.add('is-help');
+        if(title) title.textContent = 'We can help you narrow it down.';
+        if(lead) lead.textContent = 'Thanks. Your request was saved for staff follow-up.';
+        if(body) body.textContent = 'No problem - if you are not sure which location or teacher is the best fit, our office can help you narrow it down before you book.';
+      }
     })();
   </script>
 </Base>
