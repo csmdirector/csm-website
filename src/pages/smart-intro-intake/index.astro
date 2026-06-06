@@ -220,8 +220,8 @@ import Base from '../../layouts/Base.astro';
           <fieldset class="intake-step" data-step-title="Teacher Fit">
             <legend>Anything that would help us understand the student?</legend>
             <p class="step-intro">
-              Optional. If extra support would help, share that here and our office
-              can help with the next step.
+              Optional. If a certain teacher style would help, our office can use
+              that context to guide the next step.
             </p>
             <label class="field-label">
               Helpful teacher style
@@ -480,14 +480,8 @@ import Base from '../../layouts/Base.astro';
       }
 
       function needsStaffHelp(teacherFit, studentContext){
-        var fit = String(teacherFit || '').toLowerCase();
         var context = String(studentContext || '').toLowerCase();
-        var highTouchFit = [
-          'nervous beginner',
-          'different learning needs'
-        ].some(function(term){
-          return fit.indexOf(term) !== -1;
-        });
+        var hasTeacherStyle = Boolean(String(teacherFit || '').trim());
         var highTouchContext = [
           'learning difference',
           'learning differences',
@@ -506,7 +500,7 @@ import Base from '../../layouts/Base.astro';
           return context.indexOf(term) !== -1;
         });
 
-        return highTouchFit || highTouchContext;
+        return hasTeacherStyle || highTouchContext;
       }
 
       function getRecommendation(){
