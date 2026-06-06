@@ -59,9 +59,9 @@ import Base from '../../layouts/Base.astro';
           </p>
 
           <fieldset class="intake-step is-active" data-step-title="Instrument">
-            <legend>What kind of lesson are you looking for?</legend>
+            <legend>Which instrument are you interested in learning?</legend>
             <p class="step-intro">
-              This helps us avoid dropping you into every teacher schedule at once.
+              A few quick questions help us show the most useful Intro Lesson options first.
             </p>
             <div class="choice-grid">
               <label class="choice-card">
@@ -100,9 +100,9 @@ import Base from '../../layouts/Base.astro';
           </fieldset>
 
           <fieldset class="intake-step" data-step-title="Student">
-            <legend>Who is the Intro Lesson for?</legend>
+            <legend>How old is the student?</legend>
             <p class="step-intro">
-              Age helps us point you toward the right starting point, especially for very young beginners.
+              Age helps us recommend a good starting point, especially for young beginners.
             </p>
             <div class="choice-grid">
               <label class="choice-card">
@@ -131,7 +131,8 @@ import Base from '../../layouts/Base.astro';
           <fieldset class="intake-step" data-step-title="Experience">
             <legend>How much lesson experience do they have?</legend>
             <p class="step-intro">
-              Beginners and returning students often need different kinds of first conversations.
+              This helps us understand whether the first lesson should feel brand new,
+              refresher-friendly, or more goal-oriented.
             </p>
             <div class="choice-grid">
               <label class="choice-card">
@@ -154,30 +155,30 @@ import Base from '../../layouts/Base.astro';
           </fieldset>
 
           <fieldset class="intake-step" data-step-title="Location">
-            <legend>Which location would work best?</legend>
+            <legend>Which CSM location is most convenient?</legend>
             <p class="step-intro">
-              We will use this to narrow the booking path when a location-specific option is available.
+              When there is a location-specific option, we will use this to show the most useful next step.
             </p>
             <div class="choice-grid">
               <label class="choice-card">
-                <input type="radio" name="preferred_location" value="Olde Montgomery" data-required />
-                <span>Olde Montgomery</span>
+                <input type="radio" name="preferred_location" value="CSM Montgomery" data-required />
+                <span>CSM Montgomery</span>
               </label>
               <label class="choice-card">
-                <input type="radio" name="preferred_location" value="Mason" />
-                <span>Mason</span>
+                <input type="radio" name="preferred_location" value="CSM Mason" />
+                <span>CSM Mason</span>
               </label>
               <label class="choice-card">
-                <input type="radio" name="preferred_location" value="Anderson" />
-                <span>Anderson</span>
+                <input type="radio" name="preferred_location" value="CSM Anderson" />
+                <span>CSM Anderson</span>
               </label>
               <label class="choice-card">
-                <input type="radio" name="preferred_location" value="Maineville" />
-                <span>Maineville</span>
+                <input type="radio" name="preferred_location" value="CSM Maineville" />
+                <span>CSM Maineville</span>
               </label>
               <label class="choice-card">
-                <input type="radio" name="preferred_location" value="Middletown" />
-                <span>Middletown</span>
+                <input type="radio" name="preferred_location" value="CSM Middletown" />
+                <span>CSM Middletown</span>
               </label>
               <label class="choice-card">
                 <input type="radio" name="preferred_location" value="Flexible or not sure" />
@@ -189,7 +190,8 @@ import Base from '../../layouts/Base.astro';
           <fieldset class="intake-step" data-step-title="Schedule">
             <legend>What schedule usually works?</legend>
             <p class="step-intro">
-              This helps families avoid opening a booking list that clearly will not fit their week.
+              Choose the time window that is usually easiest. If you are flexible,
+              that can open up more options.
             </p>
             <div class="choice-grid">
               <label class="choice-card">
@@ -216,12 +218,13 @@ import Base from '../../layouts/Base.astro';
           </fieldset>
 
           <fieldset class="intake-step" data-step-title="Teacher Fit">
-            <legend>Anything that would help the teacher fit?</legend>
+            <legend>Anything that would help us understand the student?</legend>
             <p class="step-intro">
-              This is optional. We will not promise an exact teacher match from these answers, but they can help our office guide the next step.
+              Optional. Share anything that would make the first lesson feel more
+              comfortable or useful.
             </p>
             <label class="field-label">
-              Teacher fit preference
+              Helpful teacher style
               <select name="teacher_fit_preference">
                 <option value="">No strong preference</option>
                 <option>Patient and gentle for a nervous beginner</option>
@@ -244,7 +247,7 @@ import Base from '../../layouts/Base.astro';
               <span class="section-label">Intro Lesson</span>
               <h2 id="recommendationTitle">A $42 Intro Lesson is the best starting point.</h2>
               <p id="recommendationBody">
-                We will use your answers to point you toward the clearest booking path available.
+                Based on your answers, this is the clearest next step.
               </p>
               <dl class="recommendation-list" id="recommendationList"></dl>
             </div>
@@ -270,8 +273,8 @@ import Base from '../../layouts/Base.astro';
               </label>
             </div>
             <p class="handoff-note">
-              We save these details so our office can help if booking gets interrupted.
-              After this step, you will continue to the clearest booking or help path.
+              We will save these details so the office has context if you need help.
+              After this step, you will continue to booking or a help form.
             </p>
           </fieldset>
 
@@ -293,8 +296,8 @@ import Base from '../../layouts/Base.astro';
           try the fit, and see how lessons feel before enrolling.
         </p>
         <p>
-          This guide narrows the starting point so families can continue to the most helpful
-          booking or office-help path.
+          This guide helps families find a good starting point before choosing an
+          Intro Lesson time.
         </p>
       </aside>
     </div>
@@ -371,11 +374,11 @@ import Base from '../../layouts/Base.astro';
       var ATTRIBUTION_STORAGE_KEY = 'csmSmartIntroAttribution';
       var STATE_STORAGE_KEY = 'csmSmartIntroState';
       var PIANO_LOCATION_URLS = {
-        'Olde Montgomery': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-montgomery',
-        'Mason': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-mason',
-        'Anderson': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-anderson',
-        'Maineville': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-maineville',
-        'Middletown': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-middletown'
+        'CSM Montgomery': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-montgomery',
+        'CSM Mason': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-mason',
+        'CSM Anderson': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-anderson',
+        'CSM Maineville': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-maineville',
+        'CSM Middletown': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-middletown'
       };
 
       var steps = Array.prototype.slice.call(form.querySelectorAll('.intake-step'));
@@ -484,19 +487,19 @@ import Base from '../../layouts/Base.astro';
         var teacherFit = readFormValue('teacher_fit_preference');
 
         var title = 'A $42 Intro Lesson is the best starting point.';
-        var body = 'This will take you to the CSM booking page for an Intro Lesson. Your answers help narrow the starting point and give our office context if booking gets interrupted.';
+        var body = 'This will take you to the CSM booking page for an Intro Lesson. Your answers help us show a good starting point and give the office context if you need help.';
         var outcome = 'self-booking';
         var url = OPUS_DEFAULT_URL;
 
         if(location === 'Flexible or not sure' || instrument === 'Not sure yet'){
           outcome = 'staff-help';
           url = OPUS_LEAD_URL;
-          title = 'No problem - CSM can help you narrow it down.';
-          body = 'No problem - if you are not sure which location or teacher is the best fit, our office can help you narrow it down before you book. Tell us a little about what you are looking for, and we will help point you toward the right Intro Lesson option.';
+          title = 'No problem - CSM can help you choose a starting point.';
+          body = 'If you are not sure yet, our office can help you choose a good Intro Lesson option. Tell us a little about what you are looking for, and we will point you in the right direction.';
         } else if(instrument === 'Piano' && PIANO_LOCATION_URLS[location]){
           url = PIANO_LOCATION_URLS[location];
-          title = 'Start with a $42 Piano Intro Lesson in ' + location + '.';
-          body = 'This will take you to the location-specific Piano Intro Lesson booking page, so you are not dropped into every teacher and location at once.';
+          title = 'Start with a $42 Piano Intro Lesson at ' + location + '.';
+          body = 'This will take you to the Piano Intro Lesson booking page for that location, so you can start with the most relevant schedule options.';
         } else if(instrument && instrument !== 'Not sure yet'){
           title = 'Start with a $42 ' + instrument + ' Intro Lesson.';
         }
@@ -506,7 +509,7 @@ import Base from '../../layouts/Base.astro';
         }
         if(outcome === 'staff-help' && instrument === 'Not sure yet'){
           title = 'Start with a $42 Intro Lesson and let us help narrow it.';
-          body = 'No problem - if you are not sure which lesson area, location, or teacher is the best fit, our office can help you narrow it down before you book. Tell us a little about what you are looking for, and we will help point you toward the right Intro Lesson option.';
+          body = 'Not sure yet? That is perfectly fine. Tell us a little about what you are looking for, and our office will help point you toward a good Intro Lesson option.';
         }
 
         return {
@@ -600,7 +603,7 @@ import Base from '../../layouts/Base.astro';
         if(currentStep === steps.length - 1){
           var recommendation = getRecommendation();
           if(recommendation.outcome === 'staff-help'){
-            submitButton.textContent = 'Have the Office Help Me Choose';
+            submitButton.textContent = 'Ask CSM to Help Me Choose';
           } else if(readFormValue('instrument_interest') === 'Piano'){
             submitButton.textContent = 'See Piano Intro Times';
           } else {
