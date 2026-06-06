@@ -61,7 +61,7 @@ import Base from '../../layouts/Base.astro';
           <fieldset class="intake-step is-active" data-step-title="Instrument">
             <legend>Which instrument are you interested in learning?</legend>
             <p class="step-intro">
-              A few quick questions help us show the most useful Intro Lesson options first.
+              A few quick questions help us point you toward the clearest next step.
             </p>
             <div class="choice-grid">
               <label class="choice-card">
@@ -157,7 +157,7 @@ import Base from '../../layouts/Base.astro';
           <fieldset class="intake-step" data-step-title="Location">
             <legend>Which CSM location is most convenient?</legend>
             <p class="step-intro">
-              When there is a location-specific option, we will use this to show the most useful next step.
+              When there is a location-specific option, we will use this to keep the next step focused.
             </p>
             <div class="choice-grid">
               <label class="choice-card">
@@ -220,8 +220,8 @@ import Base from '../../layouts/Base.astro';
           <fieldset class="intake-step" data-step-title="Teacher Fit">
             <legend>Anything that would help us understand the student?</legend>
             <p class="step-intro">
-              Optional. Share anything that would make the first lesson feel more
-              comfortable or useful.
+              Optional. If extra support would help, share that here and our office
+              can help with the next step.
             </p>
             <label class="field-label">
               Helpful teacher style
@@ -461,7 +461,8 @@ import Base from '../../layouts/Base.astro';
           student_age: readFormValue('student_age'),
           lesson_experience: readFormValue('lesson_experience'),
           schedule: readFormValue('preferred_time'),
-          teacher_fit: readFormValue('teacher_fit_preference')
+          teacher_fit: readFormValue('teacher_fit_preference'),
+          student_context: readFormValue('student_context')
         };
         Object.keys(context).forEach(function(key){
           if(context[key]){
@@ -478,6 +479,36 @@ import Base from '../../layouts/Base.astro';
         return field ? String(field.value || '').trim() : '';
       }
 
+      function needsStaffHelp(teacherFit, studentContext){
+        var fit = String(teacherFit || '').toLowerCase();
+        var context = String(studentContext || '').toLowerCase();
+        var highTouchFit = [
+          'nervous beginner',
+          'different learning needs'
+        ].some(function(term){
+          return fit.indexOf(term) !== -1;
+        });
+        var highTouchContext = [
+          'learning difference',
+          'learning differences',
+          'special need',
+          'special needs',
+          'anxiety',
+          'anxious',
+          'autism',
+          'adhd',
+          'sensory',
+          'iep',
+          'accommodation',
+          'disability',
+          'neurodivergent'
+        ].some(function(term){
+          return context.indexOf(term) !== -1;
+        });
+
+        return highTouchFit || highTouchContext;
+      }
+
       function getRecommendation(){
         var instrument = readFormValue('instrument_interest');
         var location = readFormValue('preferred_location');
@@ -485,13 +516,20 @@ import Base from '../../layouts/Base.astro';
         var experience = readFormValue('lesson_experience');
         var time = readFormValue('preferred_time');
         var teacherFit = readFormValue('teacher_fit_preference');
+        var studentContext = readFormValue('student_context');
+        var needsHelp = needsStaffHelp(teacherFit, studentContext);
 
         var title = 'A $42 Intro Lesson is the best starting point.';
-        var body = 'This will take you to the CSM booking page for an Intro Lesson. Your answers help us show a good starting point and give the office context if you need help.';
+        var body = 'Booking an Intro Lesson is likely the best next step. On the next page, you can review available teachers, schedules, specialties, and experience.';
         var outcome = 'self-booking';
         var url = OPUS_DEFAULT_URL;
 
-        if(location === 'Flexible or not sure' || instrument === 'Not sure yet'){
+        if(needsHelp){
+          outcome = 'staff-help';
+          url = OPUS_LEAD_URL;
+          title = 'CSM can help recommend a good starting point.';
+          body = 'Thanks for sharing a little more. We would like to take a closer look at your answers so we can help with the next step.';
+        } else if(location === 'Flexible or not sure' || instrument === 'Not sure yet'){
           outcome = 'staff-help';
           url = OPUS_LEAD_URL;
           title = 'No problem - CSM can help you choose a starting point.';
@@ -499,7 +537,7 @@ import Base from '../../layouts/Base.astro';
         } else if(instrument === 'Piano' && PIANO_LOCATION_URLS[location]){
           url = PIANO_LOCATION_URLS[location];
           title = 'Start with a $42 Piano Intro Lesson at ' + location + '.';
-          body = 'This will take you to the Piano Intro Lesson booking page for that location, so you can start with the most relevant schedule options.';
+          body = 'This will take you to the Piano Intro Lesson booking page for that location. You can review available teachers, schedules, specialties, and experience before choosing a time.';
         } else if(instrument && instrument !== 'Not sure yet'){
           title = 'Start with a $42 ' + instrument + ' Intro Lesson.';
         }
@@ -524,7 +562,8 @@ import Base from '../../layouts/Base.astro';
             experience ? 'Experience: ' + experience : '',
             location ? 'Location: ' + location : '',
             time ? 'Schedule: ' + time : '',
-            teacherFit ? 'Teacher fit: ' + teacherFit : ''
+            teacherFit ? 'Teacher fit: ' + teacherFit : '',
+            studentContext ? 'Student context: ' + studentContext : ''
           ].filter(Boolean).join(' | ')
         };
       }
@@ -554,6 +593,10 @@ import Base from '../../layouts/Base.astro';
           ['Location', readFormValue('preferred_location') || 'Not selected'],
           ['Schedule', readFormValue('preferred_time') || 'Not selected']
         ];
+        var teacherFit = readFormValue('teacher_fit_preference');
+        if(teacherFit){
+          items.push(['Helpful teacher style', teacherFit]);
+        }
         recommendationList.innerHTML = items.map(function(item){
           return '<dt>' + item[0] + '</dt><dd>' + item[1] + '</dd>';
         }).join('');
