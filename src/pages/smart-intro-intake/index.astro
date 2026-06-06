@@ -270,8 +270,8 @@ import Base from '../../layouts/Base.astro';
               </label>
             </div>
             <p class="handoff-note">
-              We save this so a real person can help if booking gets interrupted. After this step,
-              you will continue to the clearest booking or help path.
+              We save these details so our office can help if booking gets interrupted.
+              After this step, you will continue to the clearest booking or help path.
             </p>
           </fieldset>
 
@@ -281,20 +281,20 @@ import Base from '../../layouts/Base.astro';
             <button type="button" class="btn-back" id="backButton">Back</button>
             <button type="button" class="btn-a" id="nextButton">Next</button>
             <button type="submit" class="btn-a submit-button" id="submitButton">Save and Continue to Booking</button>
-            <a class="btn-c direct-booking-link" id="directBookingLink" href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Open Booking Page</a>
           </div>
         </form>
       </div>
 
       <aside class="intake-note" aria-labelledby="intake-note-title">
         <span class="section-label">What This Does</span>
-        <h2 id="intake-note-title">Less guessing before Opus.</h2>
+        <h2 id="intake-note-title">A clearer first step.</h2>
         <p>
           The Intro Lesson is a one-time private lesson. It helps the student meet the teacher,
           try the fit, and see how lessons feel before enrolling.
         </p>
         <p>
-          This guide narrows the starting point. Opus still handles the actual booking.
+          This guide narrows the starting point so families can continue to the most helpful
+          booking or office-help path.
         </p>
       </aside>
     </div>
@@ -344,7 +344,6 @@ import Base from '../../layouts/Base.astro';
     .intake-actions .btn-a{border:0;cursor:pointer}
     .btn-back{border:1px solid var(--offwb);background:var(--white);color:var(--mid);font-size:.68rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:14px 30px;cursor:pointer;transition:all .18s}
     .btn-back:hover{border-color:var(--slate);color:var(--charcoal)}
-    .direct-booking-link{display:none}
     .btn-back[hidden],.submit-button[hidden],#nextButton[hidden]{display:none}
     .intake-note{border-left:1px solid var(--offwb);padding-left:32px}
     .intake-note h2{font-size:1.55rem}
@@ -387,7 +386,6 @@ import Base from '../../layouts/Base.astro';
       var stepTitle = document.getElementById('stepTitle');
       var progressBar = document.getElementById('progressBar');
       var formError = document.getElementById('formError');
-      var directBookingLink = document.getElementById('directBookingLink');
       var helpActions = document.getElementById('helpActions');
       var routingOutcome = document.getElementById('routingOutcome');
       var recommendedOpusUrl = document.getElementById('recommendedOpusUrl');
@@ -486,7 +484,7 @@ import Base from '../../layouts/Base.astro';
         var teacherFit = readFormValue('teacher_fit_preference');
 
         var title = 'A $42 Intro Lesson is the best starting point.';
-        var body = 'This will take you to the CSM booking page in Opus. Your answers help narrow the starting point and give our office context if booking gets interrupted.';
+        var body = 'This will take you to the CSM booking page for an Intro Lesson. Your answers help narrow the starting point and give our office context if booking gets interrupted.';
         var outcome = 'self-booking';
         var url = OPUS_DEFAULT_URL;
 
@@ -498,13 +496,13 @@ import Base from '../../layouts/Base.astro';
         } else if(instrument === 'Piano' && PIANO_LOCATION_URLS[location]){
           url = PIANO_LOCATION_URLS[location];
           title = 'Start with a $42 Piano Intro Lesson in ' + location + '.';
-          body = 'This will take you to the location-specific Piano Intro Lesson booking page in Opus, so you are not dropped into every teacher and location at once.';
+          body = 'This will take you to the location-specific Piano Intro Lesson booking page, so you are not dropped into every teacher and location at once.';
         } else if(instrument && instrument !== 'Not sure yet'){
           title = 'Start with a $42 ' + instrument + ' Intro Lesson.';
         }
         if(outcome !== 'staff-help' && (instrument === 'Early childhood music' || age === '3-5')){
           title = 'Start with a $42 Intro Lesson for a young beginner.';
-          body = 'For younger students, the first lesson is mostly about comfort, attention, and fit. Opus will handle the booking, and our office can help if the schedule is not obvious.';
+          body = 'For younger students, the first lesson is mostly about comfort, attention, and fit. Our office can help if the schedule is not obvious.';
         }
         if(outcome === 'staff-help' && instrument === 'Not sure yet'){
           title = 'Start with a $42 Intro Lesson and let us help narrow it.';
@@ -541,8 +539,6 @@ import Base from '../../layouts/Base.astro';
         var recommendation = getRecommendation();
         recommendationTitle.textContent = recommendation.title;
         recommendationBody.textContent = recommendation.body;
-        directBookingLink.href = recommendation.url;
-        directBookingLink.textContent = readFormValue('instrument_interest') === 'Piano' ? 'See Piano Intro Times' : 'Open Booking Page';
         routingOutcome.value = recommendation.outcome;
         recommendedOpusUrl.value = recommendation.url;
         recommendationSummary.value = recommendation.summary;
@@ -610,9 +606,6 @@ import Base from '../../layouts/Base.astro';
           } else {
             submitButton.textContent = 'Continue to Booking';
           }
-          directBookingLink.style.display = recommendation.outcome === 'staff-help' ? 'none' : 'inline-block';
-        } else {
-          directBookingLink.style.display = 'none';
         }
         formError.textContent = '';
         updateAttributionFields();
