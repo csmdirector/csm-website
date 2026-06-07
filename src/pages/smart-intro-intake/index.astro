@@ -336,6 +336,13 @@ import Base from '../../layouts/Base.astro';
         'CSM Maineville': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-maineville',
         'CSM Middletown': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-middletown'
       };
+      var MUSIC_DISCOVERY_LOCATION_URLS = {
+        'CSM Montgomery': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro-montgomery',
+        'CSM Mason': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro-mason',
+        'CSM Anderson': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro-anderson',
+        'CSM Maineville': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro-maineville',
+        'CSM Middletown': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro-middletown'
+      };
 
       var steps = Array.prototype.slice.call(form.querySelectorAll('.intake-step'));
       var backButton = document.getElementById('backButton');
@@ -420,7 +427,18 @@ import Base from '../../layouts/Base.astro';
       }
 
       function hasKnownSelfBookingRoute(instrument, location, nextStep){
-        return nextStep === 'Ready to book' && instrument === 'Piano' && Boolean(PIANO_LOCATION_URLS[location]);
+        if(nextStep !== 'Ready to book') return false;
+        return Boolean(getSelfBookingUrl(instrument, location));
+      }
+
+      function getSelfBookingUrl(instrument, location){
+        if(instrument === 'Piano'){
+          return PIANO_LOCATION_URLS[location] || '';
+        }
+        if(instrument === 'Early childhood music'){
+          return MUSIC_DISCOVERY_LOCATION_URLS[location] || '';
+        }
+        return '';
       }
 
       function getRecommendation(){
@@ -439,9 +457,14 @@ import Base from '../../layouts/Base.astro';
 
         if(canSelfBook){
           outcome = 'self-booking';
-          url = PIANO_LOCATION_URLS[location];
-          title = 'Start with a $42 Piano Intro Lesson at ' + location + '.';
-          body = 'Based on your answers, the next step is an Intro Lesson for Piano at ' + location + '.';
+          url = getSelfBookingUrl(instrument, location);
+          if(instrument === 'Early childhood music'){
+            title = 'Start with a $42 Music Discovery Intro Lesson at ' + location + '.';
+            body = 'Based on your answers, the next step is a Music Discovery Intro Lesson at ' + location + '.';
+          } else {
+            title = 'Start with a $42 Piano Intro Lesson at ' + location + '.';
+            body = 'Based on your answers, the next step is an Intro Lesson for Piano at ' + location + '.';
+          }
         } else if(instrument === 'Not sure yet' || location === 'Flexible or not sure'){
           title = 'CSM can help you choose a starting point.';
           body = 'Not sure yet? That is perfectly fine. We can help you explore the options and find a good starting point.';
