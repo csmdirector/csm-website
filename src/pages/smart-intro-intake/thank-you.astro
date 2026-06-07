@@ -12,7 +12,7 @@ import Base from '../../layouts/Base.astro';
       <span class="section-label">Next Step</span>
       <h1 id="thankYouTitle">Continue to your Intro Lesson booking.</h1>
       <p id="thankYouLead">
-        Thanks. Your answers give our office context if you need help.
+        Thanks. Your answers help keep the next step focused.
       </p>
       <p id="thankYouBody">
         The next step is the Cincinnati School of Music booking page for your Intro Lesson.
@@ -60,9 +60,9 @@ import Base from '../../layouts/Base.astro';
         var lead = document.getElementById('thankYouLead');
         var body = document.getElementById('thankYouBody');
         if(shell) shell.classList.add('is-help');
-        if(title) title.textContent = 'We can help you choose a starting point.';
-        if(lead) lead.textContent = 'Thanks. Your request was saved for staff follow-up.';
-        if(body) body.textContent = 'A member of our team can review your answers and help with the next step.';
+        if(title) title.textContent = 'CSM can help with the next step.';
+        if(lead) lead.textContent = 'Thanks. Your request was sent.';
+        if(body) body.textContent = 'We will use your answers when we reach out.';
       }
     })();
   </script>

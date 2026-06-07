@@ -23,7 +23,7 @@ import Base from '../../layouts/Base.astro';
       <div class="intake-card">
         <div class="progress-wrap" aria-label="Intake progress">
           <div class="progress-meta">
-            <span id="stepLabel">Step 1 of 7</span>
+            <span id="stepLabel">Step 1 of 5</span>
             <span id="stepTitle">Instrument</span>
           </div>
           <div class="progress-track" aria-hidden="true">
@@ -59,9 +59,9 @@ import Base from '../../layouts/Base.astro';
           </p>
 
           <fieldset class="intake-step is-active" data-step-title="Instrument">
-            <legend>Which instrument are you interested in learning?</legend>
+            <legend>Which instrument are you interested in?</legend>
             <p class="step-intro">
-              A few quick questions help us point you toward a good next step.
+              Not sure yet? That's perfectly fine. We can help you explore the options and find a good starting point.
             </p>
             <div class="choice-grid">
               <label class="choice-card">
@@ -100,9 +100,9 @@ import Base from '../../layouts/Base.astro';
           </fieldset>
 
           <fieldset class="intake-step" data-step-title="Student">
-            <legend>How old is the student?</legend>
+            <legend>Are the lessons for yourself or your child?</legend>
             <p class="step-intro">
-              Age helps us recommend a good starting point, especially for young beginners.
+              This helps us keep the Intro Lesson information age-appropriate.
             </p>
             <div class="choice-grid">
               <label class="choice-card">
@@ -128,36 +128,10 @@ import Base from '../../layouts/Base.astro';
             </div>
           </fieldset>
 
-          <fieldset class="intake-step" data-step-title="Experience">
-            <legend>How much lesson experience do they have?</legend>
-            <p class="step-intro">
-              This helps us understand whether the first lesson should feel brand new,
-              refresher-friendly, or more goal-oriented.
-            </p>
-            <div class="choice-grid">
-              <label class="choice-card">
-                <input type="radio" name="lesson_experience" value="Brand new to lessons" data-required />
-                <span>Brand new to lessons</span>
-              </label>
-              <label class="choice-card">
-                <input type="radio" name="lesson_experience" value="Some past lessons" />
-                <span>Some past lessons</span>
-              </label>
-              <label class="choice-card">
-                <input type="radio" name="lesson_experience" value="Currently taking lessons elsewhere" />
-                <span>Currently taking lessons somewhere else</span>
-              </label>
-              <label class="choice-card">
-                <input type="radio" name="lesson_experience" value="Returning after time away" />
-                <span>Returning after time away</span>
-              </label>
-            </div>
-          </fieldset>
-
           <fieldset class="intake-step" data-step-title="Location">
             <legend>Which CSM location is most convenient?</legend>
             <p class="step-intro">
-              When there is a location-specific option, we will use this to keep the next step focused.
+              If you are flexible or not sure, we can help you choose a good starting point.
             </p>
             <div class="choice-grid">
               <label class="choice-card">
@@ -187,61 +161,25 @@ import Base from '../../layouts/Base.astro';
             </div>
           </fieldset>
 
-          <fieldset class="intake-step" data-step-title="Schedule">
-            <legend>What schedule usually works?</legend>
+          <fieldset class="intake-step" data-step-title="Next Step">
+            <legend>Do you want to book now or get help first?</legend>
             <p class="step-intro">
-              Choose the time window that is usually easiest. If you are flexible,
-              that can open up more options.
+              If you want help with teacher fit, learning considerations, schedule concerns,
+              or choosing an instrument, CSM can follow up before you book.
             </p>
             <div class="choice-grid">
               <label class="choice-card">
-                <input type="radio" name="preferred_time" value="Weekday afternoons" data-required />
-                <span>Weekday afternoons</span>
+                <input type="radio" name="next_step_preference" value="Ready to book" data-required />
+                <span>I'm ready to view Intro Lesson times</span>
               </label>
               <label class="choice-card">
-                <input type="radio" name="preferred_time" value="Weekday evenings" />
-                <span>Weekday evenings</span>
-              </label>
-              <label class="choice-card">
-                <input type="radio" name="preferred_time" value="Saturday" />
-                <span>Saturday</span>
-              </label>
-              <label class="choice-card">
-                <input type="radio" name="preferred_time" value="Flexible" />
-                <span>Flexible</span>
-              </label>
-              <label class="choice-card">
-                <input type="radio" name="preferred_time" value="Not sure yet" />
-                <span>Not sure yet</span>
+                <input type="radio" name="next_step_preference" value="Need help choosing" />
+                <span>I'd like CSM to help me choose</span>
               </label>
             </div>
           </fieldset>
 
-          <fieldset class="intake-step" data-step-title="Teacher Fit">
-            <legend>Anything that would help us understand the student?</legend>
-            <p class="step-intro">
-              Optional. If a certain teacher style would help, our office can use
-              that context to guide the next step.
-            </p>
-            <label class="field-label">
-              Helpful teacher style
-              <select name="teacher_fit_preference">
-                <option value="">No strong preference</option>
-                <option>Patient and gentle for a nervous beginner</option>
-                <option>Structured and goal-oriented</option>
-                <option>Creative and flexible</option>
-                <option>Good with young children</option>
-                <option>Good with teens</option>
-                <option>Experience supporting different learning needs</option>
-              </select>
-            </label>
-            <label class="field-label">
-              Anything else we should know?
-              <textarea name="student_context" rows="4" placeholder="Examples: shy beginner, busy sports schedule, wants to sing pop songs, returning after years away"></textarea>
-            </label>
-          </fieldset>
-
-          <fieldset class="intake-step" data-step-title="Next Step">
+          <fieldset class="intake-step" data-step-title="Result">
             <legend>Your recommended next step</legend>
             <div class="recommendation-box" id="recommendationBox" aria-live="polite">
               <span class="section-label">Intro Lesson</span>
@@ -252,20 +190,39 @@ import Base from '../../layouts/Base.astro';
               <dl class="recommendation-list" id="recommendationList"></dl>
             </div>
 
+            <div class="help-details" id="helpDetails">
+              <label class="field-label">
+                What would you like help with?
+                <select name="help_reason">
+                  <option value="">Choose one</option>
+                  <option>Choosing an instrument</option>
+                  <option>Finding a good teacher fit</option>
+                  <option>Learning differences or special considerations</option>
+                  <option>Schedule concerns</option>
+                  <option>Goals or lesson style</option>
+                  <option>Something else</option>
+                </select>
+              </label>
+              <label class="field-label">
+                Anything else we should know?
+                <textarea name="student_context" rows="4" placeholder="Examples: shy beginner, busy sports schedule, learning considerations, wants to sing pop songs"></textarea>
+              </label>
+            </div>
+
             <div class="help-actions" id="helpActions">
               <a class="btn-c" href="tel:5135609175">Call CSM</a>
               <a class="btn-c" href="sms:5135609175">Text CSM</a>
               <a class="btn-c" href="mailto:info@cincinnatischoolofmusic.com">Email CSM</a>
             </div>
 
-            <div class="contact-grid">
+            <div class="contact-grid" id="contactGrid">
               <label class="field-label">
                 Your name
-                <input type="text" name="parent_name" autocomplete="name" data-required />
+                <input type="text" name="parent_name" autocomplete="name" />
               </label>
               <label class="field-label">
                 Email
-                <input type="email" name="email" autocomplete="email" data-required />
+                <input type="email" name="email" autocomplete="email" />
               </label>
               <label class="field-label">
                 Phone
@@ -273,8 +230,7 @@ import Base from '../../layouts/Base.astro';
               </label>
             </div>
             <p class="handoff-note">
-              We will save these details so the office has context if you need help.
-              After this step, you will continue to booking or a help form.
+              <span id="handoffNoteText">After this step, you will continue to available Intro Lesson times.</span>
             </p>
           </fieldset>
 
@@ -283,7 +239,7 @@ import Base from '../../layouts/Base.astro';
           <div class="intake-actions">
             <button type="button" class="btn-back" id="backButton">Back</button>
             <button type="button" class="btn-a" id="nextButton">Next</button>
-            <button type="submit" class="btn-a submit-button" id="submitButton">Save and Continue to Booking</button>
+            <button type="submit" class="btn-a submit-button" id="submitButton">View Available Intro Times</button>
           </div>
         </form>
       </div>
@@ -296,8 +252,8 @@ import Base from '../../layouts/Base.astro';
           try the fit, and see how lessons feel before enrolling.
         </p>
         <p>
-          This guide helps families find a good starting point before choosing an
-          Intro Lesson time.
+          If you know the instrument and location, you can go straight to available
+          Intro Lesson times. If you want help choosing, CSM can follow up first.
         </p>
       </aside>
     </div>
@@ -337,6 +293,7 @@ import Base from '../../layouts/Base.astro';
     .recommendation-list{display:grid;grid-template-columns:max-content 1fr;gap:8px 16px;margin-top:18px}
     .recommendation-list dt{font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
     .recommendation-list dd{font-size:.86rem;color:var(--mid)}
+    .help-details.is-hidden,.contact-grid.is-hidden{display:none}
     .help-actions{display:none;flex-wrap:wrap;gap:10px;margin:-4px 0 24px}
     .help-actions.is-visible{display:flex}
     .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
@@ -368,8 +325,7 @@ import Base from '../../layouts/Base.astro';
       var form = document.getElementById('intakeForm');
       if(!form) return;
 
-      var OPUS_DEFAULT_URL = 'https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson';
-      var OPUS_LEAD_URL = 'https://cincinnatischoolofmusic.opus1.io/lead';
+      var HELP_THANK_YOU_URL = '/smart-intro-intake/thank-you/?help=1';
       var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
       var ATTRIBUTION_STORAGE_KEY = 'csmSmartIntroAttribution';
       var STATE_STORAGE_KEY = 'csmSmartIntroState';
@@ -389,7 +345,10 @@ import Base from '../../layouts/Base.astro';
       var stepTitle = document.getElementById('stepTitle');
       var progressBar = document.getElementById('progressBar');
       var formError = document.getElementById('formError');
+      var helpDetails = document.getElementById('helpDetails');
       var helpActions = document.getElementById('helpActions');
+      var contactGrid = document.getElementById('contactGrid');
+      var handoffNoteText = document.getElementById('handoffNoteText');
       var routingOutcome = document.getElementById('routingOutcome');
       var recommendedOpusUrl = document.getElementById('recommendedOpusUrl');
       var recommendationSummary = document.getElementById('recommendationSummary');
@@ -453,25 +412,6 @@ import Base from '../../layouts/Base.astro';
         return outbound.toString();
       }
 
-      function appendLeadContext(url){
-        var outbound = new URL(url, window.location.origin);
-        var context = {
-          instrument: readFormValue('instrument_interest'),
-          location: readFormValue('preferred_location'),
-          student_age: readFormValue('student_age'),
-          lesson_experience: readFormValue('lesson_experience'),
-          schedule: readFormValue('preferred_time'),
-          teacher_fit: readFormValue('teacher_fit_preference'),
-          student_context: readFormValue('student_context')
-        };
-        Object.keys(context).forEach(function(key){
-          if(context[key]){
-            outbound.searchParams.set(key, context[key]);
-          }
-        });
-        return outbound.toString();
-      }
-
       function readFormValue(name){
         var checked = form.querySelector('[name="' + name + '"]:checked');
         if(checked) return checked.value;
@@ -479,84 +419,51 @@ import Base from '../../layouts/Base.astro';
         return field ? String(field.value || '').trim() : '';
       }
 
-      function needsStaffHelp(teacherFit, studentContext){
-        var context = String(studentContext || '').toLowerCase();
-        var hasTeacherStyle = Boolean(String(teacherFit || '').trim());
-        var highTouchContext = [
-          'learning difference',
-          'learning differences',
-          'special need',
-          'special needs',
-          'anxiety',
-          'anxious',
-          'autism',
-          'adhd',
-          'sensory',
-          'iep',
-          'accommodation',
-          'disability',
-          'neurodivergent'
-        ].some(function(term){
-          return context.indexOf(term) !== -1;
-        });
-
-        return hasTeacherStyle || highTouchContext;
+      function hasKnownSelfBookingRoute(instrument, location, nextStep){
+        return nextStep === 'Ready to book' && instrument === 'Piano' && Boolean(PIANO_LOCATION_URLS[location]);
       }
 
       function getRecommendation(){
         var instrument = readFormValue('instrument_interest');
         var location = readFormValue('preferred_location');
         var age = readFormValue('student_age');
-        var experience = readFormValue('lesson_experience');
-        var time = readFormValue('preferred_time');
-        var teacherFit = readFormValue('teacher_fit_preference');
+        var nextStep = readFormValue('next_step_preference');
+        var helpReason = readFormValue('help_reason');
         var studentContext = readFormValue('student_context');
-        var needsHelp = needsStaffHelp(teacherFit, studentContext);
+        var canSelfBook = hasKnownSelfBookingRoute(instrument, location, nextStep);
 
         var title = 'A $42 Intro Lesson is the best starting point.';
-        var body = 'Booking an Intro Lesson is likely the best next step. On the next page, you can review available teachers, schedules, specialties, and experience.';
-        var outcome = 'self-booking';
-        var url = OPUS_DEFAULT_URL;
+        var body = 'Tell us a little about what you are looking for. We will use this information when we reach out.';
+        var outcome = 'staff-help';
+        var url = appendAttribution(HELP_THANK_YOU_URL);
 
-        if(needsHelp){
-          outcome = 'staff-help';
-          url = OPUS_LEAD_URL;
-          title = 'CSM can help recommend a good starting point.';
-          body = 'Thanks for sharing a little more. We would like to take a closer look at your answers so we can help with the next step.';
-        } else if(location === 'Flexible or not sure' || instrument === 'Not sure yet'){
-          outcome = 'staff-help';
-          url = OPUS_LEAD_URL;
-          title = 'No problem - CSM can help you choose a starting point.';
-          body = 'If you are not sure yet, our office can help you choose a good Intro Lesson option. Tell us a little about what you are looking for, and we will point you in the right direction.';
-        } else if(instrument === 'Piano' && PIANO_LOCATION_URLS[location]){
+        if(canSelfBook){
+          outcome = 'self-booking';
           url = PIANO_LOCATION_URLS[location];
           title = 'Start with a $42 Piano Intro Lesson at ' + location + '.';
-          body = 'This will take you to the Piano Intro Lesson booking page for that location. You can review available teachers, schedules, specialties, and experience before choosing a time.';
-        } else if(instrument && instrument !== 'Not sure yet'){
-          title = 'Start with a $42 ' + instrument + ' Intro Lesson.';
-        }
-        if(outcome !== 'staff-help' && (instrument === 'Early childhood music' || age === '3-5')){
-          title = 'Start with a $42 Intro Lesson for a young beginner.';
-          body = 'For younger students, the first lesson is mostly about comfort, attention, and fit. Our office can help if the schedule is not obvious.';
-        }
-        if(outcome === 'staff-help' && instrument === 'Not sure yet'){
-          title = 'Start with a $42 Intro Lesson and let us help narrow it.';
-          body = 'Not sure yet? That is perfectly fine. Tell us a little about what you are looking for, and our office will help point you toward a good Intro Lesson option.';
+          body = 'Based on your answers, the next step is an Intro Lesson for Piano at ' + location + '.';
+        } else if(instrument === 'Not sure yet' || location === 'Flexible or not sure'){
+          title = 'CSM can help you choose a starting point.';
+          body = 'Not sure yet? That is perfectly fine. We can help you explore the options and find a good starting point.';
+        } else if(nextStep === 'Need help choosing'){
+          title = 'CSM can help with the next step.';
+        } else if(instrument && location){
+          title = 'CSM can help you find the right Intro Lesson.';
+          body = 'Tell us a little about what you are looking for. We will use this information when we reach out.';
         }
 
         return {
           title: title,
           body: body,
           outcome: outcome,
-          url: outcome === 'staff-help' ? appendLeadContext(appendAttribution(url)) : appendAttribution(url),
+          url: outcome === 'staff-help' ? url : appendAttribution(url),
           summary: [
             outcome ? 'Routing outcome: ' + outcome : '',
             instrument ? 'Instrument: ' + instrument : '',
             age ? 'Student age: ' + age : '',
-            experience ? 'Experience: ' + experience : '',
             location ? 'Location: ' + location : '',
-            time ? 'Schedule: ' + time : '',
-            teacherFit ? 'Teacher fit: ' + teacherFit : '',
+            nextStep ? 'Next step preference: ' + nextStep : '',
+            helpReason ? 'Help requested with: ' + helpReason : '',
             studentContext ? 'Student context: ' + studentContext : ''
           ].filter(Boolean).join(' | ')
         };
@@ -578,18 +485,23 @@ import Base from '../../layouts/Base.astro';
         routingOutcome.value = recommendation.outcome;
         recommendedOpusUrl.value = recommendation.url;
         recommendationSummary.value = recommendation.summary;
+        helpDetails.classList.toggle('is-hidden', recommendation.outcome !== 'staff-help');
         helpActions.classList.toggle('is-visible', recommendation.outcome === 'staff-help');
+        contactGrid.classList.toggle('is-hidden', recommendation.outcome !== 'staff-help');
+        handoffNoteText.textContent = recommendation.outcome === 'staff-help'
+          ? 'We will use this information when we reach out.'
+          : 'After this step, you will continue to available Intro Lesson times.';
 
         var items = [
           ['Instrument', readFormValue('instrument_interest') || 'Not selected'],
           ['Student', readFormValue('student_age') || 'Not selected'],
-          ['Experience', readFormValue('lesson_experience') || 'Not selected'],
-          ['Location', readFormValue('preferred_location') || 'Not selected'],
-          ['Schedule', readFormValue('preferred_time') || 'Not selected']
+          ['Location', readFormValue('preferred_location') || 'Not selected']
         ];
-        var teacherFit = readFormValue('teacher_fit_preference');
-        if(teacherFit){
-          items.push(['Helpful teacher style', teacherFit]);
+        if(recommendation.outcome === 'staff-help'){
+          items.push(['Next step', readFormValue('next_step_preference') || 'Not selected']);
+          if(readFormValue('help_reason')){
+            items.push(['Help with', readFormValue('help_reason')]);
+          }
         }
         recommendationList.innerHTML = items.map(function(item){
           return '<dt>' + item[0] + '</dt><dd>' + item[1] + '</dd>';
@@ -640,11 +552,9 @@ import Base from '../../layouts/Base.astro';
         if(currentStep === steps.length - 1){
           var recommendation = getRecommendation();
           if(recommendation.outcome === 'staff-help'){
-            submitButton.textContent = 'Ask CSM to Help Me Choose';
-          } else if(readFormValue('instrument_interest') === 'Piano'){
-            submitButton.textContent = 'See Piano Intro Times';
+            submitButton.textContent = 'Send Help Request';
           } else {
-            submitButton.textContent = 'Continue to Booking';
+            submitButton.textContent = 'View Available Intro Times';
           }
         }
         formError.textContent = '';
@@ -665,6 +575,26 @@ import Base from '../../layouts/Base.astro';
           formError.textContent = 'Please answer this before moving on.';
           invalid.focus();
           return false;
+        }
+        if(currentStep === steps.length - 1 && getRecommendation().outcome === 'staff-help'){
+          var helpReason = form.elements.help_reason;
+          var parentName = form.elements.parent_name;
+          var email = form.elements.email;
+          if(!String(helpReason.value || '').trim()){
+            formError.textContent = 'Please choose what you would like help with.';
+            helpReason.focus();
+            return false;
+          }
+          if(!String(parentName.value || '').trim()){
+            formError.textContent = 'Please add your name so CSM can follow up.';
+            parentName.focus();
+            return false;
+          }
+          if(!String(email.value || '').trim()){
+            formError.textContent = 'Please add your email so CSM can follow up.';
+            email.focus();
+            return false;
+          }
         }
         formError.textContent = '';
         return true;
@@ -704,15 +634,24 @@ import Base from '../../layouts/Base.astro';
       form.addEventListener('submit', function(event){
         event.preventDefault();
         if(!validateCurrentStep()) return;
+        var recommendation = getRecommendation();
         submitButton.disabled = true;
-        submitButton.textContent = getRecommendation().outcome === 'staff-help' ? 'Opening Help Form...' : 'Opening Booking...';
+        if(recommendation.outcome === 'self-booking'){
+          submitButton.textContent = 'Opening Times...';
+          try {
+            window.localStorage.removeItem(STATE_STORAGE_KEY);
+          } catch (error) {}
+          window.location.href = recommendation.url;
+          return;
+        }
+        submitButton.textContent = 'Sending Request...';
         submitToNetlify()
           .catch(function(){})
           .finally(function(){
             try {
               window.localStorage.removeItem(STATE_STORAGE_KEY);
             } catch (error) {}
-            window.location.href = recommendedOpusUrl.value || appendAttribution(OPUS_DEFAULT_URL);
+            window.location.href = recommendation.url;
           });
       });
 
