@@ -33,7 +33,7 @@ URLs map directly to filenames: `piano-lessons.html` is served at `/piano-lesson
 Existing pages remain the source of truth for current public URLs. The Astro build is for new sections only:
 
 - Parent Resource Hub
-- Smart Intro Intake
+- Lesson Fit
 - Musical Ascent
 - MDL
 - Teacher Resource Area

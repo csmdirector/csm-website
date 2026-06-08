@@ -19,4 +19,10 @@
 /home                              /                    301
 /home/                             /                    301
 
+# ── Old intake slug → parent-facing Lesson Fit page ──
+/smart-intro-intake                /lesson-fit/         301
+/smart-intro-intake/               /lesson-fit/         301
+/smart-intro-intake/thank-you      /lesson-fit/thank-you/ 301
+/smart-intro-intake/thank-you/     /lesson-fit/thank-you/ 301
+
 # /group-class.php and /virtual-tour.php intentionally not redirected — let 404

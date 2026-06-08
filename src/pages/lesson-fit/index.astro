@@ -2,15 +2,15 @@
 import Base from '../../layouts/Base.astro';
 ---
 <Base
-  title="Find the Right Intro Lesson | Cincinnati School of Music"
-  description="A short guided path for families choosing a $42 Intro Lesson at Cincinnati School of Music."
-  canonicalPath="/smart-intro-intake/"
+  title="Find the Right Lesson Fit | Cincinnati School of Music"
+  description="A short guided path for families choosing the right music lesson starting point at Cincinnati School of Music."
+  canonicalPath="/lesson-fit/"
   noindex={true}
 >
   <section class="intake-hero">
     <div class="intake-hero-inner">
-      <span class="section-label">Intro Lesson Finder</span>
-      <h1>Start with the right Intro Lesson.</h1>
+      <span class="section-label">Lesson Fit</span>
+      <h1>Find the right lesson fit.</h1>
       <p>
         Start with a $42 Intro Lesson - a one-time private lesson to meet the teacher,
         try the fit, and see how lessons feel before enrolling.
@@ -32,18 +32,20 @@ import Base from '../../layouts/Base.astro';
         </div>
 
         <form
-          name="smart-intro-intake"
+          name="lesson-fit-request"
           method="POST"
-          action="/smart-intro-intake/thank-you/"
+          action="/lesson-fit/thank-you/"
           data-netlify="true"
           netlify-honeypot="bot-field"
           id="intakeForm"
         >
-          <input type="hidden" name="form-name" value="smart-intro-intake" />
+          <input type="hidden" name="form-name" value="lesson-fit-request" />
+          <input type="hidden" name="subject" data-remove-prefix value="New Lesson Fit Help Request" />
           <input type="hidden" name="routing_outcome" id="routingOutcome" />
           <input type="hidden" name="recommended_opus_url" id="recommendedOpusUrl" />
           <input type="hidden" name="recommendation_summary" id="recommendationSummary" />
           <input type="hidden" name="attribution_payload" id="attributionPayload" />
+          <textarea name="staff_email_summary" id="staffEmailSummary" hidden></textarea>
           <input type="hidden" name="utm_source" data-attribution-field="utm_source" />
           <input type="hidden" name="utm_medium" data-attribution-field="utm_medium" />
           <input type="hidden" name="utm_campaign" data-attribution-field="utm_campaign" />
@@ -325,10 +327,10 @@ import Base from '../../layouts/Base.astro';
       var form = document.getElementById('intakeForm');
       if(!form) return;
 
-      var HELP_THANK_YOU_URL = '/smart-intro-intake/thank-you/?help=1';
+      var HELP_THANK_YOU_URL = '/lesson-fit/thank-you/?help=1';
       var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
-      var ATTRIBUTION_STORAGE_KEY = 'csmSmartIntroAttribution';
-      var STATE_STORAGE_KEY = 'csmSmartIntroState';
+      var ATTRIBUTION_STORAGE_KEY = 'csmLessonFitAttribution';
+      var STATE_STORAGE_KEY = 'csmLessonFitState';
       var PIANO_LOCATION_URLS = {
         'CSM Montgomery': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-montgomery',
         'CSM Mason': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-mason',
@@ -360,6 +362,7 @@ import Base from '../../layouts/Base.astro';
       var recommendedOpusUrl = document.getElementById('recommendedOpusUrl');
       var recommendationSummary = document.getElementById('recommendationSummary');
       var attributionPayload = document.getElementById('attributionPayload');
+      var staffEmailSummary = document.getElementById('staffEmailSummary');
       var recommendationTitle = document.getElementById('recommendationTitle');
       var recommendationBody = document.getElementById('recommendationBody');
       var recommendationList = document.getElementById('recommendationList');
@@ -501,6 +504,39 @@ import Base from '../../layouts/Base.astro';
         attributionPayload.value = JSON.stringify(attribution);
       }
 
+      function updateStaffEmailSummary(recommendation){
+        var attribution = getAttribution();
+        var lines = [
+          'Lesson Fit Help Request',
+          '',
+          'Name: ' + (readFormValue('parent_name') || 'Not provided'),
+          'Email: ' + (readFormValue('email') || 'Not provided'),
+          'Phone: ' + (readFormValue('phone') || 'Not provided'),
+          '',
+          'Instrument: ' + (readFormValue('instrument_interest') || 'Not selected'),
+          'Student: ' + (readFormValue('student_age') || 'Not selected'),
+          'Location: ' + (readFormValue('preferred_location') || 'Not selected'),
+          'Next step: ' + (readFormValue('next_step_preference') || 'Not selected'),
+          'Help with: ' + (readFormValue('help_reason') || 'Not selected'),
+          '',
+          'Notes: ' + (readFormValue('student_context') || 'None provided'),
+          '',
+          'Routing outcome: ' + recommendation.outcome,
+          'Recommended URL: ' + recommendation.url,
+          '',
+          'Attribution',
+          'utm_source: ' + (attribution.utm_source || ''),
+          'utm_medium: ' + (attribution.utm_medium || ''),
+          'utm_campaign: ' + (attribution.utm_campaign || ''),
+          'utm_content: ' + (attribution.utm_content || ''),
+          'utm_term: ' + (attribution.utm_term || ''),
+          'gclid: ' + (attribution.gclid || ''),
+          'landing_path: ' + (attribution.landing_path || ''),
+          'referrer: ' + (attribution.referrer || '')
+        ];
+        staffEmailSummary.value = lines.join('\n');
+      }
+
       function updateRecommendation(){
         var recommendation = getRecommendation();
         recommendationTitle.textContent = recommendation.title;
@@ -529,6 +565,7 @@ import Base from '../../layouts/Base.astro';
         recommendationList.innerHTML = items.map(function(item){
           return '<dt>' + item[0] + '</dt><dd>' + item[1] + '</dd>';
         }).join('');
+        updateStaffEmailSummary(recommendation);
       }
 
       function saveState(){

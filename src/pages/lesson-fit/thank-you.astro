@@ -3,8 +3,8 @@ import Base from '../../layouts/Base.astro';
 ---
 <Base
   title="Intro Lesson Next Step | Cincinnati School of Music"
-  description="Continue from the Smart Intro Intake to book an Intro Lesson with Cincinnati School of Music."
-  canonicalPath="/smart-intro-intake/thank-you/"
+  description="Continue from Lesson Fit to book an Intro Lesson with Cincinnati School of Music."
+  canonicalPath="/lesson-fit/thank-you/"
   noindex={true}
 >
   <section class="page-shell">
@@ -43,7 +43,7 @@ import Base from '../../layouts/Base.astro';
       var params = new URLSearchParams(window.location.search);
       var isHelp = params.get('help') === '1';
       try {
-        var stored = JSON.parse(window.localStorage.getItem('csmSmartIntroAttribution') || '{}') || {};
+        var stored = JSON.parse(window.localStorage.getItem('csmLessonFitAttribution') || '{}') || {};
         if(link){
           var url = new URL(link.href);
           keys.forEach(function(key){
