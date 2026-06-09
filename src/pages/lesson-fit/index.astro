@@ -41,21 +41,7 @@ import Base from '../../layouts/Base.astro';
         >
           <input type="hidden" name="form-name" value="lesson-fit-request" />
           <input type="hidden" name="subject" data-remove-prefix value="New Lesson Fit Help Request" />
-          <input type="hidden" name="routing_outcome" id="routingOutcome" />
-          <input type="hidden" name="recommended_opus_url" id="recommendedOpusUrl" />
-          <input type="hidden" name="recommendation_summary" id="recommendationSummary" />
-          <input type="hidden" name="attribution_payload" id="attributionPayload" />
-          <textarea name="staff_email_summary" id="staffEmailSummary" hidden></textarea>
-          <input type="hidden" name="utm_source" data-attribution-field="utm_source" />
-          <input type="hidden" name="utm_medium" data-attribution-field="utm_medium" />
-          <input type="hidden" name="utm_campaign" data-attribution-field="utm_campaign" />
-          <input type="hidden" name="utm_content" data-attribution-field="utm_content" />
-          <input type="hidden" name="utm_term" data-attribution-field="utm_term" />
-          <input type="hidden" name="gclid" data-attribution-field="gclid" />
-          <input type="hidden" name="gbraid" data-attribution-field="gbraid" />
-          <input type="hidden" name="wbraid" data-attribution-field="wbraid" />
-          <input type="hidden" name="landing_path" data-attribution-field="landing_path" />
-          <input type="hidden" name="referrer" data-attribution-field="referrer" />
+          <textarea name="office_summary" id="officeSummary" hidden></textarea>
           <p class="hidden-field">
             <label>Do not fill this out if you are human: <input name="bot-field" /></label>
           </p>
@@ -359,11 +345,7 @@ import Base from '../../layouts/Base.astro';
       var helpActions = document.getElementById('helpActions');
       var contactGrid = document.getElementById('contactGrid');
       var handoffNoteText = document.getElementById('handoffNoteText');
-      var routingOutcome = document.getElementById('routingOutcome');
-      var recommendedOpusUrl = document.getElementById('recommendedOpusUrl');
-      var recommendationSummary = document.getElementById('recommendationSummary');
-      var attributionPayload = document.getElementById('attributionPayload');
-      var staffEmailSummary = document.getElementById('staffEmailSummary');
+      var officeSummary = document.getElementById('officeSummary');
       var recommendationTitle = document.getElementById('recommendationTitle');
       var recommendationBody = document.getElementById('recommendationBody');
       var recommendationList = document.getElementById('recommendationList');
@@ -497,15 +479,10 @@ import Base from '../../layouts/Base.astro';
       }
 
       function updateAttributionFields(){
-        var attribution = getAttribution();
-        form.querySelectorAll('[data-attribution-field]').forEach(function(field){
-          var key = field.getAttribute('data-attribution-field');
-          field.value = attribution[key] || '';
-        });
-        attributionPayload.value = JSON.stringify(attribution);
+        updateOfficeSummary(getRecommendation());
       }
 
-      function updateStaffEmailSummary(recommendation){
+      function updateOfficeSummary(recommendation){
         var attribution = getAttribution();
         var lines = [
           'Lesson Fit Help Request',
@@ -535,16 +512,13 @@ import Base from '../../layouts/Base.astro';
           'landing_path: ' + (attribution.landing_path || ''),
           'referrer: ' + (attribution.referrer || '')
         ];
-        staffEmailSummary.value = lines.join('\n');
+        officeSummary.value = lines.join('\n');
       }
 
       function updateRecommendation(){
         var recommendation = getRecommendation();
         recommendationTitle.textContent = recommendation.title;
         recommendationBody.textContent = recommendation.body;
-        routingOutcome.value = recommendation.outcome;
-        recommendedOpusUrl.value = recommendation.url;
-        recommendationSummary.value = recommendation.summary;
         helpDetails.classList.toggle('is-hidden', recommendation.outcome !== 'staff-help');
         helpActions.classList.toggle('is-visible', recommendation.outcome === 'staff-help');
         contactGrid.classList.toggle('is-hidden', recommendation.outcome !== 'staff-help');
@@ -566,13 +540,13 @@ import Base from '../../layouts/Base.astro';
         recommendationList.innerHTML = items.map(function(item){
           return '<dt>' + item[0] + '</dt><dd>' + item[1] + '</dd>';
         }).join('');
-        updateStaffEmailSummary(recommendation);
+        updateOfficeSummary(recommendation);
       }
 
       function saveState(){
         var data = {};
         Array.prototype.slice.call(form.elements).forEach(function(field){
-          if(!field.name || field.name === 'form-name' || field.name === 'bot-field') return;
+          if(!field.name || field.name === 'form-name' || field.name === 'bot-field' || field.name === 'subject' || field.name === 'office_summary') return;
           if((field.type === 'radio' || field.type === 'checkbox') && !field.checked) return;
           data[field.name] = field.value;
         });
@@ -663,12 +637,23 @@ import Base from '../../layouts/Base.astro';
 
       function submitToNetlify(){
         updateAttributionFields();
-        updateRecommendation();
-        var formData = new FormData(form);
+        var formData = new URLSearchParams();
+        formData.set('form-name', 'lesson-fit-request');
+        formData.set('subject', 'New Lesson Fit Help Request');
+        formData.set('office_summary', readFormValue('office_summary'));
+        formData.set('parent_name', readFormValue('parent_name'));
+        formData.set('email', readFormValue('email'));
+        formData.set('phone', readFormValue('phone'));
+        formData.set('instrument_interest', readFormValue('instrument_interest'));
+        formData.set('student_age', readFormValue('student_age'));
+        formData.set('preferred_location', readFormValue('preferred_location'));
+        formData.set('next_step_preference', readFormValue('next_step_preference'));
+        formData.set('help_reason', readFormValue('help_reason'));
+        formData.set('student_context', readFormValue('student_context'));
         return fetch(form.action, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams(formData).toString()
+          body: formData.toString()
         });
       }
 
