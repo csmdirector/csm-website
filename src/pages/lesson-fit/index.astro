@@ -41,7 +41,10 @@ import Base from '../../layouts/Base.astro';
         >
           <input type="hidden" name="form-name" value="lesson-fit-request" />
           <input type="hidden" name="subject" data-remove-prefix value="New Lesson Fit Help Request" />
-          <textarea name="office_summary" id="officeSummary" hidden></textarea>
+          <textarea name="contact_summary" id="contactSummary" hidden></textarea>
+          <textarea name="lesson_request" id="lessonRequestSummary" hidden></textarea>
+          <textarea name="follow_up_notes" id="followUpNotes" hidden></textarea>
+          <textarea name="tracking_summary" id="trackingSummary" hidden></textarea>
           <p class="hidden-field">
             <label>Do not fill this out if you are human: <input name="bot-field" /></label>
           </p>
@@ -345,7 +348,10 @@ import Base from '../../layouts/Base.astro';
       var helpActions = document.getElementById('helpActions');
       var contactGrid = document.getElementById('contactGrid');
       var handoffNoteText = document.getElementById('handoffNoteText');
-      var officeSummary = document.getElementById('officeSummary');
+      var contactSummary = document.getElementById('contactSummary');
+      var lessonRequestSummary = document.getElementById('lessonRequestSummary');
+      var followUpNotes = document.getElementById('followUpNotes');
+      var trackingSummary = document.getElementById('trackingSummary');
       var recommendationTitle = document.getElementById('recommendationTitle');
       var recommendationBody = document.getElementById('recommendationBody');
       var recommendationList = document.getElementById('recommendationList');
@@ -479,40 +485,38 @@ import Base from '../../layouts/Base.astro';
       }
 
       function updateAttributionFields(){
-        updateOfficeSummary(getRecommendation());
+        updateNotificationFields(getRecommendation());
       }
 
-      function updateOfficeSummary(recommendation){
+      function updateNotificationFields(recommendation){
         var attribution = getAttribution();
-        var lines = [
-          'Lesson Fit Help Request',
-          '',
+        contactSummary.value = [
           'Name: ' + (readFormValue('parent_name') || 'Not provided'),
-          'Email: ' + (readFormValue('email') || 'Not provided'),
-          'Phone: ' + (readFormValue('phone') || 'Not provided'),
-          '',
+          'Phone: ' + (readFormValue('phone') || 'Not provided')
+        ].join('\n');
+
+        lessonRequestSummary.value = [
           'Instrument: ' + (readFormValue('instrument_interest') || 'Not selected'),
           'Student: ' + (readFormValue('student_age') || 'Not selected'),
           'Location: ' + (readFormValue('preferred_location') || 'Not selected'),
           'Next step: ' + (readFormValue('next_step_preference') || 'Not selected'),
+          'Routing: ' + (recommendation.outcome === 'staff-help' ? 'Staff follow-up' : 'Self-booking')
+        ].join('\n');
+
+        followUpNotes.value = [
           'Help with: ' + (readFormValue('help_reason') || 'Not selected'),
-          '',
-          'Notes: ' + (readFormValue('student_context') || 'None provided'),
-          '',
-          'Routing outcome: ' + recommendation.outcome,
-          'Recommended URL: ' + recommendation.url,
-          '',
-          'Attribution',
-          'utm_source: ' + (attribution.utm_source || ''),
-          'utm_medium: ' + (attribution.utm_medium || ''),
-          'utm_campaign: ' + (attribution.utm_campaign || ''),
-          'utm_content: ' + (attribution.utm_content || ''),
-          'utm_term: ' + (attribution.utm_term || ''),
-          'gclid: ' + (attribution.gclid || ''),
-          'landing_path: ' + (attribution.landing_path || ''),
-          'referrer: ' + (attribution.referrer || '')
-        ];
-        officeSummary.value = lines.join('\n');
+          'Notes: ' + (readFormValue('student_context') || 'None provided')
+        ].join('\n');
+
+        trackingSummary.value = [
+          'Source: ' + [attribution.utm_source, attribution.utm_medium].filter(Boolean).join(' / '),
+          'Campaign: ' + (attribution.utm_campaign || ''),
+          'Content: ' + (attribution.utm_content || ''),
+          'Search term: ' + (attribution.utm_term || ''),
+          'Click ID: ' + (attribution.gclid || attribution.gbraid || attribution.wbraid || ''),
+          'Landing page: ' + (attribution.landing_path || ''),
+          'Referrer: ' + (attribution.referrer || '')
+        ].join('\n');
       }
 
       function updateRecommendation(){
@@ -540,13 +544,13 @@ import Base from '../../layouts/Base.astro';
         recommendationList.innerHTML = items.map(function(item){
           return '<dt>' + item[0] + '</dt><dd>' + item[1] + '</dd>';
         }).join('');
-        updateOfficeSummary(recommendation);
+        updateNotificationFields(recommendation);
       }
 
       function saveState(){
         var data = {};
         Array.prototype.slice.call(form.elements).forEach(function(field){
-          if(!field.name || field.name === 'form-name' || field.name === 'bot-field' || field.name === 'subject' || field.name === 'office_summary') return;
+          if(!field.name || field.name === 'form-name' || field.name === 'bot-field' || field.name === 'subject' || field.name === 'contact_summary' || field.name === 'lesson_request' || field.name === 'follow_up_notes' || field.name === 'tracking_summary') return;
           if((field.type === 'radio' || field.type === 'checkbox') && !field.checked) return;
           data[field.name] = field.value;
         });
@@ -640,16 +644,11 @@ import Base from '../../layouts/Base.astro';
         var formData = new URLSearchParams();
         formData.set('form-name', 'lesson-fit-request');
         formData.set('subject', 'New Lesson Fit Help Request');
-        formData.set('office_summary', readFormValue('office_summary'));
-        formData.set('parent_name', readFormValue('parent_name'));
         formData.set('email', readFormValue('email'));
-        formData.set('phone', readFormValue('phone'));
-        formData.set('instrument_interest', readFormValue('instrument_interest'));
-        formData.set('student_age', readFormValue('student_age'));
-        formData.set('preferred_location', readFormValue('preferred_location'));
-        formData.set('next_step_preference', readFormValue('next_step_preference'));
-        formData.set('help_reason', readFormValue('help_reason'));
-        formData.set('student_context', readFormValue('student_context'));
+        formData.set('contact_summary', readFormValue('contact_summary'));
+        formData.set('lesson_request', readFormValue('lesson_request'));
+        formData.set('follow_up_notes', readFormValue('follow_up_notes'));
+        formData.set('tracking_summary', readFormValue('tracking_summary'));
         return fetch(form.action, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
