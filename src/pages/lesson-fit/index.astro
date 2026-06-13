@@ -321,6 +321,7 @@ import Base from '../../layouts/Base.astro';
       var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
       var ATTRIBUTION_STORAGE_KEY = 'csmLessonFitAttribution';
       var STATE_STORAGE_KEY = 'csmLessonFitState';
+      var HELP_SUBMIT_EVENT_SENT_KEY = 'csmLessonFitHelpSubmitEventSent';
       var PIANO_LOCATION_URLS = {
         'CSM Montgomery': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-montgomery',
         'CSM Mason': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-mason',
@@ -409,6 +410,66 @@ import Base from '../../layouts/Base.astro';
           outbound.searchParams.set('referrer', attribution.referrer);
         }
         return outbound.toString();
+      }
+
+      function getTrackingPayload(recommendation){
+        var attribution = getAttribution();
+        var clickId = attribution.gclid || attribution.gbraid || attribution.wbraid || '';
+        return {
+          routing_outcome: recommendation.outcome,
+          recommended_url: recommendation.url,
+          instrument: readFormValue('instrument_interest') || '',
+          student_age: readFormValue('student_age') || '',
+          preferred_location: readFormValue('preferred_location') || '',
+          next_step_preference: readFormValue('next_step_preference') || '',
+          help_reason: readFormValue('help_reason') || '',
+          has_student_context: readFormValue('student_context') ? 'yes' : 'no',
+          utm_source: attribution.utm_source || '',
+          utm_medium: attribution.utm_medium || '',
+          utm_campaign: attribution.utm_campaign || '',
+          utm_content: attribution.utm_content || '',
+          utm_term: attribution.utm_term || '',
+          gclid: attribution.gclid || '',
+          gbraid: attribution.gbraid || '',
+          wbraid: attribution.wbraid || '',
+          click_id: clickId,
+          landing_path: attribution.landing_path || '',
+          referrer: attribution.referrer || ''
+        };
+      }
+
+      function pushTrackingEvent(eventName, recommendation, done){
+        var completed = false;
+        var timeout = window.setTimeout(function(){
+          if(completed) return;
+          completed = true;
+          if(done) done(false);
+        }, 1200);
+        var payload = getTrackingPayload(recommendation);
+        payload.event = eventName;
+        payload.event_callback = function(){
+          if(completed) return;
+          completed = true;
+          window.clearTimeout(timeout);
+          if(done) done(true);
+        };
+        payload.event_timeout = 1000;
+        if(window.dataLayer && typeof window.dataLayer.push === 'function'){
+          window.dataLayer.push(payload);
+        } else {
+          window.clearTimeout(timeout);
+          if(done) done(false);
+        }
+      }
+
+      function navigateAfterTracking(url, eventName, recommendation){
+        var didNavigate = false;
+        function finish(){
+          if(didNavigate) return;
+          didNavigate = true;
+          window.location.href = url;
+        }
+        pushTrackingEvent(eventName, recommendation, finish);
       }
 
       function readFormValue(name){
@@ -653,6 +714,11 @@ import Base from '../../layouts/Base.astro';
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: formData.toString()
+        }).then(function(response){
+          if(!response.ok){
+            throw new Error('Lesson Fit form submission failed');
+          }
+          return response;
         });
       }
 
@@ -686,17 +752,29 @@ import Base from '../../layouts/Base.astro';
           try {
             window.localStorage.removeItem(STATE_STORAGE_KEY);
           } catch (error) {}
-          window.location.href = recommendation.url;
+          navigateAfterTracking(recommendation.url, 'lesson_fit_self_booking_handoff', recommendation);
           return;
         }
         submitButton.textContent = 'Sending Request...';
         submitToNetlify()
-          .catch(function(){})
-          .finally(function(){
+          .then(function(){
             try {
               window.localStorage.removeItem(STATE_STORAGE_KEY);
+              window.sessionStorage.removeItem(HELP_SUBMIT_EVENT_SENT_KEY);
             } catch (error) {}
-            window.location.href = recommendation.url;
+            pushTrackingEvent('lesson_fit_help_submit', recommendation, function(sent){
+              try {
+                if(sent){
+                  window.sessionStorage.setItem(HELP_SUBMIT_EVENT_SENT_KEY, '1');
+                }
+              } catch (error) {}
+              window.location.href = recommendation.url;
+            });
+          })
+          .catch(function(){
+            submitButton.disabled = false;
+            submitButton.textContent = 'Send Help Request';
+            formError.textContent = 'Something went wrong. Please try again or contact CSM directly.';
           });
       });
 
