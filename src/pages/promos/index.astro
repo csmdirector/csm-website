@@ -58,7 +58,15 @@ const locations = [
         <h1>{promo.headline}</h1>
         <p class="promo-lead">{promo.supportingMessage}</p>
         <figure class="hero-photo">
-          <img src="/images/piano_lesson.JPG" alt="A Cincinnati School of Music teacher working with a young piano student" />
+          <img
+            src="/images/promo-piano-lesson.jpg"
+            width="720"
+            height="552"
+            alt="A Cincinnati School of Music teacher working with a young piano student"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
         </figure>
         <div class="offer-list" aria-label="Offer includes">
           {promo.offerBullets.map((bullet) => (
