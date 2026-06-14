@@ -60,8 +60,10 @@ const locations = [
         <figure class="hero-photo">
           <img
             src="/images/promo-piano-lesson.jpg"
-            width="720"
-            height="552"
+            srcset="/images/promo-piano-lesson.jpg 720w, /images/piano_lesson.JPG 1204w"
+            sizes="(min-width: 1020px) 60vw, 100vw"
+            width="1204"
+            height="924"
             alt="A Cincinnati School of Music teacher working with a young piano student"
             loading="eager"
             decoding="async"
@@ -193,27 +195,30 @@ const locations = [
   </section>
 
   <style>
-    .promo-page{background:var(--white)}
+    .promo-page{background:var(--white);--promo-teal:#2f8f9d}
     .promo-hero{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
-    .promo-copy{background:var(--charcoal);color:var(--white);padding:56px 24px 42px}
+    .promo-copy{background:var(--charcoal);color:var(--white);padding:58px 24px 46px;position:relative;overflow:hidden}
+    .promo-copy::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(37,37,37,.88),rgba(37,37,37,.74) 48%,rgba(37,37,37,.58));z-index:1}
+    .promo-copy>*:not(.hero-photo){position:relative;z-index:2}
     .promo-copy .section-label{color:var(--slate-lt)}
-    .promo-copy h1{color:var(--white);font-size:clamp(2.1rem,8vw,4.3rem);max-width:760px;margin-bottom:18px}
-    .promo-lead{color:rgba(255,255,255,.74);font-size:1.02rem;max-width:680px}
-    .hero-photo{margin:30px 0 0;max-width:560px;height:230px;overflow:hidden;background:rgba(255,255,255,.08)}
+    .promo-copy h1{color:var(--white);font-size:clamp(2.25rem,6vw,3.75rem);max-width:720px;margin-bottom:20px;letter-spacing:0}
+    .promo-lead{color:rgba(255,255,255,.82);font-size:1.06rem;max-width:620px}
+    .hero-photo{position:absolute;inset:0;margin:0;max-width:none;height:auto;overflow:hidden;background:var(--charcoal);z-index:0}
     .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center 44%;display:block}
-    .offer-list{display:grid;gap:10px;margin:30px 0 18px;max-width:640px}
-    .offer-item{display:flex;justify-content:space-between;gap:16px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);padding:15px 16px}
+    .offer-list{display:grid;gap:8px;margin:32px 0 18px;max-width:560px}
+    .offer-item{display:flex;justify-content:space-between;gap:16px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);padding:14px 16px;backdrop-filter:blur(6px)}
     .offer-item span{font-size:.94rem;font-weight:400;line-height:1.35}
     .offer-item strong{font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--slate-lt);white-space:nowrap;align-self:center}
     .deadline{color:rgba(255,255,255,.82);font-size:.72rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
-    .promo-form-wrap{padding:28px 24px 46px;background:var(--offwhite)}
-    form,.inactive-promo{background:var(--white);border:1px solid var(--offwb);padding:26px 22px}
+    .promo-form-wrap{padding:28px 24px 46px;background:#f6f5f3}
+    form,.inactive-promo{background:var(--white);border:1px solid var(--offwb);padding:26px 22px;box-shadow:0 18px 42px rgba(61,61,61,.08)}
     .hidden-field,[hidden]{display:none !important}
-    .form-heading{margin-bottom:24px}
-    .form-heading h2{font-size:clamp(1.55rem,6vw,2.15rem);margin-bottom:8px}
+    .form-heading{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--offwb)}
+    .form-heading .section-label,.field-label{color:var(--promo-teal)}
+    .form-heading h2{font-size:clamp(1.55rem,5vw,2.1rem);margin-bottom:8px;letter-spacing:0}
     .form-heading p{font-size:.9rem}
     .form-grid{display:grid;grid-template-columns:1fr;gap:18px}
-    .field-label{display:block;font-size:.64rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--slate)}
+    .field-label{display:block;font-size:.64rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase}
     .field-label em{font-style:normal;color:var(--accent)}
     input,select,textarea{display:block;width:100%;margin-top:8px;border:1px solid var(--offwb);background:var(--offwhite);color:var(--charcoal);font:inherit;font-size:.96rem;font-weight:300;letter-spacing:0;text-transform:none;padding:13px 14px;border-radius:0}
     textarea{resize:vertical;min-height:100px}
@@ -226,8 +231,7 @@ const locations = [
     .trust-band p{font-size:.95rem}
     .inactive-promo p{margin-bottom:24px}
     @media(min-width:720px){
-      .promo-copy{padding:72px 48px 54px}
-      .hero-photo{height:290px}
+      .promo-copy{padding:76px 48px 58px}
       .promo-form-wrap{padding:42px 48px 64px}
       form,.inactive-promo{padding:34px}
       .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -237,7 +241,6 @@ const locations = [
     @media(min-width:1020px){
       .promo-hero{grid-template-columns:minmax(0,1.05fr) minmax(420px,.72fr);align-items:stretch;min-height:calc(100vh - 68px)}
       .promo-copy{display:flex;flex-direction:column;justify-content:center;padding:84px 64px}
-      .hero-photo{height:260px}
       .promo-form-wrap{display:flex;align-items:center;padding:54px 48px;background:var(--offwhite)}
       .promo-form-wrap form,.inactive-promo{width:100%;max-width:560px;margin:0 auto}
       .trust-band{padding:52px 48px 70px}
