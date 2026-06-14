@@ -1,0 +1,390 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const promo = {
+  active: true,
+  name: 'July Start Special',
+  savingsAmount: '$142',
+  deadline: '7/14/26',
+  headline: 'Save $142 when you start music lessons this summer.',
+  supportingMessage:
+    'Beat the August rush for lesson times and get help finding the right teacher, location, and starting point.',
+  ctaLabel: 'Claim July Start Special',
+  offerBullets: [
+    { label: 'Free Registration', value: '$50 value' },
+    { label: 'Free Intro Lesson', value: '$42 value' },
+    { label: '$50 Off First Full Month', value: 'when you enroll' }
+  ],
+  terms:
+    'July Start Special includes free registration, a free intro lesson, and $50 off the first full month after enrollment. Offer valid through 7/14/26. New students only. One offer per student. Cannot be combined with any other offer and is not redeemable for cash. Subject to teacher, instrument, and location availability.'
+};
+
+const lessons = [
+  'Piano',
+  'Voice',
+  'Guitar',
+  'Ukulele',
+  'Drums',
+  'Violin',
+  'Viola',
+  'Cello',
+  'Flute',
+  'Clarinet',
+  'Saxophone',
+  'Trumpet',
+  'Music Discovery',
+  'Not sure / help me choose'
+];
+
+const locations = [
+  'Montgomery',
+  'Mason',
+  'Anderson',
+  'Maineville',
+  'Middletown',
+  'Not sure / flexible'
+];
+---
+<Base
+  title={`${promo.name} | Cincinnati School of Music`}
+  description="Claim a limited-time Cincinnati School of Music summer lesson offer and get help finding the right teacher, location, and starting point."
+  canonicalPath="/promos/"
+  noindex={true}
+>
+  <section class="promo-page" data-promo-active={promo.active ? 'true' : 'false'}>
+    <div class="promo-hero">
+      <div class="promo-copy">
+        <span class="section-label">{promo.name}</span>
+        <h1>{promo.headline}</h1>
+        <p class="promo-lead">{promo.supportingMessage}</p>
+        <figure class="hero-photo">
+          <img src="/images/piano_lesson.JPG" alt="A Cincinnati School of Music teacher working with a young piano student" />
+        </figure>
+        <div class="offer-list" aria-label="Offer includes">
+          {promo.offerBullets.map((bullet) => (
+            <div class="offer-item">
+              <span>{bullet.label}</span>
+              <strong>{bullet.value}</strong>
+            </div>
+          ))}
+        </div>
+        <p class="deadline">Offer valid through {promo.deadline}</p>
+      </div>
+
+      <div class="promo-form-wrap" id="claim">
+        {promo.active ? (
+          <form
+            name="promo-claim"
+            method="POST"
+            action="/promos/thank-you/"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            id="promoClaimForm"
+          >
+            <input type="hidden" name="form-name" value="promo-claim" />
+            <input type="hidden" name="subject" data-remove-prefix value={`New ${promo.name} Claim`} />
+            <input type="hidden" name="promo_name" value={promo.name} />
+            <input type="hidden" name="promo_deadline" value={promo.deadline} />
+            <input type="hidden" name="promo_terms" value={promo.terms} />
+            <input type="hidden" name="utm_source" id="utmSource" />
+            <input type="hidden" name="utm_medium" id="utmMedium" />
+            <input type="hidden" name="utm_campaign" id="utmCampaign" />
+            <input type="hidden" name="utm_content" id="utmContent" />
+            <input type="hidden" name="utm_term" id="utmTerm" />
+            <input type="hidden" name="fbclid" id="fbclid" />
+            <input type="hidden" name="landing_path" id="landingPath" />
+            <input type="hidden" name="submitted_at" id="submittedAt" />
+            <textarea name="promo_summary" id="promoSummary" hidden></textarea>
+            <textarea name="family_contact_summary" id="familyContactSummary" hidden></textarea>
+            <textarea name="student_lesson_summary" id="studentLessonSummary" hidden></textarea>
+            <textarea name="schedule_notes_summary" id="scheduleNotesSummary" hidden></textarea>
+            <textarea name="attribution_summary" id="attributionSummary" hidden></textarea>
+            <p class="hidden-field">
+              <label>Do not fill this out if you are human: <input name="bot-field" /></label>
+            </p>
+
+            <div class="form-heading">
+              <span class="section-label">Claim Offer</span>
+              <h2>{promo.ctaLabel}</h2>
+              <p>Share a few details and the CSM office will help with the best next step.</p>
+            </div>
+
+            <div class="form-grid">
+              <label class="field-label">
+                Parent/guardian name <em>*</em>
+                <input type="text" name="parent_guardian_name" autocomplete="name" required />
+              </label>
+              <label class="field-label">
+                Phone <em>*</em>
+                <input type="tel" name="phone" autocomplete="tel" required />
+              </label>
+              <label class="field-label">
+                Email <em>*</em>
+                <input type="email" name="email" autocomplete="email" required />
+              </label>
+              <label class="field-label">
+                Student name <em>*</em>
+                <input type="text" name="student_name" autocomplete="off" required />
+              </label>
+              <label class="field-label">
+                Student age <em>*</em>
+                <input type="text" name="student_age" inputmode="numeric" autocomplete="off" required />
+              </label>
+              <label class="field-label">
+                Interested lesson <em>*</em>
+                <select name="interested_lesson" required>
+                  <option value="">Choose one</option>
+                  {lessons.map((lesson) => <option value={lesson}>{lesson}</option>)}
+                </select>
+              </label>
+              <label class="field-label">
+                Preferred location <em>*</em>
+                <select name="preferred_location" required>
+                  <option value="">Choose one</option>
+                  {locations.map((location) => <option value={location}>{location}</option>)}
+                </select>
+              </label>
+              <label class="field-label field-wide">
+                Best days/times for lessons
+                <textarea name="best_days_times" rows="3" placeholder="Example: Mondays after 4, Saturday mornings, flexible"></textarea>
+              </label>
+              <label class="field-label field-wide">
+                Notes/questions
+                <textarea name="notes_questions" rows="4" placeholder="Anything helpful about goals, experience level, scheduling, or teacher fit"></textarea>
+              </label>
+            </div>
+
+            <p class="privacy-note">
+              Your request goes to the Cincinnati School of Music office. No payment is collected here.
+            </p>
+            <p class="promo-terms">{promo.terms}</p>
+            <button class="btn-a promo-submit" type="submit">{promo.ctaLabel}</button>
+          </form>
+        ) : (
+          <div class="inactive-promo" role="status">
+            <span class="section-label">Offer Closed</span>
+            <h2>This promo is no longer active.</h2>
+            <p>Contact Cincinnati School of Music and the office can help with current lesson options.</p>
+            <a class="btn-c" href="/request-info">Request Info</a>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <div class="trust-band">
+      <div>
+        <span class="section-label">Cincinnati-Area Lessons</span>
+        <p>
+          Cincinnati School of Music offers private music lessons at five Cincinnati-area locations:
+          Montgomery, Mason, Anderson, Maineville, and Middletown. Lessons are available in piano,
+          voice, guitar, drums, violin, viola, cello, ukulele, flute, clarinet, saxophone, trumpet,
+          and Music Discovery for young beginners.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .promo-page{background:var(--white)}
+    .promo-hero{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+    .promo-copy{background:var(--charcoal);color:var(--white);padding:56px 24px 42px}
+    .promo-copy .section-label{color:var(--slate-lt)}
+    .promo-copy h1{color:var(--white);font-size:clamp(2.1rem,8vw,4.3rem);max-width:760px;margin-bottom:18px}
+    .promo-lead{color:rgba(255,255,255,.74);font-size:1.02rem;max-width:680px}
+    .hero-photo{margin:30px 0 0;max-width:560px;height:230px;overflow:hidden;background:rgba(255,255,255,.08)}
+    .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center 44%;display:block}
+    .offer-list{display:grid;gap:10px;margin:30px 0 18px;max-width:640px}
+    .offer-item{display:flex;justify-content:space-between;gap:16px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);padding:15px 16px}
+    .offer-item span{font-size:.94rem;font-weight:400;line-height:1.35}
+    .offer-item strong{font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--slate-lt);white-space:nowrap;align-self:center}
+    .deadline{color:rgba(255,255,255,.82);font-size:.72rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
+    .promo-form-wrap{padding:28px 24px 46px;background:var(--offwhite)}
+    form,.inactive-promo{background:var(--white);border:1px solid var(--offwb);padding:26px 22px}
+    .hidden-field,[hidden]{display:none !important}
+    .form-heading{margin-bottom:24px}
+    .form-heading h2{font-size:clamp(1.55rem,6vw,2.15rem);margin-bottom:8px}
+    .form-heading p{font-size:.9rem}
+    .form-grid{display:grid;grid-template-columns:1fr;gap:18px}
+    .field-label{display:block;font-size:.64rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--slate)}
+    .field-label em{font-style:normal;color:var(--accent)}
+    input,select,textarea{display:block;width:100%;margin-top:8px;border:1px solid var(--offwb);background:var(--offwhite);color:var(--charcoal);font:inherit;font-size:.96rem;font-weight:300;letter-spacing:0;text-transform:none;padding:13px 14px;border-radius:0}
+    textarea{resize:vertical;min-height:100px}
+    input:focus,select:focus,textarea:focus{outline:2px solid rgba(60,181,198,.25);border-color:var(--slate);background:var(--white)}
+    .privacy-note{font-size:.78rem;margin:20px 0;color:var(--mid)}
+    .promo-terms{font-size:.72rem;line-height:1.65;color:var(--light);margin:-8px 0 22px}
+    .promo-submit{width:100%;border:0;cursor:pointer;text-align:center}
+    .trust-band{background:var(--white);border-top:1px solid var(--offwb);padding:42px 24px 58px}
+    .trust-band>div{max-width:920px;margin:0 auto}
+    .trust-band p{font-size:.95rem}
+    .inactive-promo p{margin-bottom:24px}
+    @media(min-width:720px){
+      .promo-copy{padding:72px 48px 54px}
+      .hero-photo{height:290px}
+      .promo-form-wrap{padding:42px 48px 64px}
+      form,.inactive-promo{padding:34px}
+      .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .field-wide{grid-column:1 / -1}
+      .promo-submit{width:auto}
+    }
+    @media(min-width:1020px){
+      .promo-hero{grid-template-columns:minmax(0,1.05fr) minmax(420px,.72fr);align-items:stretch;min-height:calc(100vh - 68px)}
+      .promo-copy{display:flex;flex-direction:column;justify-content:center;padding:84px 64px}
+      .hero-photo{height:260px}
+      .promo-form-wrap{display:flex;align-items:center;padding:54px 48px;background:var(--offwhite)}
+      .promo-form-wrap form,.inactive-promo{width:100%;max-width:560px;margin:0 auto}
+      .trust-band{padding:52px 48px 70px}
+    }
+  </style>
+
+  <script define:vars={{ promoName: promo.name, promoDeadline: promo.deadline, promoTerms: promo.terms, offerSavings: promo.savingsAmount }}>
+    (function(){
+      var form = document.getElementById('promoClaimForm');
+      if(!form) return;
+
+      var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid'];
+      var STORAGE_KEY = 'csmPromoAttribution';
+      var THANK_YOU_PAYLOAD_KEY = 'csmPromoClaimPayload';
+
+      function getStoredAttribution(){
+        try {
+          return JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '{}') || {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function setStoredAttribution(value){
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+        } catch (error) {}
+      }
+
+      function hasNewAttribution(params){
+        return ATTRIBUTION_KEYS.some(function(key){
+          var value = params.get(key);
+          return Boolean(value && value.trim());
+        });
+      }
+
+      function captureAttribution(){
+        var params = new URLSearchParams(window.location.search);
+        var stored = getStoredAttribution();
+        var hasCampaignOnUrl = hasNewAttribution(params);
+
+        if(hasCampaignOnUrl || !stored.landing_path){
+          ATTRIBUTION_KEYS.forEach(function(key){
+            var value = params.get(key);
+            stored[key] = value && value.trim() ? value.trim() : '';
+          });
+          stored.landing_path = window.location.pathname + window.location.search;
+        } else {
+          ATTRIBUTION_KEYS.forEach(function(key){
+            var value = params.get(key);
+            if(value && value.trim()){
+              stored[key] = value.trim();
+            }
+          });
+        }
+
+        setStoredAttribution(stored);
+        return stored;
+      }
+
+      function fieldValue(name){
+        var field = form.elements[name];
+        return field ? String(field.value || '').trim() : '';
+      }
+
+      function setValue(id, value){
+        var field = document.getElementById(id);
+        if(field) field.value = value || '';
+      }
+
+      function updateAttributionFields(){
+        var attribution = captureAttribution();
+        setValue('utmSource', attribution.utm_source);
+        setValue('utmMedium', attribution.utm_medium);
+        setValue('utmCampaign', attribution.utm_campaign);
+        setValue('utmContent', attribution.utm_content);
+        setValue('utmTerm', attribution.utm_term);
+        setValue('fbclid', attribution.fbclid);
+        setValue('landingPath', attribution.landing_path);
+      }
+
+      function updateSummaries(){
+        var attribution = getStoredAttribution();
+        setValue('promoSummary', [
+          'Promo: ' + promoName,
+          'Savings: ' + offerSavings,
+          'Deadline: ' + promoDeadline,
+          'Terms: ' + promoTerms
+        ].join('\n'));
+        setValue('familyContactSummary', [
+          'Parent/guardian: ' + (fieldValue('parent_guardian_name') || 'Not provided'),
+          'Phone: ' + (fieldValue('phone') || 'Not provided'),
+          'Email: ' + (fieldValue('email') || 'Not provided')
+        ].join('\n'));
+        setValue('studentLessonSummary', [
+          'Student: ' + (fieldValue('student_name') || 'Not provided'),
+          'Age: ' + (fieldValue('student_age') || 'Not provided'),
+          'Interested lesson: ' + (fieldValue('interested_lesson') || 'Not selected'),
+          'Preferred location: ' + (fieldValue('preferred_location') || 'Not selected')
+        ].join('\n'));
+        setValue('scheduleNotesSummary', [
+          'Best days/times: ' + (fieldValue('best_days_times') || 'Not provided'),
+          'Notes/questions: ' + (fieldValue('notes_questions') || 'None provided')
+        ].join('\n'));
+        setValue('attributionSummary', [
+          'Source: ' + [attribution.utm_source, attribution.utm_medium].filter(Boolean).join(' / '),
+          'Campaign: ' + (attribution.utm_campaign || ''),
+          'Content: ' + (attribution.utm_content || ''),
+          'Term: ' + (attribution.utm_term || ''),
+          'Facebook click ID: ' + (attribution.fbclid || ''),
+          'Landing path: ' + (attribution.landing_path || '')
+        ].join('\n'));
+      }
+
+      function buildPayload(){
+        var attribution = getStoredAttribution();
+        return {
+          promo_name: promoName,
+          promo_deadline: promoDeadline,
+          promo_terms: promoTerms,
+          parent_guardian_name: fieldValue('parent_guardian_name'),
+          phone: fieldValue('phone'),
+          email: fieldValue('email'),
+          student_name: fieldValue('student_name'),
+          student_age: fieldValue('student_age'),
+          interested_lesson: fieldValue('interested_lesson'),
+          preferred_location: fieldValue('preferred_location'),
+          best_days_times: fieldValue('best_days_times'),
+          notes_questions: fieldValue('notes_questions'),
+          utm_source: attribution.utm_source || '',
+          utm_medium: attribution.utm_medium || '',
+          utm_campaign: attribution.utm_campaign || '',
+          utm_content: attribution.utm_content || '',
+          utm_term: attribution.utm_term || '',
+          fbclid: attribution.fbclid || '',
+          landing_path: attribution.landing_path || '',
+          submitted_at: fieldValue('submitted_at')
+        };
+      }
+
+      updateAttributionFields();
+      updateSummaries();
+      form.addEventListener('input', updateSummaries);
+      form.addEventListener('change', function(){
+        updateAttributionFields();
+        updateSummaries();
+      });
+      form.addEventListener('submit', function(){
+        updateAttributionFields();
+        setValue('submittedAt', new Date().toISOString());
+        updateSummaries();
+        try {
+          window.sessionStorage.setItem(THANK_YOU_PAYLOAD_KEY, JSON.stringify(buildPayload()));
+        } catch (error) {}
+      });
+    })();
+  </script>
+</Base>

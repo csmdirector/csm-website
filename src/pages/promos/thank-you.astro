@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base
+  title="July Start Special Received | Cincinnati School of Music"
+  description="Thanks for claiming the July Start Special at Cincinnati School of Music."
+  canonicalPath="/promos/thank-you/"
+  noindex={true}
+>
+  <section class="page-shell">
+    <div class="page-inner narrow promo-thanks">
+      <span class="section-label">Request Received</span>
+      <h1 id="thankYouTitle">Thanks. Your July Start Special request was sent.</h1>
+      <p id="thankYouLead">
+        The Cincinnati School of Music office will use your details to help with the right teacher,
+        location, and starting point.
+      </p>
+      <p>
+        Offer valid through 7/14/26. If you want to talk sooner, call or text the office.
+      </p>
+      <div class="thank-you-actions">
+        <a class="btn-a" href="tel:5135609175">Call CSM</a>
+        <a class="btn-c" href="sms:5135609175">Text CSM</a>
+        <a class="btn-c" href="mailto:info@cincinnatischoolofmusic.com">Email CSM</a>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .promo-thanks{padding-top:104px}
+    .promo-thanks p{margin-bottom:18px}
+    .thank-you-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+  </style>
+
+  <script>
+    (function(){
+      try {
+        var payload = JSON.parse(window.sessionStorage.getItem('csmPromoClaimPayload') || '{}') || {};
+        if(window.dataLayer && payload.promo_name){
+          payload.event = 'promo_claim_submit';
+          window.dataLayer.push(payload);
+        }
+      } catch (error) {}
+    })();
+  </script>
+</Base>
