@@ -321,7 +321,8 @@ import Base from '../../layouts/Base.astro';
       var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
       var ATTRIBUTION_STORAGE_KEY = 'csmLessonFitAttribution';
       var STATE_STORAGE_KEY = 'csmLessonFitState';
-      var HELP_SUBMIT_EVENT_SENT_KEY = 'csmLessonFitHelpSubmitEventSent';
+      var HELP_SUBMIT_EVENT_PUSHED_KEY = 'csmLessonFitHelpSubmitEventPushed';
+      var HELP_SUBMIT_PAYLOAD_KEY = 'csmLessonFitHelpSubmitPayload';
       var PIANO_LOCATION_URLS = {
         'CSM Montgomery': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-montgomery',
         'CSM Mason': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-mason',
@@ -418,8 +419,11 @@ import Base from '../../layouts/Base.astro';
         return {
           routing_outcome: recommendation.outcome,
           recommended_url: recommendation.url,
+          destination_url: recommendation.url,
           instrument: readFormValue('instrument_interest') || '',
+          location: readFormValue('preferred_location') || '',
           student_age: readFormValue('student_age') || '',
+          student_age_range: readFormValue('student_age') || '',
           preferred_location: readFormValue('preferred_location') || '',
           next_step_preference: readFormValue('next_step_preference') || '',
           help_reason: readFormValue('help_reason') || '',
@@ -455,6 +459,11 @@ import Base from '../../layouts/Base.astro';
         };
         payload.event_timeout = 1000;
         if(window.dataLayer && typeof window.dataLayer.push === 'function'){
+          if(eventName === 'lesson_fit_help_submit'){
+            try {
+              window.sessionStorage.setItem(HELP_SUBMIT_EVENT_PUSHED_KEY, '1');
+            } catch (error) {}
+          }
           window.dataLayer.push(payload);
         } else {
           window.clearTimeout(timeout);
@@ -760,14 +769,10 @@ import Base from '../../layouts/Base.astro';
           .then(function(){
             try {
               window.localStorage.removeItem(STATE_STORAGE_KEY);
-              window.sessionStorage.removeItem(HELP_SUBMIT_EVENT_SENT_KEY);
+              window.sessionStorage.removeItem(HELP_SUBMIT_EVENT_PUSHED_KEY);
+              window.sessionStorage.setItem(HELP_SUBMIT_PAYLOAD_KEY, JSON.stringify(getTrackingPayload(recommendation)));
             } catch (error) {}
-            pushTrackingEvent('lesson_fit_help_submit', recommendation, function(sent){
-              try {
-                if(sent){
-                  window.sessionStorage.setItem(HELP_SUBMIT_EVENT_SENT_KEY, '1');
-                }
-              } catch (error) {}
+            pushTrackingEvent('lesson_fit_help_submit', recommendation, function(){
               window.location.href = recommendation.url;
             });
           })

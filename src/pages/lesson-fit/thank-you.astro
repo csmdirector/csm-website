@@ -42,9 +42,11 @@ import Base from '../../layouts/Base.astro';
       var keys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
       var params = new URLSearchParams(window.location.search);
       var isHelp = params.get('help') === '1';
-      var HELP_SUBMIT_EVENT_SENT_KEY = 'csmLessonFitHelpSubmitEventSent';
+      var HELP_SUBMIT_EVENT_PUSHED_KEY = 'csmLessonFitHelpSubmitEventPushed';
+      var HELP_SUBMIT_PAYLOAD_KEY = 'csmLessonFitHelpSubmitPayload';
       try {
         var stored = JSON.parse(window.localStorage.getItem('csmLessonFitAttribution') || '{}') || {};
+        var helpPayload = JSON.parse(window.sessionStorage.getItem(HELP_SUBMIT_PAYLOAD_KEY) || '{}') || {};
         if(link){
           var url = new URL(link.href);
           keys.forEach(function(key){
@@ -54,23 +56,22 @@ import Base from '../../layouts/Base.astro';
           });
           link.href = url.toString();
         }
-        if(isHelp && window.dataLayer && window.sessionStorage.getItem(HELP_SUBMIT_EVENT_SENT_KEY) !== '1'){
-          window.dataLayer.push({
-            event: 'lesson_fit_help_submit',
-            routing_outcome: 'staff-help',
-            utm_source: stored.utm_source || params.get('utm_source') || '',
-            utm_medium: stored.utm_medium || params.get('utm_medium') || '',
-            utm_campaign: stored.utm_campaign || params.get('utm_campaign') || '',
-            utm_content: stored.utm_content || params.get('utm_content') || '',
-            utm_term: stored.utm_term || params.get('utm_term') || '',
-            gclid: stored.gclid || params.get('gclid') || '',
-            gbraid: stored.gbraid || params.get('gbraid') || '',
-            wbraid: stored.wbraid || params.get('wbraid') || '',
-            click_id: stored.gclid || stored.gbraid || stored.wbraid || params.get('gclid') || params.get('gbraid') || params.get('wbraid') || '',
-            landing_path: stored.landing_path || params.get('landing_path') || '',
-            referrer: stored.referrer || params.get('referrer') || ''
-          });
-          window.sessionStorage.setItem(HELP_SUBMIT_EVENT_SENT_KEY, '1');
+        if(isHelp && window.dataLayer && window.sessionStorage.getItem(HELP_SUBMIT_EVENT_PUSHED_KEY) !== '1'){
+          helpPayload.event = 'lesson_fit_help_submit';
+          helpPayload.routing_outcome = helpPayload.routing_outcome || 'staff-help';
+          helpPayload.utm_source = helpPayload.utm_source || stored.utm_source || params.get('utm_source') || '';
+          helpPayload.utm_medium = helpPayload.utm_medium || stored.utm_medium || params.get('utm_medium') || '';
+          helpPayload.utm_campaign = helpPayload.utm_campaign || stored.utm_campaign || params.get('utm_campaign') || '';
+          helpPayload.utm_content = helpPayload.utm_content || stored.utm_content || params.get('utm_content') || '';
+          helpPayload.utm_term = helpPayload.utm_term || stored.utm_term || params.get('utm_term') || '';
+          helpPayload.gclid = helpPayload.gclid || stored.gclid || params.get('gclid') || '';
+          helpPayload.gbraid = helpPayload.gbraid || stored.gbraid || params.get('gbraid') || '';
+          helpPayload.wbraid = helpPayload.wbraid || stored.wbraid || params.get('wbraid') || '';
+          helpPayload.click_id = helpPayload.click_id || stored.gclid || stored.gbraid || stored.wbraid || params.get('gclid') || params.get('gbraid') || params.get('wbraid') || '';
+          helpPayload.landing_path = helpPayload.landing_path || stored.landing_path || params.get('landing_path') || '';
+          helpPayload.referrer = helpPayload.referrer || stored.referrer || params.get('referrer') || '';
+          window.dataLayer.push(helpPayload);
+          window.sessionStorage.setItem(HELP_SUBMIT_EVENT_PUSHED_KEY, '1');
         }
       } catch (error) {}
       if(isHelp){
