@@ -12,11 +12,12 @@ import Base from '../../layouts/Base.astro';
       <span class="section-label">Request Received</span>
       <h1 id="thankYouTitle">Thanks. Your July Start Special request was sent.</h1>
       <p id="thankYouLead">
-        The Cincinnati School of Music office will use your details to help with the right teacher,
-        location, and starting point.
+        Thanks - we received your July Start Special request. Our team will follow up to help you
+        find the right lesson, location, and time.
       </p>
       <p>
-        Offer valid through 7/14/26. If you want to talk sooner, call or text the office.
+        No payment was collected with this form. Offer valid through 7/14/26. If you want to talk
+        sooner, call or text the office.
       </p>
       <div class="thank-you-actions">
         <a class="btn-a" href="tel:5135609175">Call CSM</a>
@@ -34,11 +35,32 @@ import Base from '../../layouts/Base.astro';
 
   <script>
     (function(){
+      var PAYLOAD_KEY = 'csmPromoClaimPayload';
+      var LEAD_EVENT_PUSHED_KEY = 'csmPromoLeadEventPushedFor';
+
       try {
-        var payload = JSON.parse(window.sessionStorage.getItem('csmPromoClaimPayload') || '{}') || {};
-        if(window.dataLayer && payload.promo_name){
+        var payload = JSON.parse(window.sessionStorage.getItem(PAYLOAD_KEY) || '{}') || {};
+        var submissionKey = payload.submitted_at || '';
+        var alreadyPushedFor = window.sessionStorage.getItem(LEAD_EVENT_PUSHED_KEY) || '';
+
+        if(window.dataLayer && payload.promo_name && submissionKey && alreadyPushedFor !== submissionKey){
           payload.event = 'promo_claim_submit';
           window.dataLayer.push(payload);
+          if(typeof window.fbq === 'function'){
+            window.fbq('track', 'Lead', {
+              content_name: payload.promo_name,
+              content_category: 'Promo Claim',
+              promotion_deadline: payload.promo_deadline || '',
+              utm_source: payload.utm_source || '',
+              utm_medium: payload.utm_medium || '',
+              utm_campaign: payload.utm_campaign || '',
+              utm_content: payload.utm_content || '',
+              utm_term: payload.utm_term || '',
+              fbclid: payload.fbclid || '',
+              landing_path: payload.landing_path || ''
+            });
+          }
+          window.sessionStorage.setItem(LEAD_EVENT_PUSHED_KEY, submissionKey);
         }
       } catch (error) {}
     })();

@@ -351,7 +351,8 @@ const locations = [
           'Content: ' + (attribution.utm_content || ''),
           'Term: ' + (attribution.utm_term || ''),
           'Facebook click ID: ' + (attribution.fbclid || ''),
-          'Landing path: ' + (attribution.landing_path || '')
+          'Landing path: ' + (attribution.landing_path || ''),
+          'Submitted at: ' + (fieldValue('submitted_at') || '')
         ].join('\n'));
       }
 
