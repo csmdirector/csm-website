@@ -1,6 +1,5 @@
 const INFO_EMAIL = 'info@cincinnatischoolofmusic.com';
 const DIRECTOR_EMAIL = 'director@cincinnatischoolofmusic.com';
-const DEFAULT_FROM = 'CSM Website <forms@cincinnatischoolofmusic.com>';
 
 const ROUTES = {
   'promo-claim': {
@@ -253,7 +252,7 @@ function getSubmission(event) {
 
 async function sendEmail(route, formName, fields, meta) {
   const apiKey = env('RESEND_API_KEY');
-  const from = env('FORM_EMAIL_FROM') || env('RESEND_FROM') || DEFAULT_FROM;
+  const from = env('FORM_EMAIL_FROM') || env('RESEND_FROM') || `CSM Website <${route.to}>`;
 
   if (!apiKey) {
     console.error(`Skipping ${formName} email: RESEND_API_KEY is not configured.`);
