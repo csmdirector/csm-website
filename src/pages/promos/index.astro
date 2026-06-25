@@ -95,7 +95,6 @@ const locations = [
             <input type="hidden" name="subject" data-remove-prefix value={`New ${promo.name} Claim`} />
             <input type="hidden" name="promo_name" value={promo.name} />
             <input type="hidden" name="promo_deadline" value={promo.deadline} />
-            <input type="hidden" name="promo_terms" value={promo.terms} />
             <input type="hidden" name="utm_source" id="utmSource" />
             <input type="hidden" name="utm_medium" id="utmMedium" />
             <input type="hidden" name="utm_campaign" id="utmCampaign" />
@@ -104,11 +103,6 @@ const locations = [
             <input type="hidden" name="fbclid" id="fbclid" />
             <input type="hidden" name="landing_path" id="landingPath" />
             <input type="hidden" name="submitted_at" id="submittedAt" />
-            <textarea name="promo_summary" id="promoSummary" hidden></textarea>
-            <textarea name="family_contact_summary" id="familyContactSummary" hidden></textarea>
-            <textarea name="student_lesson_summary" id="studentLessonSummary" hidden></textarea>
-            <textarea name="schedule_notes_summary" id="scheduleNotesSummary" hidden></textarea>
-            <textarea name="attribution_summary" id="attributionSummary" hidden></textarea>
             <p class="hidden-field">
               <label>Do not fill this out if you are human: <input name="bot-field" /></label>
             </p>
@@ -322,46 +316,11 @@ const locations = [
         setValue('landingPath', attribution.landing_path);
       }
 
-      function updateSummaries(){
-        var attribution = getStoredAttribution();
-        setValue('promoSummary', [
-          'Promo: ' + promoName,
-          'Savings: ' + offerSavings,
-          'Deadline: ' + promoDeadline,
-          'Terms: ' + promoTerms
-        ].join('\n'));
-        setValue('familyContactSummary', [
-          'Parent/guardian: ' + (fieldValue('parent_guardian_name') || 'Not provided'),
-          'Phone: ' + (fieldValue('phone') || 'Not provided'),
-          'Email: ' + (fieldValue('email') || 'Not provided')
-        ].join('\n'));
-        setValue('studentLessonSummary', [
-          'Student: ' + (fieldValue('student_name') || 'Not provided'),
-          'Age: ' + (fieldValue('student_age') || 'Not provided'),
-          'Interested lesson: ' + (fieldValue('interested_lesson') || 'Not selected'),
-          'Preferred location: ' + (fieldValue('preferred_location') || 'Not selected')
-        ].join('\n'));
-        setValue('scheduleNotesSummary', [
-          'Best days/times: ' + (fieldValue('best_days_times') || 'Not provided'),
-          'Notes/questions: ' + (fieldValue('notes_questions') || 'None provided')
-        ].join('\n'));
-        setValue('attributionSummary', [
-          'Source: ' + [attribution.utm_source, attribution.utm_medium].filter(Boolean).join(' / '),
-          'Campaign: ' + (attribution.utm_campaign || ''),
-          'Content: ' + (attribution.utm_content || ''),
-          'Term: ' + (attribution.utm_term || ''),
-          'Facebook click ID: ' + (attribution.fbclid || ''),
-          'Landing path: ' + (attribution.landing_path || ''),
-          'Submitted at: ' + (fieldValue('submitted_at') || '')
-        ].join('\n'));
-      }
-
       function buildPayload(){
         var attribution = getStoredAttribution();
         return {
           promo_name: promoName,
           promo_deadline: promoDeadline,
-          promo_terms: promoTerms,
           parent_guardian_name: fieldValue('parent_guardian_name'),
           phone: fieldValue('phone'),
           email: fieldValue('email'),
@@ -383,16 +342,10 @@ const locations = [
       }
 
       updateAttributionFields();
-      updateSummaries();
-      form.addEventListener('input', updateSummaries);
-      form.addEventListener('change', function(){
-        updateAttributionFields();
-        updateSummaries();
-      });
+      form.addEventListener('change', updateAttributionFields);
       form.addEventListener('submit', function(){
         updateAttributionFields();
         setValue('submittedAt', new Date().toISOString());
-        updateSummaries();
         try {
           window.sessionStorage.setItem(THANK_YOU_PAYLOAD_KEY, JSON.stringify(buildPayload()));
         } catch (error) {}

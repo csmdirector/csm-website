@@ -8,11 +8,11 @@ const ROUTES = {
     subject: 'New promo claim',
     replyTo: ['email'],
     groups: [
-      ['Promo', ['promo_name', 'promo_deadline', 'promo_summary']],
-      ['Parent', ['parent_guardian_name', 'phone', 'email', 'family_contact_summary']],
-      ['Student', ['student_name', 'student_age', 'interested_lesson', 'preferred_location', 'student_lesson_summary']],
-      ['Schedule and notes', ['best_days_times', 'notes_questions', 'schedule_notes_summary']],
-      ['Attribution', ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'landing_path', 'submitted_at', 'attribution_summary']]
+      ['Promo', ['promo_name', 'promo_deadline']],
+      ['Parent', ['parent_guardian_name', 'phone', 'email']],
+      ['Student', ['student_name', 'student_age', 'interested_lesson', 'preferred_location']],
+      ['Schedule and notes', ['best_days_times', 'notes_questions']],
+      ['Attribution', ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'landing_path']]
     ]
   },
   'lesson-fit-request': {
@@ -88,7 +88,68 @@ const ROUTES = {
   }
 };
 
-const SKIP_FIELDS = new Set(['bot-field', 'form-name', 'subject']);
+const SKIP_FIELDS = new Set(['bot-field', 'form-name', 'subject', 'submitted_at']);
+const FIELD_LABELS = {
+  'ack-no-family-contact': 'Office confirmation',
+  'ack-not-2-already': 'Two-day limit',
+  'ack-not-30-day-closure': 'Closure window',
+  'ack-not-guaranteed': 'Approval acknowledgement',
+  'ack-not-tied-to-absence': 'Not tied to absence',
+  'ack-within-14': 'Within 14 days',
+  'additional-notes': 'Additional notes',
+  'anticipated-tenure': 'Anticipated tenure',
+  best_days_times: 'Best days/times',
+  email: 'Email',
+  experience_feedback: 'Experience feedback',
+  fbclid: 'Facebook click ID',
+  'first-name': 'First name',
+  help_reason: 'Help reason',
+  instrument_type: 'Instrument type',
+  interested_lesson: 'Interested lesson/instrument',
+  issue_description: 'Issue description',
+  landing_path: 'Landing path',
+  'last-name': 'Last name',
+  last_lesson_date: 'Last lesson date',
+  location: 'Location',
+  next_step_preference: 'Next step preference',
+  notes_questions: 'Notes/questions',
+  other_issues: 'Other issues',
+  parent_guardian_name: 'Parent/guardian name',
+  parent_name: 'Parent/guardian name',
+  phone: 'Phone',
+  preferred_location: 'Preferred location',
+  primary_phone: 'Primary phone',
+  promo_deadline: 'Promo deadline',
+  promo_name: 'Promo name',
+  proposed_date: 'Proposed date',
+  'proposed-date': 'Proposed date',
+  reason_for_withdrawing: 'Reason for withdrawing',
+  'resume-sent': 'Resume sent',
+  selected_action: 'Selected action',
+  sender_email: 'Sender email',
+  skills_experience: 'Skills/experience',
+  'skills-experience': 'Skills/experience',
+  student_age: 'Student age',
+  student_context: 'Student context',
+  student_first_name: 'Student first name',
+  student_last_name: 'Student last name',
+  student_name: 'Student name',
+  studio_number: 'Studio number',
+  submitted_by: 'Submitted by',
+  'teacher-email': 'Teacher email',
+  'teacher-name': 'Teacher name',
+  'time-block': 'Time block',
+  used_this_year: 'Used this year',
+  'used-this-year': 'Used this year',
+  utm_campaign: 'UTM campaign',
+  utm_content: 'UTM content',
+  utm_medium: 'UTM medium',
+  utm_source: 'UTM source',
+  utm_term: 'UTM term',
+  'voicemail-left': 'Voicemail left',
+  why_interested: 'Why interested',
+  'why-interested': 'Why interested'
+};
 
 function env(name) {
   if (typeof Netlify !== 'undefined' && Netlify.env && typeof Netlify.env.get === 'function') {
@@ -151,6 +212,7 @@ function isEmailLike(value) {
 }
 
 function labelFor(key) {
+  if (FIELD_LABELS[key]) return FIELD_LABELS[key];
   return key
     .replace(/[-_]+/g, ' ')
     .replace(/\b\w/g, (char) => char.toUpperCase());
@@ -209,33 +271,69 @@ function buildText(route, formName, fields, meta) {
 }
 
 function buildHtml(route, formName, fields, meta) {
+  const submittedAt = meta.createdAt || valueFor(fields, 'submitted_at') || new Date().toISOString();
+  const replyTo = getReplyTo(fields, route.replyTo || []);
   const sections = buildSections(route, fields)
     .map(([heading, rows]) => {
       const body = rows
         .map(([label, value]) => `
           <tr>
-            <th align="left" style="padding:8px 12px;border-bottom:1px solid #e6e4e1;width:220px;vertical-align:top;color:#3d3d3d;">${escapeHtml(label)}</th>
-            <td style="padding:8px 12px;border-bottom:1px solid #e6e4e1;white-space:pre-wrap;color:#3d3d3d;">${escapeHtml(value)}</td>
+            <th align="left" style="padding:10px 14px;border-bottom:1px solid #ece9e5;width:190px;vertical-align:top;color:#5f6266;font-size:13px;font-weight:700;line-height:1.35;">${escapeHtml(label)}</th>
+            <td style="padding:10px 14px;border-bottom:1px solid #ece9e5;white-space:pre-wrap;color:#202124;font-size:14px;line-height:1.45;">${escapeHtml(value)}</td>
           </tr>
         `)
         .join('');
 
       return `
-        <h2 style="font-size:16px;margin:28px 0 8px;color:#3d3d3d;">${escapeHtml(heading)}</h2>
-        <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;border-top:1px solid #e6e4e1;">${body}</table>
+        <tr>
+          <td style="padding:22px 28px 0;">
+            <h2 style="font-size:14px;line-height:1.3;margin:0 0 10px;color:#2f8f9d;letter-spacing:.08em;text-transform:uppercase;">${escapeHtml(heading)}</h2>
+            <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;border:1px solid #ece9e5;border-bottom:0;border-radius:4px;overflow:hidden;">${body}</table>
+          </td>
+        </tr>
       `;
     })
     .join('');
 
   return `
-    <div style="font-family:Arial,sans-serif;line-height:1.5;color:#3d3d3d;max-width:760px;">
-      <p style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#747474;margin:0 0 6px;">Cincinnati School of Music</p>
-      <h1 style="font-size:22px;margin:0 0 18px;color:#3d3d3d;">${escapeHtml(route.label)}</h1>
-      <p style="margin:0 0 4px;"><strong>Form:</strong> ${escapeHtml(formName)}</p>
-      <p style="margin:0 0 4px;"><strong>Routed to:</strong> ${escapeHtml(route.to)}</p>
-      <p style="margin:0 0 4px;"><strong>Submission ID:</strong> ${escapeHtml(meta.id || 'Not provided')}</p>
-      <p style="margin:0 0 20px;"><strong>Submitted at:</strong> ${escapeHtml(meta.createdAt || valueFor(fields, 'submitted_at') || new Date().toISOString())}</p>
-      ${sections}
+    <div style="margin:0;padding:0;background:#f6f5f3;">
+      <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;background:#f6f5f3;">
+        <tr>
+          <td style="padding:24px 12px;">
+            <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;max-width:760px;margin:0 auto;border-collapse:collapse;background:#ffffff;border:1px solid #e6e4e1;border-radius:6px;overflow:hidden;font-family:Arial,sans-serif;color:#202124;">
+              <tr>
+                <td style="padding:26px 28px 22px;background:#3d3d3d;color:#ffffff;">
+                  <div style="font-size:11px;line-height:1.3;letter-spacing:.16em;text-transform:uppercase;color:#7dd4df;font-weight:700;margin-bottom:8px;">Cincinnati School of Music</div>
+                  <h1 style="font-size:24px;line-height:1.2;font-weight:700;margin:0 0 12px;color:#ffffff;">${escapeHtml(route.label)}</h1>
+                  <table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                    <tr>
+                      <td style="font-size:13px;line-height:1.45;color:#f0efee;padding:0 22px 0 0;"><strong style="color:#ffffff;">Form:</strong> ${escapeHtml(formName)}</td>
+                      <td style="font-size:13px;line-height:1.45;color:#f0efee;padding:0;"><strong style="color:#ffffff;">To:</strong> ${escapeHtml(route.to)}</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:18px 28px 0;">
+                  <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;background:#f6f5f3;border:1px solid #ece9e5;border-radius:4px;">
+                    <tr>
+                      <td style="padding:12px 14px;font-size:13px;line-height:1.45;color:#3d3d3d;"><strong>Submitted:</strong> ${escapeHtml(submittedAt)}</td>
+                    </tr>
+                    ${replyTo ? `<tr><td style="padding:0 14px 12px;font-size:13px;line-height:1.45;color:#3d3d3d;"><strong>Reply-to:</strong> ${escapeHtml(replyTo)}</td></tr>` : ''}
+                    ${meta.id ? `<tr><td style="padding:0 14px 12px;font-size:13px;line-height:1.45;color:#747474;"><strong>Submission ID:</strong> ${escapeHtml(meta.id)}</td></tr>` : ''}
+                  </table>
+                </td>
+              </tr>
+              ${sections}
+              <tr>
+                <td style="padding:24px 28px 28px;font-size:12px;line-height:1.5;color:#747474;">
+                  Sent by the standardized CSM form email layer. Netlify form storage and approved webhook automations remain active.
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
     </div>
   `;
 }
