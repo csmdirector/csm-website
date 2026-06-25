@@ -189,15 +189,33 @@ function valueFor(fields, key) {
   return value || '';
 }
 
+function getSubmissionContainer(event) {
+  if (!event || typeof event !== 'object') return {};
+  let parsedBody = null;
+  if (typeof event.body === 'string') {
+    try {
+      parsedBody = JSON.parse(event.body);
+    } catch (err) {
+      parsedBody = null;
+    }
+  }
+  return (
+    event.payload ||
+    (parsedBody && parsedBody.payload) ||
+    parsedBody ||
+    event.submission ||
+    event
+  );
+}
+
 function getFormName(event, fields) {
-  const submission = event && event.submission ? event.submission : {};
+  const c = getSubmissionContainer(event);
   return (
     valueFor(fields, 'form-name') ||
     valueFor(fields, 'form_name') ||
-    submission.formName ||
-    submission.form_name ||
-    event.formName ||
-    event.form_name ||
+    c.form_name ||
+    c.formName ||
+    c.name ||
     ''
   );
 }
@@ -225,6 +243,25 @@ function escapeHtml(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function prettyDate(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value || '');
+  try {
+    return (
+      date.toLocaleString('en-US', {
+        timeZone: 'America/New_York',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      }) + ' ET'
+    );
+  } catch (err) {
+    return date.toISOString();
+  }
 }
 
 function buildSections(route, fields) {
@@ -276,19 +313,19 @@ function buildHtml(route, formName, fields, meta) {
   const sections = buildSections(route, fields)
     .map(([heading, rows]) => {
       const body = rows
-        .map(([label, value]) => `
+        .map(([label, value], index) => `
           <tr>
-            <th align="left" style="padding:10px 14px;border-bottom:1px solid #ece9e5;width:190px;vertical-align:top;color:#5f6266;font-size:13px;font-weight:700;line-height:1.35;">${escapeHtml(label)}</th>
-            <td style="padding:10px 14px;border-bottom:1px solid #ece9e5;white-space:pre-wrap;color:#202124;font-size:14px;line-height:1.45;">${escapeHtml(value)}</td>
+            <td style="padding:9px 0;${index ? 'border-top:1px solid #efede9;' : ''}vertical-align:top;width:170px;color:#8a8a86;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;line-height:1.5;">${escapeHtml(label)}</td>
+            <td style="padding:9px 0 9px 18px;${index ? 'border-top:1px solid #efede9;' : ''}vertical-align:top;white-space:pre-wrap;color:#1e1e1e;font-size:14px;line-height:1.55;">${escapeHtml(value)}</td>
           </tr>
         `)
         .join('');
 
       return `
         <tr>
-          <td style="padding:22px 28px 0;">
-            <h2 style="font-size:14px;line-height:1.3;margin:0 0 10px;color:#2f8f9d;letter-spacing:.08em;text-transform:uppercase;">${escapeHtml(heading)}</h2>
-            <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;border:1px solid #ece9e5;border-bottom:0;border-radius:4px;overflow:hidden;">${body}</table>
+          <td style="padding:22px 32px 0;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#f74f57;margin:0 0 4px;">${escapeHtml(heading)}</div>
+            <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;">${body}</table>
           </td>
         </tr>
       `;
@@ -296,38 +333,28 @@ function buildHtml(route, formName, fields, meta) {
     .join('');
 
   return `
-    <div style="margin:0;padding:0;background:#f6f5f3;">
-      <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;background:#f6f5f3;">
+    <div style="margin:0;padding:0;background:#f0efee;">
+      <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;background:#f0efee;">
         <tr>
-          <td style="padding:24px 12px;">
-            <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;max-width:760px;margin:0 auto;border-collapse:collapse;background:#ffffff;border:1px solid #e6e4e1;border-radius:6px;overflow:hidden;font-family:Arial,sans-serif;color:#202124;">
+          <td style="padding:28px 12px;">
+            <table role="presentation" align="center" cellspacing="0" cellpadding="0" style="width:100%;max-width:620px;margin:0 auto;border-collapse:collapse;background:#ffffff;border:1px solid #e6e4e1;border-radius:10px;overflow:hidden;font-family:'Helvetica Neue',Arial,sans-serif;color:#1e1e1e;">
+              <tr><td style="height:4px;background:#f74f57;font-size:0;line-height:0;">&nbsp;</td></tr>
               <tr>
-                <td style="padding:26px 28px 22px;background:#3d3d3d;color:#ffffff;">
-                  <div style="font-size:11px;line-height:1.3;letter-spacing:.16em;text-transform:uppercase;color:#7dd4df;font-weight:700;margin-bottom:8px;">Cincinnati School of Music</div>
-                  <h1 style="font-size:24px;line-height:1.2;font-weight:700;margin:0 0 12px;color:#ffffff;">${escapeHtml(route.label)}</h1>
-                  <table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
-                    <tr>
-                      <td style="font-size:13px;line-height:1.45;color:#f0efee;padding:0 22px 0 0;"><strong style="color:#ffffff;">Form:</strong> ${escapeHtml(formName)}</td>
-                      <td style="font-size:13px;line-height:1.45;color:#f0efee;padding:0;"><strong style="color:#ffffff;">To:</strong> ${escapeHtml(route.to)}</td>
-                    </tr>
-                  </table>
+                <td style="padding:26px 32px 24px;background:#1e1e1e;">
+                  <div style="font-size:11px;line-height:1.3;letter-spacing:.18em;text-transform:uppercase;color:#f74f57;font-weight:700;margin-bottom:10px;">Cincinnati School of Music</div>
+                  <div style="font-size:22px;line-height:1.25;font-weight:700;color:#ffffff;">${escapeHtml(route.label)}</div>
+                  <div style="font-size:12px;line-height:1.5;color:#b8b7b4;margin-top:10px;">Form: ${escapeHtml(formName)} &nbsp;&bull;&nbsp; Routed to ${escapeHtml(route.to)}</div>
                 </td>
               </tr>
               <tr>
-                <td style="padding:18px 28px 0;">
-                  <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;background:#f6f5f3;border:1px solid #ece9e5;border-radius:4px;">
-                    <tr>
-                      <td style="padding:12px 14px;font-size:13px;line-height:1.45;color:#3d3d3d;"><strong>Submitted:</strong> ${escapeHtml(submittedAt)}</td>
-                    </tr>
-                    ${replyTo ? `<tr><td style="padding:0 14px 12px;font-size:13px;line-height:1.45;color:#3d3d3d;"><strong>Reply-to:</strong> ${escapeHtml(replyTo)}</td></tr>` : ''}
-                    ${meta.id ? `<tr><td style="padding:0 14px 12px;font-size:13px;line-height:1.45;color:#747474;"><strong>Submission ID:</strong> ${escapeHtml(meta.id)}</td></tr>` : ''}
-                  </table>
+                <td style="padding:16px 32px 2px;">
+                  <div style="font-size:12px;line-height:1.6;color:#8a8a86;"><strong style="color:#5f5e5a;">Submitted</strong> ${escapeHtml(prettyDate(submittedAt))}${replyTo ? ` &nbsp;&bull;&nbsp; <strong style="color:#5f5e5a;">Reply-to</strong> <a href="mailto:${escapeHtml(replyTo)}" style="color:#185fa5;text-decoration:none;">${escapeHtml(replyTo)}</a>` : ''}</div>
                 </td>
               </tr>
               ${sections}
               <tr>
-                <td style="padding:24px 28px 28px;font-size:12px;line-height:1.5;color:#747474;">
-                  Sent by the standardized CSM form email layer. Netlify form storage and approved webhook automations remain active.
+                <td style="padding:24px 32px 28px;">
+                  <div style="border-top:1px solid #efede9;padding-top:14px;font-size:11px;line-height:1.5;color:#a3a29e;">Standardized CSM form email. Netlify form storage and approved webhooks remain active.${meta.id ? ` &nbsp;&bull;&nbsp; ID ${escapeHtml(meta.id)}` : ''}</div>
                 </td>
               </tr>
             </table>
@@ -339,12 +366,12 @@ function buildHtml(route, formName, fields, meta) {
 }
 
 function getSubmission(event) {
-  const submission = event && event.submission ? event.submission : {};
-  const data = submission.data || submission.values || event.data || {};
+  const c = getSubmissionContainer(event);
+  const data = c.data || c.values || (event && event.data) || {};
   return {
     data: normalizeFields(data),
-    id: submission.id || event.id || '',
-    createdAt: submission.created_at || submission.createdAt || event.created_at || event.createdAt || ''
+    id: c.id || c.submission_id || (event && event.id) || '',
+    createdAt: c.created_at || c.createdAt || (event && event.created_at) || (event && event.createdAt) || ''
   };
 }
 
@@ -385,10 +412,11 @@ async function sendEmail(route, formName, fields, meta) {
     body: JSON.stringify(body)
   });
 
+  const details = await response.text();
   if (!response.ok) {
-    const details = await response.text();
     throw new Error(`Resend failed for ${formName}: ${response.status} ${details}`);
   }
+  console.log(`form-email: sent ${formName} -> ${route.to} (${response.status}) ${details}`);
 }
 
 export default {
@@ -397,7 +425,14 @@ export default {
     const formName = getFormName(event || {}, submission.data);
     const route = ROUTES[formName];
 
-    if (!route) return;
+    console.log(
+      `form-email: received form="${formName}" fieldCount=${Object.keys(submission.data || {}).length} routed=${route ? route.to : 'NONE'}`
+    );
+
+    if (!route) {
+      console.warn(`form-email: no route for "${formName}"; event keys=[${Object.keys(event || {}).join(', ')}]`);
+      return;
+    }
     if (valueFor(submission.data, 'bot-field')) return;
 
     await sendEmail(route, formName, submission.data, {
