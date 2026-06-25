@@ -88,6 +88,16 @@ const ROUTES = {
   }
 };
 
+const FORM_FIELD_SIGNATURES = [
+  ['promo-claim', ['promo_name', 'promo_deadline', 'parent_guardian_name']],
+  ['lesson-fit-request', ['contact_summary', 'lesson_request', 'follow_up_notes', 'tracking_summary']],
+  ['smart-intro-intake', ['routing_outcome', 'recommended_opus_url', 'recommendation_summary', 'attribution_payload']],
+  ['withdraw', ['student_first_name', 'student_last_name', 'reason_for_withdrawing', 'selected_action']],
+  ['teacher-makeup-day-request', ['teacher-name', 'teacher-email', 'proposed-date', 'ack-no-family-contact']],
+  ['instrument-maintenance', ['studio_number', 'instrument_type', 'issue_description', 'sender_email']],
+  ['admin-application', ['first-name', 'last-name', 'why-interested', 'skills-experience']]
+];
+
 const SKIP_FIELDS = new Set(['bot-field', 'form-name', 'subject', 'submitted_at']);
 const FIELD_LABELS = {
   'ack-no-family-contact': 'Office confirmation',
@@ -189,6 +199,10 @@ function valueFor(fields, key) {
   return value || '';
 }
 
+function hasField(fields, key) {
+  return Object.prototype.hasOwnProperty.call(fields || {}, key);
+}
+
 function getSubmissionContainer(event) {
   if (!event || typeof event !== 'object') return {};
   let parsedBody = null;
@@ -216,8 +230,24 @@ function getFormName(event, fields) {
     c.form_name ||
     c.formName ||
     c.name ||
+    inferFormName(fields) ||
     ''
   );
+}
+
+function inferFormName(fields) {
+  let bestMatch = '';
+  let bestScore = 0;
+
+  FORM_FIELD_SIGNATURES.forEach(([formName, signature]) => {
+    const score = signature.filter((key) => hasField(fields, key)).length;
+    if (score > bestScore) {
+      bestMatch = formName;
+      bestScore = score;
+    }
+  });
+
+  return bestScore > 0 ? bestMatch : '';
 }
 
 function getReplyTo(fields, keys) {
@@ -430,7 +460,9 @@ export default {
     );
 
     if (!route) {
-      console.warn(`form-email: no route for "${formName}"; event keys=[${Object.keys(event || {}).join(', ')}]`);
+      console.warn(
+        `form-email: no route for "${formName}"; event keys=[${Object.keys(event || {}).join(', ')}] field keys=[${Object.keys(submission.data || {}).join(', ')}]`
+      );
       return;
     }
     if (valueFor(submission.data, 'bot-field')) return;
@@ -448,5 +480,6 @@ export const testables = {
   buildHtml,
   getFormName,
   getSubmission,
+  inferFormName,
   normalizeFields
 };
