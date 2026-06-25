@@ -410,8 +410,7 @@ async function sendEmail(route, formName, fields, meta) {
   const from = env('FORM_EMAIL_FROM') || env('RESEND_FROM') || `CSM Website <${route.to}>`;
 
   if (!apiKey) {
-    console.error(`Skipping ${formName} email: RESEND_API_KEY is not configured.`);
-    return;
+    throw new Error(`RESEND_API_KEY is not configured for ${formName}.`);
   }
 
   const replyTo = getReplyTo(fields, route.replyTo || []);
@@ -451,6 +450,8 @@ async function sendEmail(route, formName, fields, meta) {
 
 export default {
   async formSubmitted(event) {
+    console.log(`form-email: invoked event keys=[${Object.keys(event || {}).join(', ')}]`);
+
     const submission = getSubmission(event || {});
     const formName = getFormName(event || {}, submission.data);
     const route = ROUTES[formName];
