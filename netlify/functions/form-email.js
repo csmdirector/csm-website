@@ -98,7 +98,7 @@ const FORM_FIELD_SIGNATURES = [
   ['admin-application', ['first-name', 'last-name', 'why-interested', 'skills-experience']]
 ];
 
-const SKIP_FIELDS = new Set(['bot-field', 'form-name', 'subject', 'submitted_at']);
+const SKIP_FIELDS = new Set(['bot-field', 'form-name', 'subject', 'submitted_at', 'ip', 'user_agent']);
 const FIELD_LABELS = {
   'ack-no-family-contact': 'Office confirmation',
   'ack-not-2-already': 'Two-day limit',
