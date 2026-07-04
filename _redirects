@@ -26,3 +26,8 @@
 /smart-intro-intake/thank-you/     /lesson-fit/thank-you/ 301
 
 # /group-class.php and /virtual-tour.php intentionally not redirected — let 404
+
+
+# Pricing guide short link
+/music-lesson-cost-cincinnati             /parent-resources/music-lesson-cost-cincinnati/   301
+/music-lesson-cost-cincinnati/            /parent-resources/music-lesson-cost-cincinnati/   301
