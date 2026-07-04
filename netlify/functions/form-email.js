@@ -1,3 +1,5 @@
+import { captureNetlifyLessonFitSubmission } from './_shared/lead-pipeline.js';
+
 const INFO_EMAIL = 'info@cincinnatischoolofmusic.com';
 const DIRECTOR_EMAIL = 'director@cincinnatischoolofmusic.com';
 
@@ -98,7 +100,22 @@ const FORM_FIELD_SIGNATURES = [
   ['admin-application', ['first-name', 'last-name', 'why-interested', 'skills-experience']]
 ];
 
-const SKIP_FIELDS = new Set(['bot-field', 'form-name', 'subject', 'submitted_at', 'ip', 'user_agent']);
+const PIPELINE_CAPTURE_FIELDS = [
+  'routing_outcome',
+  'recommended_url',
+  'lead_pipeline_only',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_content',
+  'utm_term',
+  'gclid',
+  'gbraid',
+  'wbraid',
+  'landing_path',
+  'referrer'
+];
+const SKIP_FIELDS = new Set(['bot-field', 'form-name', 'subject', 'submitted_at', 'ip', 'user_agent', ...PIPELINE_CAPTURE_FIELDS]);
 const FIELD_LABELS = {
   'ack-no-family-contact': 'Office confirmation',
   'ack-not-2-already': 'Two-day limit',
@@ -257,6 +274,10 @@ function getReplyTo(fields, keys) {
 
 function isEmailLike(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || '');
+}
+
+function shouldSkipOfficeEmail(fields) {
+  return valueFor(fields, 'lead_pipeline_only') === '1';
 }
 
 function labelFor(key) {
@@ -468,6 +489,16 @@ export default {
     }
     if (valueFor(submission.data, 'bot-field')) return;
 
+    if (formName === 'lesson-fit-request') {
+      try {
+        await captureNetlifyLessonFitSubmission(event || {});
+      } catch (error) {
+        console.error(`form-email: lead pipeline capture failed for ${formName}: ${error.message}`);
+      }
+    }
+
+    if (shouldSkipOfficeEmail(submission.data)) return;
+
     await sendEmail(route, formName, submission.data, {
       id: submission.id,
       createdAt: submission.createdAt
@@ -482,5 +513,6 @@ export const testables = {
   getFormName,
   getSubmission,
   inferFormName,
-  normalizeFields
+  normalizeFields,
+  shouldSkipOfficeEmail
 };
