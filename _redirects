@@ -19,6 +19,24 @@
 /home                              /                    301
 /home/                             /                    301
 
+# ── Human-friendly lesson and pricing shortcuts ──
+/piano                             /piano-lessons       301
+/piano/                            /piano-lessons       301
+/guitar                            /guitar-lessons      301
+/guitar/                           /guitar-lessons      301
+/voice                             /voice-lessons       301
+/voice/                            /voice-lessons       301
+/violin                            /violin-lessons      301
+/violin/                           /violin-lessons      301
+/drums                             /drum-lessons        301
+/drums/                            /drum-lessons        301
+/pricing                           /lessons             301
+/pricing/                          /lessons             301
+/cost                              /lessons             301
+/cost/                             /lessons             301
+/prices                            /lessons             301
+/prices/                           /lessons             301
+
 # ── Old intake slug → parent-facing Lesson Fit page ──
 /smart-intro-intake                /lesson-fit/         301
 /smart-intro-intake/               /lesson-fit/         301
