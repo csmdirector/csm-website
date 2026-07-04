@@ -35,7 +35,7 @@ h2 em{font-style:italic;font-weight:200}
 .loc-inner{max-width:1100px;margin:0 auto;padding:88px 48px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .loc-card{background:var(--white);padding:42px 38px;text-decoration:none;display:flex;flex-direction:column;border:1px solid var(--offwb);box-shadow:0 18px 34px rgba(61,61,61,.05);transition:transform .18s,box-shadow .18s,border-color .18s}
 .loc-card:hover{transform:translateY(-2px);box-shadow:0 24px 44px rgba(61,61,61,.08);border-color:#d8d5d0}
-.loc-card-wide{grid-column:span 2}
+.loc-card-centered{grid-column:1 / -1;justify-self:center;width:calc((100% - 18px)/2)}
 .loc-num{font-size:.6rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;display:block}
 .loc-name{font-size:1.4rem;font-weight:300;color:var(--charcoal);letter-spacing:.04em;margin-bottom:8px}
 .loc-area{font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin-bottom:20px;display:block}
@@ -78,7 +78,7 @@ footer{background:var(--charcoal);padding:48px;display:flex;flex-direction:colum
   .bc{padding:14px 24px}
   .intro{padding:64px 28px 56px}
   .loc-inner{grid-template-columns:1fr;padding:48px 24px}
-  .loc-card-wide{grid-column:auto}
+  .loc-card-centered{grid-column:auto;width:100%}
   .proof{flex-direction:column}
   .proof-item{border-right:none;border-bottom:1px solid rgba(255,255,255,.07)}
   .cta-inner{padding:72px 28px}
@@ -509,7 +509,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="loc-inner">
 
     <div class="loc-card">
-      <span class="loc-num">Location 01 — Est. 2012</span>
+      <span class="loc-num">Location 01</span>
       <div class="loc-name">Olde Montgomery</div>
       <span class="loc-area">Northeast Cincinnati</span>
       <div class="loc-addr">9865 Montgomery Rd<br>Montgomery, OH 45242</div>
@@ -552,7 +552,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
-    <div class="loc-card loc-card-wide">
+    <div class="loc-card loc-card-centered">
       <span class="loc-num">Location 05</span>
       <div class="loc-name">Middletown</div>
       <span class="loc-area">Butler County</span>
