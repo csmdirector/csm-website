@@ -54,10 +54,12 @@ for (const file of htmlFiles) {
 }
 
 await assertSameFile('_redirects');
+await assertSameFile('robots.txt');
+await assertSameFile('sitemap.xml');
 
 const imageFiles = await listFiles(path.join(root, 'images'), 'images');
 for (const file of imageFiles) {
   await assertSameFile(file);
 }
 
-console.log(`Verified preserved output: ${htmlFiles.length} HTML pages, _redirects, and ${imageFiles.length} image files match source.`);
+console.log(`Verified preserved output: ${htmlFiles.length} HTML pages, _redirects, robots.txt, sitemap.xml, and ${imageFiles.length} image files match source.`);

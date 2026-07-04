@@ -32,9 +32,11 @@ for (const file of htmlFiles) {
 }
 
 await cp(path.join(root, '_redirects'), path.join(dist, '_redirects'));
+await cp(path.join(root, 'robots.txt'), path.join(dist, 'robots.txt'));
+await cp(path.join(root, 'sitemap.xml'), path.join(dist, 'sitemap.xml'));
 await cp(path.join(root, 'images'), path.join(dist, 'images'), {
   recursive: true,
   force: true
 });
 
-console.log(`Preserved ${htmlFiles.length} existing HTML pages, _redirects, and images/ in dist with legacy hardcoded GA4 removed from HTML output.`);
+console.log(`Preserved ${htmlFiles.length} existing HTML pages, _redirects, robots.txt, sitemap.xml, and images/ in dist with legacy hardcoded GA4 removed from HTML output.`);
