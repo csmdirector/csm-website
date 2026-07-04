@@ -2,6 +2,7 @@ import { captureNetlifyLessonFitSubmission } from './_shared/lead-pipeline.js';
 
 const INFO_EMAIL = 'info@cincinnatischoolofmusic.com';
 const DIRECTOR_EMAIL = 'director@cincinnatischoolofmusic.com';
+const PIPELINE_CAPTURE_TIMEOUT_MS = 5000;
 
 const ROUTES = {
   'promo-claim': {
@@ -280,6 +281,31 @@ function shouldSkipOfficeEmail(fields) {
   return valueFor(fields, 'lead_pipeline_only') === '1';
 }
 
+function withTimeout(promise, timeoutMs, message) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(message)), timeoutMs);
+  });
+
+  return Promise.race([promise, timeout]).finally(() => {
+    if (timer) clearTimeout(timer);
+  });
+}
+
+async function captureLessonFitPipeline(event, formName) {
+  if (formName !== 'lesson-fit-request') return;
+
+  try {
+    await withTimeout(
+      captureNetlifyLessonFitSubmission(event || {}),
+      PIPELINE_CAPTURE_TIMEOUT_MS,
+      'Lead pipeline capture timed out.'
+    );
+  } catch (error) {
+    console.error(`form-email: lead pipeline capture failed for ${formName}: ${error.message}`);
+  }
+}
+
 function labelFor(key) {
   if (FIELD_LABELS[key]) return FIELD_LABELS[key];
   return key
@@ -489,20 +515,16 @@ export default {
     }
     if (valueFor(submission.data, 'bot-field')) return;
 
-    if (formName === 'lesson-fit-request') {
-      try {
-        await captureNetlifyLessonFitSubmission(event || {});
-      } catch (error) {
-        console.error(`form-email: lead pipeline capture failed for ${formName}: ${error.message}`);
-      }
+    if (shouldSkipOfficeEmail(submission.data)) {
+      await captureLessonFitPipeline(event || {}, formName);
+      return;
     }
-
-    if (shouldSkipOfficeEmail(submission.data)) return;
 
     await sendEmail(route, formName, submission.data, {
       id: submission.id,
       createdAt: submission.createdAt
     });
+    await captureLessonFitPipeline(event || {}, formName);
   }
 };
 
@@ -514,5 +536,6 @@ export const testables = {
   getSubmission,
   inferFormName,
   normalizeFields,
-  shouldSkipOfficeEmail
+  shouldSkipOfficeEmail,
+  withTimeout
 };

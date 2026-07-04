@@ -5,7 +5,7 @@ import {
   handleLeadEventsRequest
 } from '../netlify/functions/_shared/lead-pipeline.js';
 import { testables } from '../netlify/functions/_shared/lead-pipeline.js';
-import { testables as formEmailTestables } from '../netlify/functions/form-email.js';
+import formEmailHandler, { testables as formEmailTestables } from '../netlify/functions/form-email.js';
 
 const {
   buildEventEnvelope,
@@ -171,6 +171,49 @@ assert.doesNotMatch(emailText, /Routing Outcome/i);
 assert.doesNotMatch(emailText, /Lead Pipeline Only/i);
 assert.equal(shouldSkipOfficeEmail(emailFields), false);
 assert.equal(shouldSkipOfficeEmail({ lead_pipeline_only: '1' }), true);
+
+const originalFetch = globalThis.fetch;
+const sentEmails = [];
+globalThis.fetch = async (url, options = {}) => {
+  sentEmails.push({ url: String(url), body: JSON.parse(options.body || '{}') });
+  return { ok: true, status: 200, text: async () => '{"id":"test-email"}' };
+};
+process.env.RESEND_API_KEY = 'test-resend-key';
+process.env.ENABLE_LEAD_PIPELINE = 'true';
+delete process.env.DATABASE_URL;
+delete process.env.POSTGRES_URL;
+delete process.env.NETLIFY_DATABASE_URL;
+
+await formEmailHandler.formSubmitted({
+  payload: {
+    form_name: 'lesson-fit-request',
+    id: 'email-fail-open-test',
+    created_at: '2026-07-04T15:01:00Z',
+    data: {
+      ...emailFields,
+      parent_name: 'Jane Student'
+    }
+  }
+});
+assert.equal(sentEmails.length, 1);
+assert.equal(sentEmails[0].body.to[0], 'info@cincinnatischoolofmusic.com');
+
+await formEmailHandler.formSubmitted({
+  payload: {
+    form_name: 'lesson-fit-request',
+    id: 'pipeline-only-email-test',
+    created_at: '2026-07-04T15:02:00Z',
+    data: {
+      ...emailFields,
+      lead_pipeline_only: '1'
+    }
+  }
+});
+assert.equal(sentEmails.length, 1);
+
+globalThis.fetch = originalFetch;
+delete process.env.RESEND_API_KEY;
+delete process.env.ENABLE_LEAD_PIPELINE;
 
 const lessonFitPage = readFileSync(new URL('../src/pages/lesson-fit/index.astro', import.meta.url), 'utf8');
 assert.match(lessonFitPage, /noindex=\{true\}/);
