@@ -151,6 +151,10 @@ h2 em{font-style:italic;font-weight:200}
 .li-cell:last-child{border-right:none}
 .li-lbl{font-size:.58rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
 .li-val{font-size:.88rem;font-weight:300;color:var(--charcoal);line-height:1.7}
+.li-val a{color:var(--charcoal);text-decoration:none}
+.li-val a:hover{color:var(--accent)}
+.li-val .directions-btn{display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:var(--white);font-size:.56rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;line-height:1.2;padding:11px 10px;white-space:nowrap;transition:background .18s,color .18s}
+.li-val .directions-btn:hover{background:var(--accent-dk);color:var(--white)}
 
 /* ── LOC STRIP (dark) ── */
 .loc-strip{background:#3D3D3D}
@@ -818,7 +822,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="li-cell"><div class="li-lbl">Phone</div><div class="li-val">(513) 791-8181</div></div>
     <div class="li-cell"><div class="li-lbl">Hours</div><div class="li-val">Mon–Thu: 9am – 9pm<br>Fri: 9am – 7pm<br>Sat: 9am – 4pm &nbsp;·&nbsp; Sun: 9am – 6pm</div></div>
     <div class="li-cell"><div class="li-lbl">Lessons Available</div><div class="li-val">Piano · Voice · Guitar<br>Drums · Violin · Winds</div></div>
-    <div class="li-cell"><div class="li-lbl">Directions</div><div class="li-val"><a href="https://www.google.com/maps/search/?api=1&query=9865%20Montgomery%20Rd%2C%20Montgomery%2C%20OH%2045242" target="_blank" rel="noopener">Get Directions</a></div><!-- TODO: Add verified Google Business Profile/review link for Montgomery once owner confirms the profile URL. --></div>
+    <div class="li-cell"><div class="li-lbl">Directions</div><div class="li-val"><a class="directions-btn" href="https://www.google.com/maps/search/?api=1&query=9865%20Montgomery%20Rd%2C%20Montgomery%2C%20OH%2045242" target="_blank" rel="noopener">Get Directions</a></div><!-- TODO: Add verified Google Business Profile/review link for Montgomery once owner confirms the profile URL. --></div>
   </div>
 </div>
 
