@@ -108,6 +108,33 @@ const secondEnvelope = buildEventEnvelope({
 });
 assert.equal(firstEnvelope.dedupeKey, secondEnvelope.dedupeKey);
 
+const netlifyNotificationPayload = {
+  id: 'netlify-submission-1',
+  body: 'Wants to sing pop songs',
+  form_id: 'form-1',
+  form_name: 'lesson-fit-request',
+  created_at: '2026-07-04T15:01:02-04:00',
+  data: lessonPayload.data
+};
+const firstWebhookEnvelope = buildEventEnvelope({
+  source: 'lesson_fit',
+  payload: netlifyNotificationPayload,
+  rawText: JSON.stringify(netlifyNotificationPayload),
+  contentType: 'application/json',
+  headers: { 'x-netlify-event': 'submission_created' },
+  receivedFrom: 'test'
+});
+const secondWebhookEnvelope = buildEventEnvelope({
+  source: 'lesson_fit',
+  payload: netlifyNotificationPayload,
+  rawText: JSON.stringify({ ...netlifyNotificationPayload }),
+  contentType: 'application/json',
+  headers: { 'x-netlify-event': 'submission_created' },
+  receivedFrom: 'test'
+});
+assert.equal(firstWebhookEnvelope.externalId, 'netlify-submission-1');
+assert.equal(firstWebhookEnvelope.dedupeKey, secondWebhookEnvelope.dedupeKey);
+
 const schema = readFileSync(new URL('../db/lead-pipeline.sql', import.meta.url), 'utf8');
 assert.match(schema, /dedupe_key text NOT NULL UNIQUE/);
 assert.match(schema, /opus_client_id text UNIQUE/);

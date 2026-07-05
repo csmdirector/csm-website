@@ -230,8 +230,14 @@ function inferOpusPayload(body) {
   return body?.payload || body?.data || body?.client || body?.subscription || body || {};
 }
 
+function unwrappedBody(payload) {
+  const body = payload?.body;
+  if (body && typeof body === 'object' && !Array.isArray(body)) return body;
+  return payload || {};
+}
+
 function eventTypeFromPayload(source, payload, headers = {}) {
-  const body = payload?.body || payload || {};
+  const body = unwrappedBody(payload);
   return normalizeEventType(
     body.event_type ||
       body.eventType ||
@@ -246,7 +252,7 @@ function eventTypeFromPayload(source, payload, headers = {}) {
 }
 
 function externalIdFromPayload(source, eventType, payload) {
-  const body = payload?.body || payload || {};
+  const body = unwrappedBody(payload);
   if (source === 'lesson_fit') {
     const submission = body.payload || body.submission || body;
     return body.submission_id || submission.submission_id || submission.id || body.id || '';
@@ -259,7 +265,7 @@ function externalIdFromPayload(source, eventType, payload) {
 }
 
 function extractLessonFitFields(payload) {
-  const body = payload?.body || payload || {};
+  const body = unwrappedBody(payload);
   const formPayload = body.payload || body.submission || body;
   return normalizeFields(payload?.data || formPayload.data || formPayload.values || body.data || formPayload);
 }
@@ -269,13 +275,13 @@ function extractEmailForDedupe(source, payload) {
     const fields = extractLessonFitFields(payload);
     return normalizeEmail(valueFor(fields, ['email', 'parent_email', 'student_email']));
   }
-  const body = payload?.body || payload || {};
+  const body = unwrappedBody(payload);
   const entity = inferOpusPayload(body);
   return normalizeEmail(valueFor(entity, ['email', 'primary_email', 'email_address', 'student_email', 'parent1_email']));
 }
 
 function submittedAtForDedupe(payload) {
-  const body = payload?.body || payload || {};
+  const body = unwrappedBody(payload);
   const fields = extractLessonFitFields(payload);
   return (
     parseDate(fields.submitted_at) ||
@@ -460,7 +466,7 @@ function opusEntity(body, eventType) {
 }
 
 function canonicalFromOpus(event) {
-  const body = event.payload?.body || {};
+  const body = unwrappedBody(event.payload);
   const entity = opusEntity(body, event.event_type);
   const firstName = valueFor(entity, ['first_name', 'firstName', 'student_first_name', 'studentFirstName']);
   const lastName = valueFor(entity, ['last_name', 'lastName', 'student_last_name', 'studentLastName']);
