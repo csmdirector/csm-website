@@ -48,6 +48,8 @@ The canonical Lesson Fit ingestion path is a Netlify Form submission notificatio
 
 Netlify form notification hooks are site/form-level hooks. They are not branch-scoped like deploy-preview environment variables. Do not point the live site's `lesson-fit-request` hook at a disposable preview database while production traffic can submit the same form. For isolated proof, use a separate test site/form or a tightly controlled temporary hook that is removed immediately after the test.
 
+PR #13 includes a temporary noindex form named `lead-pipeline-webhook-test` for this isolated proof. It exists only to register a separate Netlify form ID and should be removed before final merge unless the team intentionally keeps it as an internal-only diagnostic page.
+
 Preferred webhook URL when custom headers are supported:
 
 `https://cincinnatischoolofmusic.com/api/lead-events`
