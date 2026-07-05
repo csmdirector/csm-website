@@ -1,0 +1,133 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Lead Pipeline Clean Proof | Cincinnati School of Music"
+  description="Internal lead pipeline proof form."
+  canonicalPath="/lead-pipeline-webhook-clean-proof/"
+  noindex={true}
+>
+  <section class="page-shell">
+    <div class="page-inner narrow clean-proof">
+      <span class="section-label">Internal Test</span>
+      <h1>Clean webhook proof</h1>
+
+      <form
+        name="lead-pipeline-webhook-clean-proof-20260705"
+        method="POST"
+        action="/lead-pipeline-webhook-clean-proof/"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+      >
+        <input type="hidden" name="form-name" value="lead-pipeline-webhook-clean-proof-20260705" />
+        <input type="hidden" name="subject" value="Lead Pipeline Clean Proof" />
+        <input type="hidden" name="routing_outcome" value="clean-webhook-proof" />
+        <input type="hidden" name="recommended_url" value="/lead-pipeline-webhook-clean-proof/" />
+        <input type="hidden" name="utm_source" value="codex" />
+        <input type="hidden" name="utm_medium" value="netlify-form-webhook" />
+        <input type="hidden" name="utm_campaign" value="lead-pipeline-phase-1" />
+        <input type="hidden" name="landing_path" value="/lead-pipeline-webhook-clean-proof/" />
+        <p class="hidden-field">
+          <label>Do not fill this out if you are human: <input name="bot-field" /></label>
+        </p>
+
+        <label>
+          Name
+          <input name="parent_name" value="Codex Clean Webhook Proof" required />
+        </label>
+        <label>
+          Email
+          <input name="email" type="email" value="codex.clean.webhook.proof@example.com" required />
+        </label>
+        <label>
+          Phone
+          <input name="phone" type="tel" value="513-555-0209" />
+        </label>
+        <label>
+          Instrument
+          <input name="instrument_interest" value="Piano" />
+        </label>
+        <label>
+          Student age
+          <input name="student_age" value="Adult" />
+        </label>
+        <label>
+          Preferred location
+          <input name="preferred_location" value="Olde Montgomery" />
+        </label>
+        <label>
+          Next step
+          <input name="next_step_preference" value="I want CSM to help me choose" />
+        </label>
+        <label>
+          Help reason
+          <input name="help_reason" value="Clean Netlify Form webhook proof" />
+        </label>
+        <label>
+          Test marker
+          <textarea name="student_context" rows="3" required>CODEX_CLEAN_WEBHOOK_PROOF_PENDING</textarea>
+        </label>
+        <label>
+          Lesson request
+          <textarea name="lesson_request" rows="3">Piano | Adult | Olde Montgomery | Clean Netlify Form webhook proof</textarea>
+        </label>
+        <label>
+          Follow-up notes
+          <textarea name="follow_up_notes" rows="3">CODEX_CLEAN_WEBHOOK_PROOF_PENDING</textarea>
+        </label>
+        <label>
+          Tracking summary
+          <textarea name="tracking_summary" rows="4">Source: codex / netlify-form-webhook
+Campaign: lead-pipeline-phase-1
+Content: CODEX_CLEAN_WEBHOOK_PROOF_PENDING
+Landing page: /lead-pipeline-webhook-clean-proof/</textarea>
+        </label>
+        <input name="submitted_at" value="2026-07-05T00:00:00Z" />
+        <input name="utm_content" value="CODEX_CLEAN_WEBHOOK_PROOF_PENDING" />
+
+        <button type="submit" class="btn-a">Submit Proof</button>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .clean-proof form {
+    display: grid;
+    gap: 18px;
+    margin-top: 32px;
+    max-width: 640px;
+  }
+
+  .clean-proof label {
+    display: grid;
+    gap: 6px;
+    color: var(--charcoal);
+    font-size: .76rem;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .clean-proof input,
+  .clean-proof textarea {
+    width: 100%;
+    border: 1px solid var(--offwb);
+    background: var(--white);
+    color: var(--charcoal);
+    font: 300 1rem/1.5 var(--f);
+    letter-spacing: 0;
+    padding: 12px 14px;
+  }
+
+  .clean-proof .hidden-field {
+    display: none;
+  }
+
+  .clean-proof button {
+    border: 0;
+    justify-self: start;
+    cursor: pointer;
+  }
+</style>
