@@ -22,6 +22,8 @@ Required:
 - `LEAD_PIPELINE_ADMIN_TOKEN`
 - `OPUS_INBOUND_WEBHOOK_URL`
 
+`LEAD_EVENTS_LESSON_FIT_TOKEN` can be supplied as `X-CSM-Source-Token`, `Authorization: Bearer ...`, or as a `token` query parameter when `source=lesson_fit`. Query-string tokens are only accepted for the `lesson_fit` source so Netlify Form notifications can call the endpoint when custom headers are not available.
+
 Required for the Google Sheet mirror:
 
 - `LEAD_FUNNEL_SHEET_ID`
@@ -39,6 +41,31 @@ Optional:
 When `ENABLE_LEAD_PIPELINE` is not `true`, the pipeline returns a disabled/no-op response and does not touch Postgres, Opus, or Sheets. Lesson Fit Netlify Form handling and office email continue through the existing path.
 
 ## Webhook URLs
+
+### Lesson Fit Netlify Form notification
+
+The canonical Lesson Fit ingestion path is a Netlify Form submission notification webhook for the verified `lesson-fit-request` form. Configure this from Netlify project notifications for preview first, then production only after preview proof passes.
+
+Netlify form notification hooks are site/form-level hooks. They are not branch-scoped like deploy-preview environment variables. Do not point the live site's `lesson-fit-request` hook at a disposable preview database while production traffic can submit the same form. For isolated proof, use a separate test site/form or a tightly controlled temporary hook that is removed immediately after the test.
+
+Preferred webhook URL when custom headers are supported:
+
+`https://cincinnatischoolofmusic.com/api/lead-events`
+
+Headers:
+
+- `X-CSM-Source-Token: <LEAD_EVENTS_LESSON_FIT_TOKEN>`
+- `X-CSM-Source: lesson_fit`
+
+Fallback webhook URL when Netlify cannot send custom headers:
+
+`https://cincinnatischoolofmusic.com/api/lead-events?source=lesson_fit&token=<LEAD_EVENTS_LESSON_FIT_TOKEN>`
+
+The normal Lesson Fit office email path is separate from this webhook. Office email should keep sending even if this webhook or the lead pipeline fails.
+
+The Netlify `formSubmitted` event function is not the production-critical ingestion path. It may remain as non-canonical support for manual/local checks, but Netlify Form notifications are the source of record for Lesson Fit ingestion.
+
+### Opus outbound webhooks
 
 Opus outbound webhooks should point to:
 
@@ -80,7 +107,8 @@ Then check recent events. If `client_create` appears immediately, Request Info i
 
 ## Phase 1 acceptance
 
-- Lesson Fit Netlify Form submissions create one `events_raw` row.
+- A verified `lesson-fit-request` Netlify Form submission notification posts to `/api/lead-events`.
+- Lesson Fit webhook submissions create one `events_raw` row.
 - Lesson Fit rows upsert a `people` row by normalized email.
 - Lesson Fit rows enqueue and attempt an Opus inbound webhook forward.
 - Opus `client_create` links back to the same person by email or `opus_client_id`.
@@ -106,12 +134,14 @@ To revert the code while preserving lead data, deploy the previous site version 
 4. Deploy to preview.
 5. Confirm Lesson Fit still stores a Netlify form submission and sends the normal office email.
 6. Turn `ENABLE_LEAD_PIPELINE=true` in preview and redeploy.
-7. Submit test Lesson Fit.
-8. Confirm `events_raw` row and `people` row.
-9. Confirm Opus inbound created/linked prospect.
-10. Configure Opus outbound webhook to preview/test endpoint.
-11. Confirm `client_create` event arrives.
-12. Send duplicate event and confirm no duplicate `events_raw` row and no duplicate `people` row.
-13. Trigger `subscription_create` and confirm `subscription_created_at`.
-14. Run `/api/lead-funnel-sync` and verify the read-only Sheet mirror.
-15. Only then merge to production.
+7. Configure the `lesson-fit-request` Netlify Form notification webhook to the preview `/api/lead-events` endpoint only if the hook can be isolated from production traffic. Use headers if available, otherwise use `?source=lesson_fit&token=<preview token>`.
+8. Submit test Lesson Fit through the deploy preview.
+9. Confirm Netlify Forms stored the submission and office email arrived exactly once.
+10. Confirm `events_raw` row and `people` row.
+11. Confirm Opus inbound created/linked prospect.
+12. Configure Opus outbound webhook to preview/test endpoint.
+13. Confirm `client_create` event arrives.
+14. Send duplicate event and confirm no duplicate `events_raw` row and no duplicate `people` row.
+15. Trigger `subscription_create` and confirm `subscription_created_at`.
+16. Run `/api/lead-funnel-sync` and verify the read-only Sheet mirror.
+17. Only then merge to production.

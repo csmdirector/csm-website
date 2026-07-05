@@ -195,11 +195,13 @@ function timingSafeEqual(a, b) {
 }
 
 function authorizeSource(req) {
+  const url = new URL(req.url);
   const headerToken = req.headers.get('x-csm-source-token') || '';
   const auth = req.headers.get('authorization') || '';
   const bearerToken = auth.replace(/^Bearer\s+/i, '');
-  const token = headerToken || bearerToken;
-  const requestedSource = (req.headers.get('x-csm-source') || new URL(req.url).searchParams.get('source') || '').trim();
+  const requestedSource = (req.headers.get('x-csm-source') || url.searchParams.get('source') || '').trim();
+  const queryToken = requestedSource === 'lesson_fit' ? url.searchParams.get('token') || '' : '';
+  const token = headerToken || bearerToken || queryToken;
   const tokens = sourceTokenMap();
 
   for (const [source, expected] of Object.entries(tokens)) {
@@ -1079,5 +1081,6 @@ export const testables = {
   normalizeFields,
   normalizePhone,
   parseRequestBody,
-  parseTrackingSummary
+  parseTrackingSummary,
+  authorizeSource
 };

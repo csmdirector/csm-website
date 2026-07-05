@@ -10,6 +10,7 @@ import formEmailHandler, { testables as formEmailTestables } from '../netlify/fu
 const {
   buildEventEnvelope,
   canonicalizeStoredEvent,
+  authorizeSource,
   isLeadPipelineEnabled,
   normalizeEmail,
   normalizeEventType,
@@ -28,6 +29,8 @@ delete process.env.ENABLE_LEAD_PIPELINE;
 delete process.env.DATABASE_URL;
 delete process.env.POSTGRES_URL;
 delete process.env.NETLIFY_DATABASE_URL;
+delete process.env.LEAD_EVENTS_LESSON_FIT_TOKEN;
+delete process.env.LEAD_EVENTS_OPUS_TOKEN;
 
 assert.equal(isLeadPipelineEnabled(), false);
 
@@ -35,6 +38,22 @@ assert.equal(normalizeEmail(' First.Last+tag@Gmail.com '), 'firstlast@gmail.com'
 assert.equal(normalizePhone('(513) 560-9175'), '+15135609175');
 assert.equal(normalizeEventType('client_create_trigger', 'opus'), 'client_create');
 assert.equal(normalizeEventType('subscription update', 'opus'), 'subscription_update');
+
+process.env.LEAD_EVENTS_LESSON_FIT_TOKEN = 'lesson-fit-secret';
+process.env.LEAD_EVENTS_OPUS_TOKEN = 'opus-secret';
+const lessonQueryAuth = authorizeSource(new Request('https://example.com/api/lead-events?source=lesson_fit&token=lesson-fit-secret'));
+assert.deepEqual(lessonQueryAuth, { ok: true, source: 'lesson_fit' });
+assert.equal(authorizeSource(new Request('https://example.com/api/lead-events?source=opus&token=opus-secret')).ok, false);
+assert.equal(authorizeSource(new Request('https://example.com/api/lead-events?source=lesson_fit&token=opus-secret')).ok, false);
+const opusHeaderAuth = authorizeSource(new Request('https://example.com/api/lead-events', {
+  headers: {
+    'X-CSM-Source': 'opus',
+    'X-CSM-Source-Token': 'opus-secret'
+  }
+}));
+assert.deepEqual(opusHeaderAuth, { ok: true, source: 'opus' });
+delete process.env.LEAD_EVENTS_LESSON_FIT_TOKEN;
+delete process.env.LEAD_EVENTS_OPUS_TOKEN;
 
 const tracking = parseTrackingSummary([
   'Source: google / cpc',
