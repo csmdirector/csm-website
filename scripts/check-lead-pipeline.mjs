@@ -223,4 +223,10 @@ process.env.ENABLE_LEAD_PIPELINE = 'true';
 assert.equal(isLeadPipelineEnabled(), true);
 delete process.env.ENABLE_LEAD_PIPELINE;
 
+globalThis.Netlify = { env: { get: () => '' } };
+process.env.ENABLE_LEAD_PIPELINE = 'true';
+assert.equal(isLeadPipelineEnabled(), true);
+delete process.env.ENABLE_LEAD_PIPELINE;
+delete globalThis.Netlify;
+
 console.log('lead pipeline checks passed');

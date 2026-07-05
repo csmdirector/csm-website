@@ -7,7 +7,8 @@ let pool;
 
 function env(name) {
   if (typeof Netlify !== 'undefined' && Netlify.env && typeof Netlify.env.get === 'function') {
-    return Netlify.env.get(name) || '';
+    const value = Netlify.env.get(name);
+    if (value) return value;
   }
   if (typeof process !== 'undefined' && process.env) {
     return process.env[name] || '';
