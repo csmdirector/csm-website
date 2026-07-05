@@ -114,6 +114,7 @@ const PIPELINE_CAPTURE_FIELDS = [
   'referrer'
 ];
 const SKIP_FIELDS = new Set(['bot-field', 'form-name', 'subject', 'submitted_at', 'ip', 'user_agent', ...PIPELINE_CAPTURE_FIELDS]);
+SKIP_FIELDS.add('client_submission_id');
 const FIELD_LABELS = {
   'ack-no-family-contact': 'Office confirmation',
   'ack-not-2-already': 'Two-day limit',
@@ -451,8 +452,9 @@ async function sendEmail(route, formName, fields, meta) {
     'Content-Type': 'application/json'
   };
 
-  if (meta.id) {
-    headers['Idempotency-Key'] = `csm-${formName}-${meta.id}`.slice(0, 256);
+  const idempotencyId = valueFor(fields, 'client_submission_id') || meta.id;
+  if (idempotencyId) {
+    headers['Idempotency-Key'] = `csm-${formName}-${idempotencyId}`.slice(0, 256);
   }
 
   const response = await fetch('https://api.resend.com/emails', {
@@ -466,6 +468,24 @@ async function sendEmail(route, formName, fields, meta) {
     throw new Error(`Resend failed for ${formName}: ${response.status} ${details}`);
   }
   console.log(`form-email: sent ${formName} -> ${route.to} (${response.status}) ${details}`);
+}
+
+async function sendFormEmailSubmission({ formName, data, id = '', createdAt = '' }) {
+  const fields = normalizeFields(data || {});
+  const route = ROUTES[formName];
+
+  if (!route) {
+    return { ok: true, skipped: true, reason: 'no_route' };
+  }
+  if (valueFor(fields, 'bot-field')) {
+    return { ok: true, skipped: true, reason: 'honeypot' };
+  }
+  if (shouldSkipOfficeEmail(fields)) {
+    return { ok: true, skipped: true, reason: 'pipeline_only' };
+  }
+
+  await sendEmail(route, formName, fields, { id, createdAt });
+  return { ok: true, sent: true, to: route.to };
 }
 
 export default {
@@ -486,13 +506,9 @@ export default {
       );
       return;
     }
-    if (valueFor(submission.data, 'bot-field')) return;
-
-    if (shouldSkipOfficeEmail(submission.data)) {
-      return;
-    }
-
-    await sendEmail(route, formName, submission.data, {
+    await sendFormEmailSubmission({
+      formName,
+      data: submission.data,
       id: submission.id,
       createdAt: submission.createdAt
     });
@@ -507,5 +523,8 @@ export const testables = {
   getSubmission,
   inferFormName,
   normalizeFields,
+  sendFormEmailSubmission,
   shouldSkipOfficeEmail
 };
+
+export { sendFormEmailSubmission };

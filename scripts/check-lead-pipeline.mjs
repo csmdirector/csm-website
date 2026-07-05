@@ -6,6 +6,7 @@ import {
 } from '../netlify/functions/_shared/lead-pipeline.js';
 import { testables } from '../netlify/functions/_shared/lead-pipeline.js';
 import formEmailHandler, { testables as formEmailTestables } from '../netlify/functions/form-email.js';
+import lessonFitSubmit from '../netlify/functions/lesson-fit-submit.js';
 
 const {
   buildEventEnvelope,
@@ -26,6 +27,7 @@ const {
 } = formEmailTestables;
 
 delete process.env.ENABLE_LEAD_PIPELINE;
+delete process.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT;
 delete process.env.DATABASE_URL;
 delete process.env.POSTGRES_URL;
 delete process.env.NETLIFY_DATABASE_URL;
@@ -196,6 +198,14 @@ const malformed = await parseRequestBody(new Request('https://example.com/api/le
 assert.equal(malformed.parsed.raw_body, '{"bad json"');
 assert.match(malformed.parsed.parse_error, /JSON/);
 
+const disabledDirectSubmit = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  body: new URLSearchParams({ 'form-name': 'lesson-fit-request' }).toString()
+}));
+assert.equal(disabledDirectSubmit.status, 404);
+assert.equal((await disabledDirectSubmit.json()).disabled, true);
+
 const emailFields = normalizeEmailFields({
   'form-name': 'lesson-fit-request',
   subject: 'New Lesson Fit Help Request',
@@ -221,7 +231,7 @@ assert.equal(shouldSkipOfficeEmail({ lead_pipeline_only: '1' }), true);
 const originalFetch = globalThis.fetch;
 const sentEmails = [];
 globalThis.fetch = async (url, options = {}) => {
-  sentEmails.push({ url: String(url), body: JSON.parse(options.body || '{}') });
+  sentEmails.push({ url: String(url), headers: options.headers || {}, body: JSON.parse(options.body || '{}') });
   return { ok: true, status: 200, text: async () => '{"id":"test-email"}' };
 };
 process.env.RESEND_API_KEY = 'test-resend-key';
@@ -257,13 +267,67 @@ await formEmailHandler.formSubmitted({
 });
 assert.equal(sentEmails.length, 1);
 
+process.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT = 'true';
+process.env.ENABLE_LEAD_PIPELINE = 'true';
+delete process.env.DATABASE_URL;
+delete process.env.POSTGRES_URL;
+delete process.env.NETLIFY_DATABASE_URL;
+
+const directFields = {
+  ...emailFields,
+  client_submission_id: 'lesson-fit-direct-test-123',
+  parent_name: 'Jane Student',
+  email: 'direct.parent@example.com',
+  phone: '513-555-0100',
+  instrument_interest: 'Voice',
+  student_age: 'Adult',
+  preferred_location: 'CSM Montgomery',
+  next_step_preference: 'Need help choosing',
+  help_reason: 'Finding a good teacher fit',
+  student_context: 'Direct endpoint proof',
+  submitted_at: '2026-07-04T15:03:00Z'
+};
+const directResponse = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  body: new URLSearchParams({ 'form-name': 'lesson-fit-request', ...directFields }).toString()
+}));
+const directJson = await directResponse.json();
+assert.equal(directResponse.status, 200);
+assert.equal(directJson.ok, true);
+assert.equal(directJson.submission_id, 'lesson-fit-direct-test-123');
+assert.equal(directJson.email.sent, true);
+assert.equal(directJson.pipeline.ok, false);
+assert.match(directJson.pipeline.error, /DATABASE_URL|POSTGRES_URL/);
+assert.equal(sentEmails.length, 2);
+assert.equal(sentEmails[1].body.to[0], 'info@cincinnatischoolofmusic.com');
+assert.equal(sentEmails[1].headers['Idempotency-Key'], 'csm-lesson-fit-request-lesson-fit-direct-test-123');
+
+const pipelineOnlyResponse = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  body: new URLSearchParams({
+    'form-name': 'lesson-fit-request',
+    ...directFields,
+    lead_pipeline_only: '1',
+    submitted_at: '2026-07-04T15:04:00Z'
+  }).toString()
+}));
+const pipelineOnlyJson = await pipelineOnlyResponse.json();
+assert.equal(pipelineOnlyResponse.status, 200);
+assert.equal(pipelineOnlyJson.email.skipped, true);
+assert.equal(pipelineOnlyJson.email.reason, 'pipeline_only');
+assert.equal(sentEmails.length, 2);
+
 globalThis.fetch = originalFetch;
 delete process.env.RESEND_API_KEY;
 delete process.env.ENABLE_LEAD_PIPELINE;
+delete process.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT;
 
 const lessonFitPage = readFileSync(new URL('../src/pages/lesson-fit/index.astro', import.meta.url), 'utf8');
 assert.match(lessonFitPage, /noindex=\{true\}/);
 assert.match(lessonFitPage, /ENABLE_LEAD_PIPELINE_CAPTURE/);
+assert.match(lessonFitPage, /ENABLE_LESSON_FIT_DIRECT_SUBMIT/);
 
 process.env.ENABLE_LEAD_PIPELINE = 'true';
 assert.equal(isLeadPipelineEnabled(), true);

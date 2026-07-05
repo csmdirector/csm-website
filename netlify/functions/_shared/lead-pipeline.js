@@ -885,35 +885,54 @@ function extractNetlifyFormSubmission(event) {
   };
 }
 
-async function captureNetlifyLessonFitSubmission(event) {
+async function captureLessonFitSubmission({
+  formName,
+  data,
+  id = '',
+  createdAt = new Date().toISOString(),
+  provider = 'direct',
+  receivedFrom = 'lesson_fit_direct_endpoint'
+} = {}) {
   if (!isLeadPipelineEnabled()) return disabledResult('Lesson Fit form capture');
 
-  const submission = extractNetlifyFormSubmission(event || {});
-  if (submission.formName !== 'lesson-fit-request') {
+  const fields = normalizeFields(data || {});
+  if (formName !== 'lesson-fit-request') {
     return { skipped: true, reason: 'not_lesson_fit' };
   }
-  if (valueFor(submission.data, 'bot-field')) {
+  if (valueFor(fields, 'bot-field')) {
     return { skipped: true, reason: 'honeypot' };
   }
 
   const envelope = buildEventEnvelope({
     source: 'lesson_fit',
     eventType: 'form_submitted',
-    externalId: submission.id,
+    externalId: id,
     payload: {
-      provider: 'netlify_forms',
-      form_name: submission.formName,
-      submission_id: submission.id,
-      created_at: submission.createdAt,
-      data: submission.data
+      provider,
+      form_name: formName,
+      submission_id: id,
+      created_at: createdAt,
+      data: fields
     },
-    receivedFrom: 'netlify_form_submitted'
+    receivedFrom
   });
   const stored = await persistRawEvent(envelope);
   if (stored.isNew && stored.id) {
     await processStoredEvent(stored.id);
   }
   return stored;
+}
+
+async function captureNetlifyLessonFitSubmission(event) {
+  const submission = extractNetlifyFormSubmission(event || {});
+  return captureLessonFitSubmission({
+    formName: submission.formName,
+    data: submission.data,
+    id: submission.id,
+    createdAt: submission.createdAt,
+    provider: 'netlify_forms',
+    receivedFrom: 'netlify_form_submitted'
+  });
 }
 
 function quoteSheetName(sheetName) {
@@ -1069,6 +1088,7 @@ async function handleLeadFunnelSyncRequest(req) {
 }
 
 export {
+  captureLessonFitSubmission,
   captureNetlifyLessonFitSubmission,
   drainOpusForwardQueue,
   handleLeadEventsRequest,
@@ -1080,6 +1100,7 @@ export {
 export const testables = {
   buildEventEnvelope,
   canonicalizeStoredEvent,
+  captureLessonFitSubmission,
   extractNetlifyFormSubmission,
   isLeadPipelineEnabled,
   normalizeEmail,

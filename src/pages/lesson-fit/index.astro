@@ -4,6 +4,9 @@ import Base from '../../layouts/Base.astro';
 const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
   String(import.meta.env.ENABLE_LEAD_PIPELINE || '').trim().toLowerCase()
 );
+const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
+  String(import.meta.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT || '').trim().toLowerCase()
+);
 ---
 <Base
   title="Find the Right Lesson Fit | Cincinnati School of Music"
@@ -52,6 +55,7 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
           <input type="hidden" name="routing_outcome" id="routingOutcome" value="" />
           <input type="hidden" name="recommended_url" id="recommendedUrl" value="" />
           <input type="hidden" name="submitted_at" id="submittedAt" value="" />
+          <input type="hidden" name="client_submission_id" id="clientSubmissionId" value="" />
           <input type="hidden" name="lead_pipeline_only" id="leadPipelineOnly" value="" />
           <input type="hidden" name="utm_source" id="utmSource" value="" />
           <input type="hidden" name="utm_medium" id="utmMedium" value="" />
@@ -330,14 +334,16 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
     }
   </style>
 
-  <script define:vars={{ enableLeadPipelineCapture }}>
+  <script define:vars={{ enableLeadPipelineCapture, enableLessonFitDirectSubmit }}>
     (function(){
       var form = document.getElementById('intakeForm');
       if(!form) return;
 
       var HELP_THANK_YOU_URL = '/lesson-fit/thank-you/?help=1';
+      var DIRECT_SUBMIT_URL = '/api/lesson-fit-submit';
       var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
       var ENABLE_LEAD_PIPELINE_CAPTURE = Boolean(enableLeadPipelineCapture);
+      var ENABLE_LESSON_FIT_DIRECT_SUBMIT = Boolean(enableLessonFitDirectSubmit);
       var ATTRIBUTION_STORAGE_KEY = 'csmLessonFitAttribution';
       var STATE_STORAGE_KEY = 'csmLessonFitState';
       var HELP_SUBMIT_EVENT_PUSHED_KEY = 'csmLessonFitHelpSubmitEventPushed';
@@ -346,6 +352,7 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
         routing_outcome: 'routingOutcome',
         recommended_url: 'recommendedUrl',
         submitted_at: 'submittedAt',
+        client_submission_id: 'clientSubmissionId',
         lead_pipeline_only: 'leadPipelineOnly',
         utm_source: 'utmSource',
         utm_medium: 'utmMedium',
@@ -397,6 +404,16 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
       function setLeadEventField(name, value){
         var field = document.getElementById(LEAD_EVENT_FIELD_IDS[name]);
         if(field) field.value = value || '';
+      }
+
+      function ensureClientSubmissionId(){
+        var field = document.getElementById('clientSubmissionId');
+        if(!field) return '';
+        if(!field.value){
+          var randomPart = Math.random().toString(36).slice(2, 10);
+          field.value = 'lesson-fit-' + Date.now().toString(36) + '-' + randomPart;
+        }
+        return field.value;
       }
 
       function getStoredJson(key){
@@ -757,12 +774,13 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
         return true;
       }
 
-      function submitToNetlify(){
+      function submitLegacyNetlify(){
         updateAttributionFields();
         var formData = new URLSearchParams();
         formData.set('form-name', 'lesson-fit-request');
         formData.set('subject', 'New Lesson Fit Help Request');
         formData.set('email', readFormValue('email'));
+        formData.set('client_submission_id', ensureClientSubmissionId());
         formData.set('contact_summary', readFormValue('contact_summary'));
         formData.set('lesson_request', readFormValue('lesson_request'));
         formData.set('follow_up_notes', readFormValue('follow_up_notes'));
@@ -784,13 +802,44 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
         });
       }
 
+      function submitDirect(){
+        updateAttributionFields();
+        ensureClientSubmissionId();
+        setLeadEventField('submitted_at', new Date().toISOString());
+        setLeadEventField('lead_pipeline_only', '');
+        var formData = new URLSearchParams(new FormData(form));
+        formData.set('form-name', 'lesson-fit-request');
+        formData.set('lead_pipeline_only', '');
+        return fetch(DIRECT_SUBMIT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        }).then(function(response){
+          if(!response.ok){
+            throw new Error('Lesson Fit direct submission failed');
+          }
+          return response;
+        });
+      }
+
+      function submitToNetlify(){
+        if(!ENABLE_LESSON_FIT_DIRECT_SUBMIT){
+          return submitLegacyNetlify();
+        }
+        return submitDirect().catch(function(error){
+          if(window.console && window.console.warn) window.console.warn('Lesson Fit direct submit failed; falling back to Netlify form', error);
+          return submitLegacyNetlify();
+        });
+      }
+
       function submitPipelineOnly(){
         updateAttributionFields();
+        ensureClientSubmissionId();
         setLeadEventField('submitted_at', new Date().toISOString());
         setLeadEventField('lead_pipeline_only', '1');
         var formData = new URLSearchParams(new FormData(form));
         formData.set('lead_pipeline_only', '1');
-        return fetch(form.action, {
+        return fetch(ENABLE_LESSON_FIT_DIRECT_SUBMIT ? DIRECT_SUBMIT_URL : form.action, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: formData.toString()

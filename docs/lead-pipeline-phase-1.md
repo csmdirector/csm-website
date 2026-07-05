@@ -16,13 +16,14 @@ Run `db/lead-pipeline.sql` against the production Postgres database. It creates:
 Required:
 
 - `ENABLE_LEAD_PIPELINE` must be `true` before the pipeline writes to Postgres, forwards to Opus, serves recent events, or syncs Sheets. Any other value, including missing, is treated as disabled.
+- `ENABLE_LESSON_FIT_DIRECT_SUBMIT` must be `true` before the Lesson Fit page posts to the CSM-owned submit endpoint. Any other value, including missing, keeps the existing Netlify Form submit path.
 - `DATABASE_URL`
 - `LEAD_EVENTS_LESSON_FIT_TOKEN`
 - `LEAD_EVENTS_OPUS_TOKEN`
 - `LEAD_PIPELINE_ADMIN_TOKEN`
 - `OPUS_INBOUND_WEBHOOK_URL`
 
-`LEAD_EVENTS_LESSON_FIT_TOKEN` can be supplied as `X-CSM-Source-Token`, `Authorization: Bearer ...`, or as a `token` query parameter when `source=lesson_fit`. Query-string tokens are only accepted for the `lesson_fit` source so Netlify Form notifications can call the endpoint when custom headers are not available.
+`LEAD_EVENTS_LESSON_FIT_TOKEN` can be supplied as `X-CSM-Source-Token`, `Authorization: Bearer ...`, or as a `token` query parameter when `source=lesson_fit`. Query-string tokens are only accepted for the `lesson_fit` source for backend webhook tests that cannot send custom headers.
 
 Required for the Google Sheet mirror:
 
@@ -40,17 +41,31 @@ Optional:
 
 When `ENABLE_LEAD_PIPELINE` is not `true`, the pipeline returns a disabled/no-op response and does not touch Postgres, Opus, or Sheets. Lesson Fit Netlify Form handling and office email continue through the existing path.
 
+When `ENABLE_LESSON_FIT_DIRECT_SUBMIT` is not `true`, the Lesson Fit page continues to post to Netlify Forms exactly as before. The direct submit endpoint returns disabled and does not send office email or touch the pipeline.
+
 ## Webhook URLs
+
+### Lesson Fit direct submit endpoint
+
+The production candidate Lesson Fit ingestion path is the CSM-owned `/api/lesson-fit-submit` endpoint, gated by `ENABLE_LESSON_FIT_DIRECT_SUBMIT`.
+
+This endpoint:
+
+- accepts the existing `lesson-fit-request` fields from the Lesson Fit page
+- sends the office email through the same formatter/sender used by `form-email`
+- captures the lead into the pipeline when `ENABLE_LEAD_PIPELINE=true`
+- does not expose a privileged source token in browser JavaScript
+- returns success when the office email sends, even if pipeline capture fails
+
+The browser keeps the old Netlify Form submit path as the fail-open fallback. If the direct endpoint returns an error or cannot be reached, the page posts the same submission to the existing Netlify Form action. A client-generated `client_submission_id` is included in both paths and is used as the Resend idempotency key so a fallback retry does not intentionally create a second office email.
+
+Do not enable `ENABLE_LESSON_FIT_DIRECT_SUBMIT` in production until this path has preview proof with real office email delivery, pipeline capture, Opus inbound forwarding, and a forced endpoint-failure fallback test.
 
 ### Lesson Fit Netlify Form notification
 
-The canonical Lesson Fit ingestion path is a Netlify Form submission notification webhook for the verified `lesson-fit-request` form. Configure this from Netlify project notifications for preview first, then production only after preview proof passes.
+Netlify Form notification webhooks were tested as a possible automatic trigger, but they were not reliable enough to make production-critical for Lesson Fit ingestion. Do not use Netlify Form notifications as the canonical Lesson Fit pipeline trigger unless they are re-proven separately and monitored.
 
-Netlify form notification hooks are site/form-level hooks. They are not branch-scoped like deploy-preview environment variables. Do not point the live site's `lesson-fit-request` hook at a disposable preview database while production traffic can submit the same form. For isolated proof, use a separate test site/form or a tightly controlled temporary hook that is removed immediately after the test.
-
-Preview proof used a temporary noindex form named `lead-pipeline-webhook-test` to register a separate Netlify form ID. That form and its notification hook should not ship to production.
-
-Preferred webhook URL when custom headers are supported:
+The existing `/api/lead-events` endpoint still supports Lesson Fit source-token ingestion for controlled tests and non-browser sources:
 
 `https://cincinnatischoolofmusic.com/api/lead-events`
 
@@ -63,9 +78,9 @@ Fallback webhook URL when Netlify cannot send custom headers:
 
 `https://cincinnatischoolofmusic.com/api/lead-events?source=lesson_fit&token=<LEAD_EVENTS_LESSON_FIT_TOKEN>`
 
-The normal Lesson Fit office email path is separate from this webhook. Office email should keep sending even if this webhook or the lead pipeline fails.
+Do not put `LEAD_EVENTS_LESSON_FIT_TOKEN` in browser JavaScript. Query-string tokens are only acceptable for server-to-server notification tests where the URL is stored in Netlify or another backend service.
 
-The Netlify `formSubmitted` event function is not the production-critical ingestion path. It may remain as non-canonical support for manual/local checks, but Netlify Form notifications are the source of record for Lesson Fit ingestion.
+The Netlify `formSubmitted` event function is not the production-critical ingestion path. It may remain as non-canonical support for manual/local checks.
 
 ### Opus outbound webhooks
 
@@ -109,8 +124,12 @@ Then check recent events. If `client_create` appears immediately, Request Info i
 
 ## Phase 1 acceptance
 
-- A verified `lesson-fit-request` Netlify Form submission notification posts to `/api/lead-events`.
-- Lesson Fit webhook submissions create one `events_raw` row.
+- With `ENABLE_LESSON_FIT_DIRECT_SUBMIT=false`, Lesson Fit uses the existing Netlify Form path.
+- With `ENABLE_LESSON_FIT_DIRECT_SUBMIT=true`, a Lesson Fit staff-help submission posts to `/api/lesson-fit-submit`.
+- The direct endpoint sends the normal office email exactly once.
+- If pipeline capture fails, the direct endpoint still returns success when the office email sends.
+- If the direct endpoint fails before success, the browser falls back to the existing Netlify Form submit path.
+- Lesson Fit direct submissions create one `events_raw` row.
 - Lesson Fit rows upsert a `people` row by normalized email.
 - Lesson Fit rows enqueue and attempt an Opus inbound webhook forward.
 - Opus `client_create` links back to the same person by email or `opus_client_id`.
@@ -120,9 +139,11 @@ Then check recent events. If `client_create` appears immediately, Request Info i
 
 ## Rollback
 
+Set `ENABLE_LESSON_FIT_DIRECT_SUBMIT=false` in Netlify and redeploy, or unset it. Lesson Fit immediately returns to the existing Netlify Form submit path.
+
 Set `ENABLE_LEAD_PIPELINE=false` in Netlify and redeploy, or unset it. The pipeline stops writing to Postgres, forwarding to Opus, reading recent events, retrying queue rows, and syncing Sheets.
 
-Disabling does not disable Netlify Forms and does not disable Lesson Fit office email.
+Disabling either flag does not disable Netlify Forms. Disabling `ENABLE_LEAD_PIPELINE` does not disable Lesson Fit office email.
 
 Queued `opus_forward_queue` rows stay in Postgres. They are not deleted. Re-enable the flag to resume scheduled retries, or inspect/replay manually from the database.
 
@@ -132,15 +153,15 @@ To revert the code while preserving lead data, deploy the previous site version 
 
 1. Create Postgres database.
 2. Run `db/lead-pipeline.sql`.
-3. Add Netlify env vars with `ENABLE_LEAD_PIPELINE=false`.
+3. Add Netlify env vars with `ENABLE_LEAD_PIPELINE=false` and `ENABLE_LESSON_FIT_DIRECT_SUBMIT=false`.
 4. Deploy to preview.
 5. Confirm Lesson Fit still stores a Netlify form submission and sends the normal office email.
-6. Turn `ENABLE_LEAD_PIPELINE=true` in preview and redeploy.
-7. Configure the `lesson-fit-request` Netlify Form notification webhook to the preview `/api/lead-events` endpoint only if the hook can be isolated from production traffic. Use headers if available, otherwise use `?source=lesson_fit&token=<preview token>`.
-8. Submit test Lesson Fit through the deploy preview.
-9. Confirm Netlify Forms stored the submission and office email arrived exactly once.
-10. Confirm `events_raw` row and `people` row.
-11. Confirm Opus inbound created/linked prospect.
+6. Turn `ENABLE_LEAD_PIPELINE=true` and `ENABLE_LESSON_FIT_DIRECT_SUBMIT=true` in preview and redeploy.
+7. Submit a staff-help Lesson Fit through the deploy preview.
+8. Confirm office email arrived exactly once.
+9. Confirm `events_raw` row and `people` row.
+10. Confirm Opus inbound created/linked prospect.
+11. Temporarily force the direct endpoint to fail in preview and confirm the browser falls back to the existing Netlify Form path.
 12. Configure Opus outbound webhook to preview/test endpoint.
 13. Confirm `client_create` event arrives.
 14. Send duplicate event and confirm no duplicate `events_raw` row and no duplicate `people` row.
