@@ -13,6 +13,7 @@ const {
   canonicalizeStoredEvent,
   authorizeSource,
   isLeadPipelineEnabled,
+  isOpusInboundForwardingEnabled,
   normalizeEmail,
   normalizeEventType,
   normalizePhone,
@@ -28,6 +29,7 @@ const {
 
 delete process.env.ENABLE_LEAD_PIPELINE;
 delete process.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT;
+delete process.env.ENABLE_OPUS_INBOUND_FORWARDING;
 delete process.env.DATABASE_URL;
 delete process.env.POSTGRES_URL;
 delete process.env.NETLIFY_DATABASE_URL;
@@ -35,6 +37,7 @@ delete process.env.LEAD_EVENTS_LESSON_FIT_TOKEN;
 delete process.env.LEAD_EVENTS_OPUS_TOKEN;
 
 assert.equal(isLeadPipelineEnabled(), false);
+assert.equal(isOpusInboundForwardingEnabled(), false);
 
 assert.equal(normalizeEmail(' First.Last+tag@Gmail.com '), 'firstlast@gmail.com');
 assert.equal(normalizePhone('(513) 560-9175'), '+15135609175');
@@ -89,6 +92,7 @@ const lessonPayload = {
     next_step_preference: 'Need help choosing',
     help_reason: 'Finding a good teacher fit',
     student_context: 'Wants to sing pop songs',
+    routing_outcome: 'staff-help',
     utm_source: 'google',
     utm_medium: 'cpc',
     submitted_at: '2026-07-04T15:01:00-04:00'
@@ -149,7 +153,52 @@ const canonicalLesson = canonicalizeStoredEvent({
   received_at: '2026-07-04T19:01:00Z'
 });
 assert.equal(canonicalLesson.emailNorm, 'janestudent@gmail.com');
-assert.equal(canonicalLesson.forwardToOpus, true);
+assert.equal(canonicalLesson.forwardToOpus, false);
+
+process.env.ENABLE_OPUS_INBOUND_FORWARDING = 'true';
+const forwardableLesson = canonicalizeStoredEvent({
+  source: 'lesson_fit',
+  event_type: 'form_submitted',
+  payload: firstEnvelope.payload,
+  received_at: '2026-07-04T19:01:00Z'
+});
+assert.equal(forwardableLesson.forwardToOpus, true);
+assert.equal(forwardableLesson.opusInboundPayload.student_tags[0], 'lesson-fit');
+
+const pipelineOnlyLesson = canonicalizeStoredEvent({
+  source: 'lesson_fit',
+  event_type: 'form_submitted',
+  payload: {
+    ...firstEnvelope.payload,
+    body: {
+      ...firstEnvelope.payload.body,
+      data: {
+        ...firstEnvelope.payload.body.data,
+        lead_pipeline_only: '1'
+      }
+    }
+  },
+  received_at: '2026-07-04T19:01:00Z'
+});
+assert.equal(pipelineOnlyLesson.forwardToOpus, false);
+
+const selfBookingLesson = canonicalizeStoredEvent({
+  source: 'lesson_fit',
+  event_type: 'form_submitted',
+  payload: {
+    ...firstEnvelope.payload,
+    body: {
+      ...firstEnvelope.payload.body,
+      data: {
+        ...firstEnvelope.payload.body.data,
+        routing_outcome: 'self-booking'
+      }
+    }
+  },
+  received_at: '2026-07-04T19:01:00Z'
+});
+assert.equal(selfBookingLesson.forwardToOpus, false);
+delete process.env.ENABLE_OPUS_INBOUND_FORWARDING;
 assert.equal(canonicalLesson.opusInboundPayload.student_tags[0], 'lesson-fit');
 
 const opusCanonical = canonicalizeStoredEvent({
@@ -205,6 +254,19 @@ const disabledDirectSubmit = await lessonFitSubmit(new Request('https://example.
 }));
 assert.equal(disabledDirectSubmit.status, 404);
 assert.equal((await disabledDirectSubmit.json()).disabled, true);
+
+process.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT = 'true';
+const invalidDirectSubmit = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  body: new URLSearchParams({
+    'form-name': 'lesson-fit-request',
+    parent_name: 'Jane Student',
+    email: 'jane@example.com'
+  }).toString()
+}));
+assert.equal(invalidDirectSubmit.status, 422);
+delete process.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT;
 
 const emailFields = normalizeEmailFields({
   'form-name': 'lesson-fit-request',
@@ -323,11 +385,24 @@ globalThis.fetch = originalFetch;
 delete process.env.RESEND_API_KEY;
 delete process.env.ENABLE_LEAD_PIPELINE;
 delete process.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT;
+delete process.env.ENABLE_OPUS_INBOUND_FORWARDING;
 
 const lessonFitPage = readFileSync(new URL('../src/pages/lesson-fit/index.astro', import.meta.url), 'utf8');
 assert.match(lessonFitPage, /noindex=\{true\}/);
 assert.match(lessonFitPage, /ENABLE_LEAD_PIPELINE_CAPTURE/);
 assert.match(lessonFitPage, /ENABLE_LESSON_FIT_DIRECT_SUBMIT/);
+assert.match(lessonFitPage, /function shouldFallbackToLegacySubmit/);
+assert.match(lessonFitPage, /error\.status === 404/);
+assert.match(lessonFitPage, /error\.status === 500/);
+assert.match(lessonFitPage, /error\.status === 502/);
+assert.match(lessonFitPage, /error\.status === 503/);
+assert.match(lessonFitPage, /error\.status === 504/);
+assert.doesNotMatch(lessonFitPage, /error\.status === 400/);
+assert.doesNotMatch(lessonFitPage, /error\.status === 401/);
+assert.doesNotMatch(lessonFitPage, /error\.status === 403/);
+assert.doesNotMatch(lessonFitPage, /error\.status === 405/);
+assert.doesNotMatch(lessonFitPage, /error\.status === 422/);
+assert.doesNotMatch(lessonFitPage, /error\.status === 429/);
 
 process.env.ENABLE_LEAD_PIPELINE = 'true';
 assert.equal(isLeadPipelineEnabled(), true);

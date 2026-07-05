@@ -816,10 +816,21 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
           body: formData.toString()
         }).then(function(response){
           if(!response.ok){
-            throw new Error('Lesson Fit direct submission failed');
+            var error = new Error('Lesson Fit direct submission failed');
+            error.status = response.status;
+            throw error;
           }
           return response;
         });
+      }
+
+      function shouldFallbackToLegacySubmit(error){
+        if(!error || typeof error.status === 'undefined') return true;
+        return error.status === 404 ||
+          error.status === 500 ||
+          error.status === 502 ||
+          error.status === 503 ||
+          error.status === 504;
       }
 
       function submitToNetlify(){
@@ -827,8 +838,11 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
           return submitLegacyNetlify();
         }
         return submitDirect().catch(function(error){
-          if(window.console && window.console.warn) window.console.warn('Lesson Fit direct submit failed; falling back to Netlify form', error);
-          return submitLegacyNetlify();
+          if(shouldFallbackToLegacySubmit(error)){
+            if(window.console && window.console.warn) window.console.warn('Lesson Fit direct submit failed operationally; falling back to Netlify form', error);
+            return submitLegacyNetlify();
+          }
+          throw error;
         });
       }
 

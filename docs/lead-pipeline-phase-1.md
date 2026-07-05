@@ -15,13 +15,12 @@ Run `db/lead-pipeline.sql` against the production Postgres database. It creates:
 
 Required:
 
-- `ENABLE_LEAD_PIPELINE` must be `true` before the pipeline writes to Postgres, forwards to Opus, serves recent events, or syncs Sheets. Any other value, including missing, is treated as disabled.
+- `ENABLE_LEAD_PIPELINE` must be `true` before the pipeline writes to Postgres, serves recent events, retries queued work, or syncs Sheets. Any other value, including missing, is treated as disabled.
 - `ENABLE_LESSON_FIT_DIRECT_SUBMIT` must be `true` before the Lesson Fit page posts to the CSM-owned submit endpoint. Any other value, including missing, keeps the existing Netlify Form submit path.
 - `DATABASE_URL`
 - `LEAD_EVENTS_LESSON_FIT_TOKEN`
 - `LEAD_EVENTS_OPUS_TOKEN`
 - `LEAD_PIPELINE_ADMIN_TOKEN`
-- `OPUS_INBOUND_WEBHOOK_URL`
 
 `LEAD_EVENTS_LESSON_FIT_TOKEN` can be supplied as `X-CSM-Source-Token`, `Authorization: Bearer ...`, or as a `token` query parameter when `source=lesson_fit`. Query-string tokens are only accepted for the `lesson_fit` source for backend webhook tests that cannot send custom headers.
 
@@ -36,10 +35,20 @@ Share the mirror spreadsheet with `GOOGLE_SERVICE_ACCOUNT_EMAIL` as an editor. H
 Optional:
 
 - `LEAD_FUNNEL_SHEET_TAB` defaults to `lead_funnel`
-- `OPUS_INBOUND_WEBHOOK_TOKEN` sends an `Authorization: Bearer ...` header to Opus if configured
 - `LEAD_EVENTS_SOURCE_TOKENS_JSON` can replace per-source token env vars with a JSON object such as `{"opus":"...","lesson_fit":"..."}`
 
+Required for Lesson Fit to Opus inbound forwarding:
+
+- `ENABLE_OPUS_INBOUND_FORWARDING=true`
+- `OPUS_INBOUND_WEBHOOK_URL`
+
+Optional for Opus inbound forwarding:
+
+- `OPUS_INBOUND_WEBHOOK_TOKEN` sends an `Authorization: Bearer ...` header to Opus if configured
+
 When `ENABLE_LEAD_PIPELINE` is not `true`, the pipeline returns a disabled/no-op response and does not touch Postgres, Opus, or Sheets. Lesson Fit Netlify Form handling and office email continue through the existing path.
+
+When `ENABLE_OPUS_INBOUND_FORWARDING` is not `true`, Lesson Fit events can still write to Postgres and `people`, but they do not enqueue or send Opus inbound prospect creation. Self-booking and `lead_pipeline_only=1` events never forward to Opus.
 
 When `ENABLE_LESSON_FIT_DIRECT_SUBMIT` is not `true`, the Lesson Fit page continues to post to Netlify Forms exactly as before. The direct submit endpoint returns disabled and does not send office email or touch the pipeline.
 
@@ -57,7 +66,7 @@ This endpoint:
 - does not expose a privileged source token in browser JavaScript
 - returns success when the office email sends, even if pipeline capture fails
 
-The browser keeps the old Netlify Form submit path as the fail-open fallback. If the direct endpoint returns an error or cannot be reached, the page posts the same submission to the existing Netlify Form action. A client-generated `client_submission_id` is included in both paths and is used as the Resend idempotency key so a fallback retry does not intentionally create a second office email.
+The browser keeps the old Netlify Form submit path as the fail-open fallback for operational endpoint failures only: network failure, `404`, `500`, `502`, `503`, or `504`. Validation, security, method, and rate-limit responses such as `400`, `401`, `403`, `405`, `422`, and `429` do not fall back to Netlify. A client-generated `client_submission_id` is included in both allowed paths and is used as the Resend idempotency key so a fallback retry does not intentionally create a second office email.
 
 Do not enable `ENABLE_LESSON_FIT_DIRECT_SUBMIT` in production until this path has preview proof with real office email delivery, pipeline capture, Opus inbound forwarding, and a forced endpoint-failure fallback test.
 
@@ -131,7 +140,8 @@ Then check recent events. If `client_create` appears immediately, Request Info i
 - If the direct endpoint fails before success, the browser falls back to the existing Netlify Form submit path.
 - Lesson Fit direct submissions create one `events_raw` row.
 - Lesson Fit rows upsert a `people` row by normalized email.
-- Lesson Fit rows enqueue and attempt an Opus inbound webhook forward.
+- Staff-help Lesson Fit rows enqueue and attempt an Opus inbound webhook forward only when `ENABLE_OPUS_INBOUND_FORWARDING=true`.
+- Self-booking and `lead_pipeline_only=1` Lesson Fit rows do not enqueue Opus inbound prospect creation.
 - Opus `client_create` links back to the same person by email or `opus_client_id`.
 - Opus `subscription_create` sets `subscription_created_at`.
 - Re-sending the same webhook keeps one `events_raw` row because `dedupe_key` is unique.
@@ -140,6 +150,8 @@ Then check recent events. If `client_create` appears immediately, Request Info i
 ## Rollback
 
 Set `ENABLE_LESSON_FIT_DIRECT_SUBMIT=false` in Netlify and redeploy, or unset it. Lesson Fit immediately returns to the existing Netlify Form submit path.
+
+Set `ENABLE_OPUS_INBOUND_FORWARDING=false` in Netlify and redeploy, or unset it. Lesson Fit events stop creating new Opus inbound forward queue rows and queued Opus sends do not run.
 
 Set `ENABLE_LEAD_PIPELINE=false` in Netlify and redeploy, or unset it. The pipeline stops writing to Postgres, forwarding to Opus, reading recent events, retrying queue rows, and syncing Sheets.
 
@@ -153,18 +165,22 @@ To revert the code while preserving lead data, deploy the previous site version 
 
 1. Create Postgres database.
 2. Run `db/lead-pipeline.sql`.
-3. Add Netlify env vars with `ENABLE_LEAD_PIPELINE=false` and `ENABLE_LESSON_FIT_DIRECT_SUBMIT=false`.
+3. Add Netlify env vars with `ENABLE_LEAD_PIPELINE=false`, `ENABLE_LESSON_FIT_DIRECT_SUBMIT=false`, and `ENABLE_OPUS_INBOUND_FORWARDING=false`.
 4. Deploy to preview.
 5. Confirm Lesson Fit still stores a Netlify form submission and sends the normal office email.
-6. Turn `ENABLE_LEAD_PIPELINE=true` and `ENABLE_LESSON_FIT_DIRECT_SUBMIT=true` in preview and redeploy.
+6. Turn `ENABLE_LEAD_PIPELINE=true` and `ENABLE_LESSON_FIT_DIRECT_SUBMIT=true` in preview and redeploy. Keep `ENABLE_OPUS_INBOUND_FORWARDING=false`.
 7. Submit a staff-help Lesson Fit through the deploy preview.
 8. Confirm office email arrived exactly once.
 9. Confirm `events_raw` row and `people` row.
-10. Confirm Opus inbound created/linked prospect.
-11. Temporarily force the direct endpoint to fail in preview and confirm the browser falls back to the existing Netlify Form path.
-12. Configure Opus outbound webhook to preview/test endpoint.
-13. Confirm `client_create` event arrives.
-14. Send duplicate event and confirm no duplicate `events_raw` row and no duplicate `people` row.
-15. Trigger `subscription_create` and confirm `subscription_created_at`.
-16. Run `/api/lead-funnel-sync` and verify the read-only Sheet mirror.
-17. Only then merge to production.
+10. Confirm no Opus inbound forward is queued while `ENABLE_OPUS_INBOUND_FORWARDING=false`.
+11. Temporarily force the direct endpoint to return `502` in preview and confirm the browser falls back to the existing Netlify Form path.
+12. Temporarily force or submit a `422` in preview and confirm the browser does not fall back.
+13. Turn `ENABLE_OPUS_INBOUND_FORWARDING=true` in preview only.
+14. Submit a staff-help Lesson Fit test and confirm Opus inbound created/linked prospect.
+15. Submit or replay a self-booking/pipeline-only event and confirm it does not create an Opus prospect.
+16. Configure Opus outbound webhook to preview/test endpoint.
+17. Confirm `client_create` event arrives.
+18. Send duplicate event and confirm no duplicate `events_raw` row and no duplicate `people` row.
+19. Trigger `subscription_create` and confirm `subscription_created_at`.
+20. Run `/api/lead-funnel-sync` and verify the read-only Sheet mirror.
+21. Only then merge to production.

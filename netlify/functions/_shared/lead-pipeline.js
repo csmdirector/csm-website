@@ -20,9 +20,18 @@ function isLeadPipelineEnabled() {
   return ['1', 'true', 'yes', 'on'].includes(String(env('ENABLE_LEAD_PIPELINE')).trim().toLowerCase());
 }
 
+function isOpusInboundForwardingEnabled() {
+  return ['1', 'true', 'yes', 'on'].includes(String(env('ENABLE_OPUS_INBOUND_FORWARDING')).trim().toLowerCase());
+}
+
 function disabledResult(scope) {
   console.log(`lead-pipeline: disabled; skipping ${scope}`);
   return { ok: true, skipped: true, disabled: true, reason: 'ENABLE_LEAD_PIPELINE is not true' };
+}
+
+function opusForwardingDisabledResult(scope) {
+  console.log(`lead-pipeline: Opus inbound forwarding disabled; skipping ${scope}`);
+  return { ok: true, skipped: true, disabled: true, reason: 'ENABLE_OPUS_INBOUND_FORWARDING is not true' };
 }
 
 function getPool() {
@@ -423,6 +432,12 @@ function canonicalFromLessonFit(event) {
   const studentAge = valueFor(fields, 'student_age');
   const isChild = studentAge && studentAge !== 'Adult';
   const note = buildStudentNote(fields, attribution, eventAt);
+  const routingOutcome = valueFor(fields, 'routing_outcome');
+  const isPipelineOnly = valueFor(fields, 'lead_pipeline_only') === '1';
+  const canForwardToOpus = isOpusInboundForwardingEnabled() &&
+    !isPipelineOnly &&
+    routingOutcome === 'staff-help' &&
+    Boolean(email || phone);
   const opusPayload = compactObject({
     source: 'lesson_fit',
     student_tags: ['lesson-fit'],
@@ -453,7 +468,7 @@ function canonicalFromLessonFit(event) {
     firstUtm: attribution,
     firstContext: context || null,
     leadAt: eventAt,
-    forwardToOpus: Boolean(email || phone),
+    forwardToOpus: canForwardToOpus,
     opusInboundPayload: opusPayload
   };
 }
@@ -689,6 +704,7 @@ function retryDelayMinutes(attempts) {
 
 async function attemptOpusForward(queueId) {
   if (!isLeadPipelineEnabled()) return disabledResult('Opus forward');
+  if (!isOpusInboundForwardingEnabled()) return opusForwardingDisabledResult('Opus forward');
 
   const url = env('OPUS_INBOUND_WEBHOOK_URL');
   if (!url) {
@@ -1103,6 +1119,7 @@ export const testables = {
   captureLessonFitSubmission,
   extractNetlifyFormSubmission,
   isLeadPipelineEnabled,
+  isOpusInboundForwardingEnabled,
   normalizeEmail,
   normalizeEventType,
   normalizeFields,
