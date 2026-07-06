@@ -4,11 +4,15 @@ import path from 'node:path';
 
 const root = process.cwd();
 const dist = path.join(root, 'dist');
+const trackingHeadHtml = (await readFile(path.join(root, 'src/components/TrackingHead.astro'), 'utf8'))
+  .replaceAll(' is:inline', '');
 const hardcodedGa4Pattern = /\n?<!-- Google Analytics 4 -->\n<script async src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-R3FZGNMFEK"><\/script>\n<script>\n\s*window\.dataLayer = window\.dataLayer \|\| \[\];\n\s*function gtag\(\)\{dataLayer\.push\(arguments\);\}\n\s*gtag\('js', new Date\(\)\);\n\s*gtag\('config', 'G-R3FZGNMFEK'\);\n<\/script>\n<!-- End Google Analytics 4 -->\n?/g;
 const directGtagEventPattern = /\n\s*if\(typeof gtag === 'function'\)\{\n\s*gtag\('event', 'book_intro_click', \{\n\s*link_url: link\.href,\n\s*page_path: location,\n\s*link_text: \(link\.textContent \|\| ''\)\.trim\(\)\.slice\(0, 80\)\n\s*\}\);\n\s*\}/g;
+const trackingBlockPattern = /\n?<!-- CSM-TRACKING-INJECTED v\d+ -->[\s\S]*?<!-- End Book Intro click tracking -->\n?/;
 
 function sanitizeLegacyHtml(html) {
   return html
+    .replace(trackingBlockPattern, `\n${trackingHeadHtml}\n`)
     .replace(hardcodedGa4Pattern, '\n')
     .replace(directGtagEventPattern, '');
 }

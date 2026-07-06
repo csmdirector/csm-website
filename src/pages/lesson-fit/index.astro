@@ -66,7 +66,11 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
           <input type="hidden" name="gbraid" id="gbraid" value="" />
           <input type="hidden" name="wbraid" id="wbraid" value="" />
           <input type="hidden" name="landing_path" id="landingPath" value="" />
+          <input type="hidden" name="first_landing_path" id="firstLandingPath" value="" />
+          <input type="hidden" name="latest_landing_path" id="latestLandingPath" value="" />
           <input type="hidden" name="referrer" id="referrer" value="" />
+          <input type="hidden" name="attribution_timestamp" id="attributionTimestamp" value="" />
+          <input type="hidden" name="last_paid_click_timestamp" id="lastPaidClickTimestamp" value="" />
           <p class="hidden-field">
             <label>Do not fill this out if you are human: <input name="bot-field" /></label>
           </p>
@@ -363,7 +367,11 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         gbraid: 'gbraid',
         wbraid: 'wbraid',
         landing_path: 'landingPath',
-        referrer: 'referrer'
+        first_landing_path: 'firstLandingPath',
+        latest_landing_path: 'latestLandingPath',
+        referrer: 'referrer',
+        attribution_timestamp: 'attributionTimestamp',
+        last_paid_click_timestamp: 'lastPaidClickTimestamp'
       };
       var PIANO_LOCATION_URLS = {
         'CSM Montgomery': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-montgomery',
@@ -430,7 +438,42 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         } catch (error) {}
       }
 
+      function normalizeAttribution(value){
+        var attribution = value || {};
+        var flat = {};
+        ATTRIBUTION_KEYS.forEach(function(key){
+          flat[key] = attribution[key] || '';
+        });
+        flat.first_landing_path = attribution.first_landing_path || attribution.landing_path || '';
+        flat.latest_landing_path = attribution.latest_landing_path || attribution.landing_path || flat.first_landing_path || '';
+        flat.landing_path = flat.latest_landing_path;
+        flat.referrer = attribution.referrer || '';
+        flat.timestamp = attribution.timestamp || attribution.attribution_timestamp || '';
+        flat.last_paid_click_timestamp = attribution.last_paid_click_timestamp || '';
+        flat.source_type = attribution.source_type || '';
+        return flat;
+      }
+
+      function getSitewideAttribution(){
+        if(window.CSMAttribution && typeof window.CSMAttribution.getLatest === 'function'){
+          return normalizeAttribution(window.CSMAttribution.getLatest());
+        }
+        var stored = getStoredJson('csmAttribution');
+        var first = stored.first_touch || {};
+        var latest = stored.latest_touch || first || {};
+        var flat = normalizeAttribution(latest);
+        flat.first_landing_path = first.first_landing_path || first.latest_landing_path || flat.first_landing_path || '';
+        flat.latest_landing_path = latest.latest_landing_path || latest.first_landing_path || flat.latest_landing_path || flat.first_landing_path || '';
+        flat.landing_path = flat.latest_landing_path;
+        flat.last_paid_click_timestamp = stored.last_paid_click_timestamp || flat.last_paid_click_timestamp || '';
+        return flat;
+      }
+
       function captureAttribution(){
+        if(window.CSMAttribution && typeof window.CSMAttribution.capture === 'function'){
+          window.CSMAttribution.capture();
+        }
+        var sitewide = getSitewideAttribution();
         var params = new URLSearchParams(window.location.search);
         var stored = getStoredJson(ATTRIBUTION_STORAGE_KEY);
         ATTRIBUTION_KEYS.forEach(function(key){
@@ -439,33 +482,62 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
             stored[key] = value.trim();
           }
         });
-        if(!stored.landing_path){
-          stored.landing_path = window.location.pathname + window.location.search;
+        var merged = normalizeAttribution(Object.assign({}, stored, sitewide));
+        ATTRIBUTION_KEYS.forEach(function(key){
+          if(stored[key]){
+            merged[key] = stored[key];
+          }
+        });
+        if(sitewide.first_landing_path){
+          merged.first_landing_path = sitewide.first_landing_path;
         }
-        if(document.referrer && !stored.referrer){
-          stored.referrer = document.referrer;
+        if(sitewide.latest_landing_path){
+          merged.latest_landing_path = sitewide.latest_landing_path;
+          merged.landing_path = sitewide.latest_landing_path;
         }
-        setStoredJson(ATTRIBUTION_STORAGE_KEY, stored);
-        return stored;
+        if(sitewide.referrer){
+          merged.referrer = sitewide.referrer;
+        }
+        if(sitewide.timestamp){
+          merged.timestamp = sitewide.timestamp;
+        }
+        if(sitewide.last_paid_click_timestamp){
+          merged.last_paid_click_timestamp = sitewide.last_paid_click_timestamp;
+        }
+        setStoredJson(ATTRIBUTION_STORAGE_KEY, merged);
+        return merged;
       }
 
       function getAttribution(){
-        return getStoredJson(ATTRIBUTION_STORAGE_KEY);
+        return normalizeAttribution(Object.assign(
+          {},
+          getStoredJson(ATTRIBUTION_STORAGE_KEY),
+          getSitewideAttribution()
+        ));
       }
 
       function appendAttribution(url){
         var attribution = getAttribution();
-        var outbound = new URL(url, window.location.origin);
+        var outbound = window.CSMAttribution && typeof window.CSMAttribution.decorateUrl === 'function'
+          ? new URL(window.CSMAttribution.decorateUrl(url), window.location.origin)
+          : new URL(url, window.location.origin);
         ATTRIBUTION_KEYS.forEach(function(key){
           if(attribution[key]){
             outbound.searchParams.set(key, attribution[key]);
           }
         });
-        if(attribution.landing_path){
-          outbound.searchParams.set('landing_path', attribution.landing_path);
+        if(attribution.first_landing_path){
+          outbound.searchParams.set('first_landing_path', attribution.first_landing_path);
+        }
+        if(attribution.latest_landing_path){
+          outbound.searchParams.set('latest_landing_path', attribution.latest_landing_path);
+          outbound.searchParams.set('landing_path', attribution.latest_landing_path);
         }
         if(attribution.referrer){
           outbound.searchParams.set('referrer', attribution.referrer);
+        }
+        if(attribution.timestamp){
+          outbound.searchParams.set('attribution_timestamp', attribution.timestamp);
         }
         return outbound.toString();
       }
@@ -494,8 +566,12 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
           gbraid: attribution.gbraid || '',
           wbraid: attribution.wbraid || '',
           click_id: clickId,
-          landing_path: attribution.landing_path || '',
-          referrer: attribution.referrer || ''
+          landing_path: attribution.latest_landing_path || attribution.landing_path || '',
+          first_landing_path: attribution.first_landing_path || '',
+          latest_landing_path: attribution.latest_landing_path || '',
+          referrer: attribution.referrer || '',
+          attribution_timestamp: attribution.timestamp || '',
+          last_paid_click_timestamp: attribution.last_paid_click_timestamp || ''
         };
       }
 
@@ -622,8 +698,12 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         ATTRIBUTION_KEYS.forEach(function(key){
           setLeadEventField(key, attribution[key] || '');
         });
-        setLeadEventField('landing_path', attribution.landing_path || '');
+        setLeadEventField('landing_path', attribution.latest_landing_path || attribution.landing_path || '');
+        setLeadEventField('first_landing_path', attribution.first_landing_path || '');
+        setLeadEventField('latest_landing_path', attribution.latest_landing_path || '');
         setLeadEventField('referrer', attribution.referrer || '');
+        setLeadEventField('attribution_timestamp', attribution.timestamp || '');
+        setLeadEventField('last_paid_click_timestamp', attribution.last_paid_click_timestamp || '');
 
         contactSummary.value = [
           'Name: ' + (readFormValue('parent_name') || 'Not provided'),
@@ -649,7 +729,8 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
           'Content: ' + (attribution.utm_content || ''),
           'Search term: ' + (attribution.utm_term || ''),
           'Click ID: ' + (attribution.gclid || attribution.gbraid || attribution.wbraid || ''),
-          'Landing page: ' + (attribution.landing_path || ''),
+          'First landing page: ' + (attribution.first_landing_path || ''),
+          'Latest landing page: ' + (attribution.latest_landing_path || attribution.landing_path || ''),
           'Referrer: ' + (attribution.referrer || '')
         ].join('\n');
       }
@@ -686,6 +767,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         var data = {};
         Array.prototype.slice.call(form.elements).forEach(function(field){
           if(!field.name || field.name === 'form-name' || field.name === 'bot-field' || field.name === 'subject' || field.name === 'contact_summary' || field.name === 'lesson_request' || field.name === 'follow_up_notes' || field.name === 'tracking_summary') return;
+          if(field.name === 'parent_name' || field.name === 'phone' || field.name === 'email' || field.name === 'student_context') return;
           if((field.type === 'radio' || field.type === 'checkbox') && !field.checked) return;
           data[field.name] = field.value;
         });
@@ -781,10 +863,23 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         formData.set('subject', 'New Lesson Fit Help Request');
         formData.set('email', readFormValue('email'));
         formData.set('client_submission_id', ensureClientSubmissionId());
+        formData.set('submitted_at', new Date().toISOString());
+        formData.set('lead_pipeline_only', '');
+        formData.set('routing_outcome', readFormValue('routing_outcome'));
+        formData.set('recommended_url', readFormValue('recommended_url'));
         formData.set('contact_summary', readFormValue('contact_summary'));
         formData.set('lesson_request', readFormValue('lesson_request'));
         formData.set('follow_up_notes', readFormValue('follow_up_notes'));
         formData.set('tracking_summary', readFormValue('tracking_summary'));
+        ATTRIBUTION_KEYS.forEach(function(key){
+          formData.set(key, readFormValue(key));
+        });
+        formData.set('landing_path', readFormValue('landing_path'));
+        formData.set('first_landing_path', readFormValue('first_landing_path'));
+        formData.set('latest_landing_path', readFormValue('latest_landing_path'));
+        formData.set('referrer', readFormValue('referrer'));
+        formData.set('attribution_timestamp', readFormValue('attribution_timestamp'));
+        formData.set('last_paid_click_timestamp', readFormValue('last_paid_click_timestamp'));
         if(ENABLE_LEAD_PIPELINE_CAPTURE){
           setLeadEventField('submitted_at', new Date().toISOString());
           setLeadEventField('lead_pipeline_only', '');

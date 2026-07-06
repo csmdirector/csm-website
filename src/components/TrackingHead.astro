@@ -1,10 +1,271 @@
-<!-- CSM-TRACKING-INJECTED v1 -->
+<!-- CSM-TRACKING-INJECTED v2 -->
 
 <!-- Site verification -->
 <meta name="norton-safeweb-site-verification" content="t-cj9cdlcf1gq4bqzt5x0fa8z6iad5lsfegpz4aqqhlx7ov2vquytd9di-43zw3wwhl8a-5ikp5qw6rkg54wgdh1rpkfcfrb4sx8z5lx262hmacy0cfi8eot0foqnhgd">
 <meta name="p:domain_verify" content="2aa58cc7e9ac7c157be9615d699f7891">
 <meta name="msvalidate.01" content="85FA914F6119C38215C51EE35017A6AC">
 <meta name="facebook-domain-verification" content="vp9gr2lcef51u8yl82np3lvo3i2lql">
+
+<!-- CSM attribution capture -->
+<script is:inline>
+(function(){
+  var STORAGE_KEY = 'csmAttribution';
+  var LEGACY_LESSON_FIT_KEY = 'csmLessonFitAttribution';
+  var SESSION_KEY = 'csmAttributionSession';
+  var PARAM_KEYS = ['gclid','gbraid','wbraid','utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+  var CLICK_ID_KEYS = ['gclid','gbraid','wbraid'];
+  var TTL_MS = 90 * 24 * 60 * 60 * 1000;
+
+  function trim(value){
+    return String(value || '').trim().slice(0, 500);
+  }
+
+  function nowIso(){
+    return new Date().toISOString();
+  }
+
+  function readJson(key, storage){
+    try {
+      return JSON.parse(storage.getItem(key) || '{}') || {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function writeJson(key, value, storage){
+    try {
+      storage.setItem(key, JSON.stringify(value));
+    } catch (error) {}
+  }
+
+  function removeJson(key, storage){
+    try {
+      storage.removeItem(key);
+    } catch (error) {}
+  }
+
+  function safePath(url){
+    var parsed;
+    try {
+      parsed = url ? new URL(url, window.location.origin) : new URL(window.location.href);
+    } catch (error) {
+      return window.location.pathname || '/';
+    }
+    var safeParams = new URLSearchParams();
+    PARAM_KEYS.forEach(function(key){
+      var value = parsed.searchParams.get(key);
+      if(value && trim(value)){
+        safeParams.set(key, trim(value));
+      }
+    });
+    var query = safeParams.toString();
+    return parsed.pathname + (query ? '?' + query : '');
+  }
+
+  function safeReferrer(value){
+    if(!value) return '';
+    try {
+      var parsed = new URL(value);
+      return parsed.origin + parsed.pathname;
+    } catch (error) {
+      return trim(String(value).split('#')[0].split('?')[0]);
+    }
+  }
+
+  function getParamSnapshot(){
+    var params = new URLSearchParams(window.location.search);
+    var snapshot = {};
+    PARAM_KEYS.forEach(function(key){
+      var value = params.get(key);
+      if(value && trim(value)){
+        snapshot[key] = trim(value);
+      }
+    });
+    return snapshot;
+  }
+
+  function hasAnyTracking(snapshot){
+    return PARAM_KEYS.some(function(key){ return Boolean(snapshot[key]); });
+  }
+
+  function hasPaidClick(snapshot){
+    if(CLICK_ID_KEYS.some(function(key){ return Boolean(snapshot[key]); })) return true;
+    return /^(cpc|ppc|paid|paid[-_ ]?search|sem)$/i.test(snapshot.utm_medium || '');
+  }
+
+  function pruneExpired(stored){
+    if(!stored || !stored.expires_at) return stored || {};
+    if(Date.parse(stored.expires_at) > Date.now()) return stored;
+    return {};
+  }
+
+  function buildTouch(snapshot, landingPath, referrer, timestamp){
+    var touch = {
+      timestamp: timestamp,
+      referrer: referrer,
+      first_landing_path: landingPath,
+      latest_landing_path: landingPath
+    };
+    PARAM_KEYS.forEach(function(key){
+      touch[key] = snapshot[key] || '';
+    });
+    touch.source_type = hasAnyTracking(snapshot) ? 'campaign' : 'direct';
+    return touch;
+  }
+
+  function migrateLegacy(stored){
+    if(stored.first_touch || stored.latest_touch) return stored;
+    var legacy = readJson(LEGACY_LESSON_FIT_KEY, window.localStorage);
+    if(!legacy || !Object.keys(legacy).length) return stored;
+    var timestamp = legacy.timestamp || stored.updated_at || nowIso();
+    var path = safePath(legacy.latest_landing_path || legacy.landing_path || legacy.first_landing_path || '');
+    var touch = buildTouch(legacy, path, safeReferrer(legacy.referrer || ''), timestamp);
+    touch.first_landing_path = legacy.first_landing_path || path;
+    touch.latest_landing_path = legacy.latest_landing_path || path;
+    stored.first_touch = touch;
+    stored.latest_touch = touch;
+    stored.created_at = timestamp;
+    stored.updated_at = timestamp;
+    if(hasPaidClick(legacy)){
+      stored.last_paid_click_timestamp = legacy.last_paid_click_timestamp || timestamp;
+    }
+    return stored;
+  }
+
+  function getStore(){
+    return migrateLegacy(pruneExpired(readJson(STORAGE_KEY, window.localStorage)));
+  }
+
+  function normalizeFlat(stored){
+    stored = stored || getStore();
+    var first = stored.first_touch || {};
+    var latest = stored.latest_touch || first || {};
+    var flat = {};
+    PARAM_KEYS.forEach(function(key){
+      flat[key] = latest[key] || '';
+    });
+    flat.first_landing_path = first.first_landing_path || first.latest_landing_path || '';
+    flat.latest_landing_path = latest.latest_landing_path || latest.first_landing_path || flat.first_landing_path || '';
+    flat.landing_path = flat.latest_landing_path;
+    flat.referrer = latest.referrer || first.referrer || '';
+    flat.timestamp = latest.timestamp || stored.updated_at || '';
+    flat.last_paid_click_timestamp = stored.last_paid_click_timestamp || '';
+    flat.source_type = latest.source_type || '';
+    return flat;
+  }
+
+  function syncLegacy(flat){
+    writeJson(LEGACY_LESSON_FIT_KEY, flat, window.localStorage);
+  }
+
+  function capture(){
+    var timestamp = nowIso();
+    var landingPath = safePath();
+    var referrer = safeReferrer(document.referrer);
+    var snapshot = getParamSnapshot();
+    var hasTracking = hasAnyTracking(snapshot);
+    var paidClick = hasPaidClick(snapshot);
+    var stored = getStore();
+    var firstVisit = !stored.first_touch;
+
+    if(firstVisit){
+      var initialTouch = buildTouch(snapshot, landingPath, referrer, timestamp);
+      stored.first_touch = initialTouch;
+      stored.latest_touch = initialTouch;
+      stored.created_at = timestamp;
+    } else if(hasTracking){
+      var latestTouch = buildTouch(snapshot, landingPath, referrer, timestamp);
+      latestTouch.first_landing_path = stored.first_touch.first_landing_path || landingPath;
+      stored.latest_touch = latestTouch;
+    }
+
+    if(paidClick){
+      stored.last_paid_click_timestamp = timestamp;
+    }
+
+    stored.version = 2;
+    stored.ttl_days = 90;
+    stored.updated_at = timestamp;
+    stored.expires_at = new Date(Date.now() + TTL_MS).toISOString();
+
+    var session = readJson(SESSION_KEY, window.sessionStorage);
+    if(!session.started_at){
+      session = {
+        started_at: timestamp,
+        entry_path: landingPath,
+        referrer: referrer,
+        source_type: hasTracking ? 'campaign' : 'direct'
+      };
+      ['utm_source','utm_medium','utm_campaign'].forEach(function(key){
+        if(snapshot[key]) session[key] = snapshot[key];
+      });
+      writeJson(SESSION_KEY, session, window.sessionStorage);
+    }
+
+    writeJson(STORAGE_KEY, stored, window.localStorage);
+    var flat = normalizeFlat(stored);
+    syncLegacy(flat);
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      csm_attribution_gclid: flat.gclid,
+      csm_attribution_gbraid: flat.gbraid,
+      csm_attribution_wbraid: flat.wbraid,
+      csm_attribution_source: flat.utm_source,
+      csm_attribution_medium: flat.utm_medium,
+      csm_attribution_campaign: flat.utm_campaign,
+      csm_attribution_first_landing_path: flat.first_landing_path,
+      csm_attribution_latest_landing_path: flat.latest_landing_path,
+      csm_attribution_timestamp: flat.timestamp
+    });
+    return flat;
+  }
+
+  function decorateUrl(url){
+    var flat = normalizeFlat();
+    var outbound;
+    try {
+      outbound = new URL(url, window.location.origin);
+    } catch (error) {
+      return url;
+    }
+    PARAM_KEYS.forEach(function(key){
+      if(flat[key]){
+        outbound.searchParams.set(key, flat[key]);
+      }
+    });
+    if(flat.first_landing_path){
+      outbound.searchParams.set('first_landing_path', flat.first_landing_path);
+    }
+    if(flat.latest_landing_path){
+      outbound.searchParams.set('latest_landing_path', flat.latest_landing_path);
+      outbound.searchParams.set('landing_path', flat.latest_landing_path);
+    }
+    if(flat.referrer){
+      outbound.searchParams.set('referrer', flat.referrer);
+    }
+    if(flat.timestamp){
+      outbound.searchParams.set('attribution_timestamp', flat.timestamp);
+    }
+    return outbound.toString();
+  }
+
+  window.CSMAttribution = {
+    capture: capture,
+    getStore: getStore,
+    getLatest: function(){ return normalizeFlat(); },
+    decorateUrl: decorateUrl,
+    clear: function(){
+      removeJson(STORAGE_KEY, window.localStorage);
+      removeJson(LEGACY_LESSON_FIT_KEY, window.localStorage);
+      removeJson(SESSION_KEY, window.sessionStorage);
+    }
+  };
+
+  capture();
+})();
+</script>
+<!-- End CSM attribution capture -->
 
 <!-- Google Tag Manager -->
 <script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -40,13 +301,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     if(link.href.indexOf('/w/recitals') !== -1) return;
 
     var location = window.location.pathname || '/';
+    var decoratedHref = link.href;
+
+    if(window.CSMAttribution && typeof window.CSMAttribution.decorateUrl === 'function'){
+      decoratedHref = window.CSMAttribution.decorateUrl(link.href);
+      link.href = decoratedHref;
+    }
 
     if(window.dataLayer){
+      var attribution = window.CSMAttribution && typeof window.CSMAttribution.getLatest === 'function'
+        ? window.CSMAttribution.getLatest()
+        : {};
       window.dataLayer.push({
         event: 'book_intro_click',
-        link_url: link.href,
+        link_url: decoratedHref,
         page_path: location,
-        link_text: (link.textContent || '').trim().slice(0, 80)
+        link_text: (link.textContent || '').trim().slice(0, 80),
+        gclid: attribution.gclid || '',
+        gbraid: attribution.gbraid || '',
+        wbraid: attribution.wbraid || '',
+        utm_source: attribution.utm_source || '',
+        utm_medium: attribution.utm_medium || '',
+        utm_campaign: attribution.utm_campaign || '',
+        first_landing_path: attribution.first_landing_path || '',
+        latest_landing_path: attribution.latest_landing_path || ''
       });
     }
     if(typeof fbq === 'function'){
