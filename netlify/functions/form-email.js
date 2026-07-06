@@ -280,6 +280,18 @@ function shouldSkipOfficeEmail(fields) {
   return valueFor(fields, 'lead_pipeline_only') === '1';
 }
 
+function isResendIdempotencyReplay(response, details, idempotencyId) {
+  if (!idempotencyId) return false;
+  if (response.status === 409) return true;
+
+  const text = String(details || '').toLowerCase();
+  return (
+    [400, 422].includes(response.status) &&
+    text.includes('idempotenc') &&
+    (text.includes('already') || text.includes('duplicate') || text.includes('conflict'))
+  );
+}
+
 function labelFor(key) {
   if (FIELD_LABELS[key]) return FIELD_LABELS[key];
   return key
@@ -465,9 +477,14 @@ async function sendEmail(route, formName, fields, meta) {
 
   const details = await response.text();
   if (!response.ok) {
+    if (isResendIdempotencyReplay(response, details, idempotencyId)) {
+      console.log(`form-email: deduped ${formName} -> ${route.to} (${response.status}) ${details}`);
+      return { ok: true, sent: true, deduped: true, to: route.to, status: response.status };
+    }
     throw new Error(`Resend failed for ${formName}: ${response.status} ${details}`);
   }
   console.log(`form-email: sent ${formName} -> ${route.to} (${response.status}) ${details}`);
+  return { ok: true, sent: true, to: route.to, status: response.status };
 }
 
 async function sendFormEmailSubmission({ formName, data, id = '', createdAt = '' }) {
@@ -484,8 +501,7 @@ async function sendFormEmailSubmission({ formName, data, id = '', createdAt = ''
     return { ok: true, skipped: true, reason: 'pipeline_only' };
   }
 
-  await sendEmail(route, formName, fields, { id, createdAt });
-  return { ok: true, sent: true, to: route.to };
+  return sendEmail(route, formName, fields, { id, createdAt });
 }
 
 export default {

@@ -292,8 +292,18 @@ assert.equal(shouldSkipOfficeEmail({ lead_pipeline_only: '1' }), true);
 
 const originalFetch = globalThis.fetch;
 const sentEmails = [];
+const sentEmailIdempotencyKeys = new Set();
 globalThis.fetch = async (url, options = {}) => {
   sentEmails.push({ url: String(url), headers: options.headers || {}, body: JSON.parse(options.body || '{}') });
+  const idempotencyKey = options.headers?.['Idempotency-Key'];
+  if (idempotencyKey && sentEmailIdempotencyKeys.has(idempotencyKey)) {
+    return {
+      ok: false,
+      status: 409,
+      text: async () => '{"message":"Idempotency key already used"}'
+    };
+  }
+  if (idempotencyKey) sentEmailIdempotencyKeys.add(idempotencyKey);
   return { ok: true, status: 200, text: async () => '{"id":"test-email"}' };
 };
 process.env.RESEND_API_KEY = 'test-resend-key';
@@ -365,6 +375,18 @@ assert.equal(sentEmails.length, 2);
 assert.equal(sentEmails[1].body.to[0], 'info@cincinnatischoolofmusic.com');
 assert.equal(sentEmails[1].headers['Idempotency-Key'], 'csm-lesson-fit-request-lesson-fit-direct-test-123');
 
+const duplicateDirectResponse = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  body: new URLSearchParams({ 'form-name': 'lesson-fit-request', ...directFields }).toString()
+}));
+const duplicateDirectJson = await duplicateDirectResponse.json();
+assert.equal(duplicateDirectResponse.status, 200);
+assert.equal(duplicateDirectJson.ok, true);
+assert.equal(duplicateDirectJson.email.deduped, true);
+assert.equal(sentEmails.length, 3);
+assert.equal(sentEmails[2].headers['Idempotency-Key'], 'csm-lesson-fit-request-lesson-fit-direct-test-123');
+
 const pipelineOnlyResponse = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {
   method: 'POST',
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -379,7 +401,7 @@ const pipelineOnlyJson = await pipelineOnlyResponse.json();
 assert.equal(pipelineOnlyResponse.status, 200);
 assert.equal(pipelineOnlyJson.email.skipped, true);
 assert.equal(pipelineOnlyJson.email.reason, 'pipeline_only');
-assert.equal(sentEmails.length, 2);
+assert.equal(sentEmails.length, 3);
 
 globalThis.fetch = originalFetch;
 delete process.env.RESEND_API_KEY;
