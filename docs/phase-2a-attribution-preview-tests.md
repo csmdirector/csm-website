@@ -25,6 +25,13 @@ Date checked: 2026-07-06
   - Then visit `/piano-lessons?gclid=SECOND_GCLID&utm_source=google&utm_medium=cpc&utm_campaign=second_campaign`.
   - Confirm `first_touch.first_landing_path` remains the first click and `latest_touch.latest_landing_path` moves to the second click.
 
+- Legacy Lesson Fit attribution TTL
+  - Seed `localStorage.csmLessonFitAttribution` with a `timestamp`, `attribution_timestamp`, or `last_paid_click_timestamp` older than 90 days, then load a CSM page.
+  - Confirm the old legacy attribution does not migrate into `csmAttribution`.
+  - Confirm stale or undated legacy attribution is removed so it cannot keep resurrecting.
+  - Seed a fresh legacy attribution object and confirm it can still migrate when `csmAttribution` is empty.
+  - Confirm `window.CSMAttribution.clear()` removes both `csmAttribution` and `csmLessonFitAttribution`.
+
 - Staff-help submit
   - Choose a staff-help path, then submit with a local preview fetch stub.
   - Confirm the submitted body includes separate `gclid`, `gbraid`, `wbraid`, UTM fields, `first_landing_path`, `latest_landing_path`, `referrer`, and `tracking_summary`.
@@ -39,4 +46,4 @@ Date checked: 2026-07-06
 ## Notes
 
 - Phase 2A does not enable production lead-pipeline functions, Opus forwarding, Google Ads offline uploads, enhanced conversions, or campaign changes.
-- Opus still needs separate proof for whether decorated URL parameters are stored or exportable after the user leaves the CSM site.
+- Working Opus assumption: Opus does not store or export full `gclid`, `gbraid`, `wbraid`, UTM, or landing-page attribution. Only coarse `?tag=` values survive as shortened client tags, so future offline attribution should not depend on Opus retaining click IDs.

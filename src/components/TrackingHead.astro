@@ -99,6 +99,23 @@
     return {};
   }
 
+  function parseTimestamp(value){
+    var timestamp = Date.parse(value || '');
+    return Number.isFinite(timestamp) ? timestamp : 0;
+  }
+
+  function getLegacyTimestamp(legacy){
+    return parseTimestamp(legacy.timestamp) ||
+      parseTimestamp(legacy.attribution_timestamp) ||
+      parseTimestamp(legacy.last_paid_click_timestamp);
+  }
+
+  function isLegacyFreshEnough(legacy){
+    var timestamp = getLegacyTimestamp(legacy);
+    if(!timestamp) return false;
+    return Date.now() - timestamp <= TTL_MS;
+  }
+
   function buildTouch(snapshot, landingPath, referrer, timestamp){
     var touch = {
       timestamp: timestamp,
@@ -117,11 +134,16 @@
     if(stored.first_touch || stored.latest_touch) return stored;
     var legacy = readJson(LEGACY_LESSON_FIT_KEY, window.localStorage);
     if(!legacy || !Object.keys(legacy).length) return stored;
-    var timestamp = legacy.timestamp || stored.updated_at || nowIso();
-    var path = safePath(legacy.latest_landing_path || legacy.landing_path || legacy.first_landing_path || '');
-    var touch = buildTouch(legacy, path, safeReferrer(legacy.referrer || ''), timestamp);
-    touch.first_landing_path = legacy.first_landing_path || path;
-    touch.latest_landing_path = legacy.latest_landing_path || path;
+    if(!isLegacyFreshEnough(legacy)){
+      removeJson(LEGACY_LESSON_FIT_KEY, window.localStorage);
+      return stored;
+    }
+    var timestamp = new Date(getLegacyTimestamp(legacy)).toISOString();
+    var latestPath = safePath(legacy.latest_landing_path || legacy.landing_path || legacy.first_landing_path || '');
+    var firstPath = safePath(legacy.first_landing_path || latestPath);
+    var touch = buildTouch(legacy, latestPath, safeReferrer(legacy.referrer || ''), timestamp);
+    touch.first_landing_path = firstPath;
+    touch.latest_landing_path = latestPath;
     stored.first_touch = touch;
     stored.latest_touch = touch;
     stored.created_at = timestamp;
@@ -155,7 +177,11 @@
   }
 
   function syncLegacy(flat){
-    writeJson(LEGACY_LESSON_FIT_KEY, flat, window.localStorage);
+    if(hasAnyTracking(flat)){
+      writeJson(LEGACY_LESSON_FIT_KEY, flat, window.localStorage);
+    } else {
+      removeJson(LEGACY_LESSON_FIT_KEY, window.localStorage);
+    }
   }
 
   function capture(){
