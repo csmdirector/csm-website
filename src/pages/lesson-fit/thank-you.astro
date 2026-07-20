@@ -2,48 +2,52 @@
 import Base from '../../layouts/Base.astro';
 ---
 <Base
-  title="Intro Lesson Next Step | Cincinnati School of Music"
-  description="Continue from Lesson Fit to book an Intro Lesson with Cincinnati School of Music."
+  title="Lesson Fit Request Sent | Cincinnati School of Music"
+  description="Confirmation that Cincinnati School of Music received a Lesson Fit help request."
   canonicalPath="/lesson-fit/thank-you/"
   noindex={true}
 >
   <section class="page-shell">
     <div class="page-inner narrow thank-you">
-      <span class="section-label">Next Step</span>
-      <h1 id="thankYouTitle">Continue to your Intro Lesson booking.</h1>
-      <p id="thankYouLead">
-        Thanks. Your answers help keep the next step focused.
-      </p>
-      <p id="thankYouBody">
-        The next step is the Cincinnati School of Music booking page for your Intro Lesson.
+      <span class="section-label">Request Sent</span>
+      <h1>CSM can help with the next step.</h1>
+      <p>
+        Thanks. Your answers were sent to Cincinnati School of Music, and we will use them when we reach out.
       </p>
       <div class="thank-you-actions">
-        <a class="btn-a" id="thankYouBookingLink" href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book an Intro Lesson</a>
-        <a class="btn-c help-link" id="thankYouCallLink" href="tel:5135609175">Call CSM</a>
-        <a class="btn-c help-link" id="thankYouTextLink" href="sms:5135609175">Text CSM</a>
-        <a class="btn-c help-link" id="thankYouEmailLink" href="mailto:info@cincinnatischoolofmusic.com">Email CSM</a>
-        <a class="btn-c" href="/parent-resources/">Visit Parent Resources</a>
+        <a class="btn-c" href="tel:5135609175">Call CSM</a>
+        <a class="btn-c" href="sms:5135609175">Text CSM</a>
+        <a class="btn-c" href="mailto:info@cincinnatischoolofmusic.com">Email CSM</a>
+        <a class="btn-c" href="/lesson-fit/">Back to Lesson Fit</a>
       </div>
     </div>
   </section>
 
   <style>
     .thank-you{padding-top:104px}
-    .thank-you p{margin-bottom:18px}
+    .thank-you p{margin-bottom:18px;max-width:640px}
     .thank-you-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
-    .help-link{display:none}
-    .thank-you.is-help .help-link{display:inline-block}
-    .thank-you.is-help #thankYouBookingLink{display:none}
+    @media(max-width:560px){
+      .thank-you-actions{display:grid;grid-template-columns:1fr}
+      .thank-you-actions .btn-c{text-align:center;padding-left:18px;padding-right:18px}
+    }
   </style>
 
   <script>
     (function(){
-      var link = document.getElementById('thankYouBookingLink');
       var keys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
       var params = new URLSearchParams(window.location.search);
-      var isHelp = params.get('help') === '1';
       var HELP_SUBMIT_EVENT_PUSHED_KEY = 'csmLessonFitHelpSubmitEventPushed';
       var HELP_SUBMIT_PAYLOAD_KEY = 'csmLessonFitHelpSubmitPayload';
+
+      function readJson(storage, key){
+        try {
+          return JSON.parse(storage.getItem(key) || '{}') || {};
+        } catch (error) {
+          return {};
+        }
+      }
+
       function normalizeAttribution(value){
         var attribution = value || {};
         var flat = {};
@@ -57,12 +61,13 @@ import Base from '../../layouts/Base.astro';
         flat.timestamp = attribution.timestamp || attribution.attribution_timestamp || '';
         return flat;
       }
+
       function getStoredAttribution(){
         if(window.CSMAttribution && typeof window.CSMAttribution.getLatest === 'function'){
           return normalizeAttribution(window.CSMAttribution.getLatest());
         }
-        var legacy = JSON.parse(window.localStorage.getItem('csmLessonFitAttribution') || '{}') || {};
-        var sitewide = JSON.parse(window.localStorage.getItem('csmAttribution') || '{}') || {};
+        var legacy = readJson(window.localStorage, 'csmLessonFitAttribution');
+        var sitewide = readJson(window.localStorage, 'csmAttribution');
         var first = sitewide.first_touch || {};
         var latest = sitewide.latest_touch || first || {};
         var flat = normalizeAttribution(Object.assign({}, legacy, latest));
@@ -71,64 +76,30 @@ import Base from '../../layouts/Base.astro';
         flat.landing_path = flat.latest_landing_path;
         return flat;
       }
+
       try {
-        var stored = getStoredAttribution();
-        var helpPayload = JSON.parse(window.sessionStorage.getItem(HELP_SUBMIT_PAYLOAD_KEY) || '{}') || {};
-        if(link){
-          var url = window.CSMAttribution && typeof window.CSMAttribution.decorateUrl === 'function'
-            ? new URL(window.CSMAttribution.decorateUrl(link.href))
-            : new URL(link.href);
-          keys.forEach(function(key){
-            if(stored[key]){
-              url.searchParams.set(key, stored[key]);
-            }
-          });
-          if(stored.first_landing_path){
-            url.searchParams.set('first_landing_path', stored.first_landing_path);
-          }
-          if(stored.latest_landing_path){
-            url.searchParams.set('latest_landing_path', stored.latest_landing_path);
-            url.searchParams.set('landing_path', stored.latest_landing_path);
-          }
-          if(stored.referrer){
-            url.searchParams.set('referrer', stored.referrer);
-          }
-          if(stored.timestamp){
-            url.searchParams.set('attribution_timestamp', stored.timestamp);
-          }
-          link.href = url.toString();
-        }
-        if(isHelp && window.dataLayer && window.sessionStorage.getItem(HELP_SUBMIT_EVENT_PUSHED_KEY) !== '1'){
-          helpPayload.event = 'lesson_fit_help_submit';
-          helpPayload.routing_outcome = helpPayload.routing_outcome || 'staff-help';
-          helpPayload.utm_source = helpPayload.utm_source || stored.utm_source || params.get('utm_source') || '';
-          helpPayload.utm_medium = helpPayload.utm_medium || stored.utm_medium || params.get('utm_medium') || '';
-          helpPayload.utm_campaign = helpPayload.utm_campaign || stored.utm_campaign || params.get('utm_campaign') || '';
-          helpPayload.utm_content = helpPayload.utm_content || stored.utm_content || params.get('utm_content') || '';
-          helpPayload.utm_term = helpPayload.utm_term || stored.utm_term || params.get('utm_term') || '';
-          helpPayload.gclid = helpPayload.gclid || stored.gclid || params.get('gclid') || '';
-          helpPayload.gbraid = helpPayload.gbraid || stored.gbraid || params.get('gbraid') || '';
-          helpPayload.wbraid = helpPayload.wbraid || stored.wbraid || params.get('wbraid') || '';
-          helpPayload.click_id = helpPayload.click_id || stored.gclid || stored.gbraid || stored.wbraid || params.get('gclid') || params.get('gbraid') || params.get('wbraid') || '';
-          helpPayload.landing_path = helpPayload.landing_path || stored.latest_landing_path || stored.landing_path || params.get('latest_landing_path') || params.get('landing_path') || '';
-          helpPayload.first_landing_path = helpPayload.first_landing_path || stored.first_landing_path || params.get('first_landing_path') || '';
-          helpPayload.latest_landing_path = helpPayload.latest_landing_path || stored.latest_landing_path || params.get('latest_landing_path') || params.get('landing_path') || '';
-          helpPayload.referrer = helpPayload.referrer || stored.referrer || params.get('referrer') || '';
-          helpPayload.attribution_timestamp = helpPayload.attribution_timestamp || stored.timestamp || params.get('attribution_timestamp') || '';
-          window.dataLayer.push(helpPayload);
-          window.sessionStorage.setItem(HELP_SUBMIT_EVENT_PUSHED_KEY, '1');
-        }
+        if(!window.dataLayer || window.sessionStorage.getItem(HELP_SUBMIT_EVENT_PUSHED_KEY) === '1') return;
+        var attribution = getStoredAttribution();
+        var helpPayload = readJson(window.sessionStorage, HELP_SUBMIT_PAYLOAD_KEY);
+        helpPayload.event = 'lesson_fit_help_submit';
+        helpPayload.routing_outcome = helpPayload.routing_outcome || 'staff-help';
+        helpPayload.utm_source = helpPayload.utm_source || attribution.utm_source || params.get('utm_source') || '';
+        helpPayload.utm_medium = helpPayload.utm_medium || attribution.utm_medium || params.get('utm_medium') || '';
+        helpPayload.utm_campaign = helpPayload.utm_campaign || attribution.utm_campaign || params.get('utm_campaign') || '';
+        helpPayload.utm_content = helpPayload.utm_content || attribution.utm_content || params.get('utm_content') || '';
+        helpPayload.utm_term = helpPayload.utm_term || attribution.utm_term || params.get('utm_term') || '';
+        helpPayload.gclid = helpPayload.gclid || attribution.gclid || params.get('gclid') || '';
+        helpPayload.gbraid = helpPayload.gbraid || attribution.gbraid || params.get('gbraid') || '';
+        helpPayload.wbraid = helpPayload.wbraid || attribution.wbraid || params.get('wbraid') || '';
+        helpPayload.click_id = helpPayload.click_id || attribution.gclid || attribution.gbraid || attribution.wbraid || params.get('gclid') || params.get('gbraid') || params.get('wbraid') || '';
+        helpPayload.landing_path = helpPayload.landing_path || attribution.latest_landing_path || attribution.landing_path || params.get('latest_landing_path') || params.get('landing_path') || '';
+        helpPayload.first_landing_path = helpPayload.first_landing_path || attribution.first_landing_path || params.get('first_landing_path') || '';
+        helpPayload.latest_landing_path = helpPayload.latest_landing_path || attribution.latest_landing_path || params.get('latest_landing_path') || params.get('landing_path') || '';
+        helpPayload.referrer = helpPayload.referrer || attribution.referrer || params.get('referrer') || '';
+        helpPayload.attribution_timestamp = helpPayload.attribution_timestamp || attribution.timestamp || params.get('attribution_timestamp') || '';
+        window.dataLayer.push(helpPayload);
+        window.sessionStorage.setItem(HELP_SUBMIT_EVENT_PUSHED_KEY, '1');
       } catch (error) {}
-      if(isHelp){
-        var shell = document.querySelector('.thank-you');
-        var title = document.getElementById('thankYouTitle');
-        var lead = document.getElementById('thankYouLead');
-        var body = document.getElementById('thankYouBody');
-        if(shell) shell.classList.add('is-help');
-        if(title) title.textContent = 'CSM can help with the next step.';
-        if(lead) lead.textContent = 'Thanks. Your request was sent.';
-        if(body) body.textContent = 'We will use your answers when we reach out.';
-      }
     })();
   </script>
 </Base>
