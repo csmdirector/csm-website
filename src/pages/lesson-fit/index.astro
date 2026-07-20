@@ -321,6 +321,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
     .contact-intro{font-size:.84rem;margin:-2px 0 18px;max-width:620px}
     .contact-intro strong{font-weight:500;color:var(--charcoal)}
     .contact-intro.is-hidden{display:none}
+    .intake-actions + .contact-intro{margin-top:24px}
     .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
     .contact-grid .field-label:last-child{grid-column:1 / -1}
     .handoff-note{font-size:.82rem;margin-top:4px}
@@ -409,6 +410,8 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
       var helpActions = document.getElementById('helpActions');
       var contactIntro = document.getElementById('contactIntro');
       var contactGrid = document.getElementById('contactGrid');
+      var intakeActions = document.querySelector('.intake-actions');
+      var handoffNote = document.querySelector('.handoff-note');
       var handoffNoteText = document.getElementById('handoffNoteText');
       var contactSummary = document.getElementById('contactSummary');
       var lessonRequestSummary = document.getElementById('lessonRequestSummary');
@@ -760,6 +763,15 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
             : '<strong>Optional contact:</strong> add an email or mobile number so CSM can keep this booking path connected.';
         }
         contactGrid.classList.toggle('is-hidden', !shouldCollectContact);
+        if(contactIntro && contactGrid && intakeActions && handoffNote){
+          if(recommendation.outcome === 'self-booking'){
+            intakeActions.insertAdjacentElement('afterend', contactGrid);
+            intakeActions.insertAdjacentElement('afterend', contactIntro);
+          } else {
+            handoffNote.parentNode.insertBefore(contactGrid, handoffNote);
+            handoffNote.parentNode.insertBefore(contactIntro, contactGrid);
+          }
+        }
         handoffNoteText.textContent = recommendation.outcome === 'staff-help'
           ? 'We will use this information when we reach out.'
           : 'This opens the CSM scheduling page for your selected Intro Lesson.';
