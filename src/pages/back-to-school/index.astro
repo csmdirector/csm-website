@@ -1,0 +1,1052 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const campaign = {
+  name: 'Back-to-School Special',
+  deadline: 'August 31, 2026',
+  savings: '$142',
+  terms:
+    'New students only. Offer includes one free 30-minute intro lesson ($42 value), the $50 registration fee waived upon enrollment, and $50 off the first full month after enrollment. Claim by August 31, 2026. One offer per student. Subject to teacher, instrument, schedule, and location availability. Cannot be combined with another offer. No cash value.'
+};
+
+const lessons = [
+  'Piano',
+  'Voice',
+  'Guitar',
+  'Ukulele',
+  'Drums',
+  'Violin',
+  'Viola',
+  'Cello',
+  'Flute',
+  'Clarinet',
+  'Saxophone',
+  'Trumpet',
+  'Music Discovery',
+  'Not sure / help me choose'
+];
+
+const locations = [
+  'Montgomery',
+  'Mason',
+  'Anderson',
+  'Maineville',
+  'Middletown',
+  'Not sure / flexible'
+];
+---
+
+<Base
+  title="Back-to-School Music Lesson Special | Cincinnati School of Music"
+  description="Save $142 when starting private music lessons at Cincinnati School of Music: a free intro lesson, free registration, and $50 off the first full month."
+  canonicalPath="/back-to-school/"
+  noindex={true}
+>
+  <div class="bts-page">
+    <section class="bts-hero" aria-labelledby="campaign-title">
+      <div class="hero-copy">
+        <p class="campaign-kicker">Back-to-School Special</p>
+        <h1 id="campaign-title">
+          <span>Back to</span>
+          <strong>Music</strong>
+        </h1>
+        <p class="school-year-banner">Start strong this school year</p>
+        <p class="hero-savings">$142 Off</p>
+        <p class="hero-support">
+          Start strong this school year with private music lessons for kids, teens, and adults.
+        </p>
+        <a class="primary-cta" href="#claim">Claim my $142 offer</a>
+        <p class="hero-deadline">Claim by August 31, 2026</p>
+      </div>
+
+      <figure class="hero-photo">
+        <img
+          src="/images/promo-piano-lesson.jpg"
+          width="720"
+          height="540"
+          alt="A Cincinnati School of Music teacher guiding a young piano student during a private lesson"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+        <figcaption>Private lessons. Personal progress. Music for life.</figcaption>
+      </figure>
+    </section>
+
+    <section class="offer-section" aria-labelledby="offer-title">
+      <div class="section-intro">
+        <p class="eyebrow">Three ways to save</p>
+        <h2 id="offer-title">Save $142 to start</h2>
+        <p>Everything in the Back-to-School Special is designed to make starting lessons easier.</p>
+      </div>
+
+      <div class="offer-stack" aria-label="Back-to-School Special includes">
+        <article class="offer-card">
+          <span class="offer-icon offer-icon-teal" aria-hidden="true">
+            <svg viewBox="0 0 48 48" focusable="false">
+              <path d="M31 8v25.5a7.5 7.5 0 1 1-3-6V15l14-4v16.5a7.5 7.5 0 1 1-3-6V6L31 8Z" />
+            </svg>
+          </span>
+          <div class="offer-copy">
+            <h3>Free intro lesson</h3>
+            <p>One private 30-minute intro lesson</p>
+          </div>
+          <strong class="offer-value">$42 value</strong>
+        </article>
+
+        <article class="offer-card">
+          <span class="offer-icon offer-icon-coral" aria-hidden="true">
+            <svg viewBox="0 0 48 48" focusable="false">
+              <path d="M18 9h12v5h7v27H11V14h7V9Zm3 5h6v-2h-6v2Zm-5 5v17h16V19H16Zm3 3h10v3H19v-3Zm0 7h10v3H19v-3Z" />
+            </svg>
+          </span>
+          <div class="offer-copy">
+            <h3>Free registration</h3>
+            <p>The registration fee is waived when you enroll</p>
+          </div>
+          <strong class="offer-value">$50 value</strong>
+        </article>
+
+        <article class="offer-card">
+          <span class="offer-icon offer-icon-navy" aria-hidden="true">
+            <svg viewBox="0 0 48 48" focusable="false">
+              <path d="m8 27 18-18h13v13L21 40 8 27Zm6 0 7 7 14-14v-7h-7L14 27Zm16-9a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z" />
+            </svg>
+          </span>
+          <div class="offer-copy">
+            <h3>$50 off your first full month</h3>
+            <p>Applied to the first full month after enrollment</p>
+          </div>
+          <strong class="offer-value">$50 savings</strong>
+        </article>
+      </div>
+    </section>
+
+    <div class="deadline-strip" role="note">
+      <span>Claim by August 31, 2026</span>
+    </div>
+
+    <section class="trust-strip" aria-label="Music lesson highlights">
+      <div><strong>5</strong><span>Cincinnati-area locations</span></div>
+      <div><strong>14+</strong><span>Lesson options including piano, voice, guitar, drums, strings, winds &amp; more</span></div>
+      <div><strong>3+</strong><span>Ages 3 through adult</span></div>
+    </section>
+
+    <section class="proof-section" aria-labelledby="proof-title">
+      <div class="proof-lead">
+        <p class="eyebrow">Cincinnati's music school</p>
+        <h2 id="proof-title">A trusted place to find your sound.</h2>
+        <p>
+          Piano, voice, guitar, drums, strings, winds, ukulele, cello, viola, trumpet,
+          saxophone, clarinet, flute, and Music Discovery — taught by 60+ teachers to a
+          community of 1,000+ students.
+        </p>
+      </div>
+      <div class="proof-details">
+        <div class="locations">
+          <span>Montgomery</span>
+          <span>Mason</span>
+          <span>Anderson</span>
+          <span>Maineville</span>
+          <span>Middletown</span>
+        </div>
+        <p class="award">
+          Cincy Magazine Best of the North — Music Instruction — 10 consecutive years
+        </p>
+      </div>
+    </section>
+
+    <section class="claim-section" id="claim" aria-labelledby="claim-title">
+      <div class="claim-intro">
+        <p class="eyebrow">Ready to start?</p>
+        <h2 id="claim-title">Get your $142 offer</h2>
+        <p>
+          Tell us a little about the student and our office will help find the right teacher,
+          location, and lesson time.
+        </p>
+        <div class="claim-contact">
+          <span>Questions?</span>
+          <a href="tel:5135609175">Call 513-560-9175</a>
+        </div>
+      </div>
+
+      <form
+        name="promo-claim"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        action="/back-to-school/thank-you/"
+        id="backToSchoolClaimForm"
+      >
+        <input type="hidden" name="form-name" value="promo-claim" />
+        <input type="hidden" name="subject" data-remove-prefix value="New Back-to-School Special Claim" />
+        <input type="hidden" name="promo_name" value="Back-to-School Special" />
+        <input type="hidden" name="promo_deadline" value="August 31, 2026" />
+        <input type="hidden" name="utm_source" id="btsUtmSource" />
+        <input type="hidden" name="utm_medium" id="btsUtmMedium" />
+        <input type="hidden" name="utm_campaign" id="btsUtmCampaign" />
+        <input type="hidden" name="utm_content" id="btsUtmContent" />
+        <input type="hidden" name="utm_term" id="btsUtmTerm" />
+        <input type="hidden" name="fbclid" id="btsFbclid" />
+        <input type="hidden" name="landing_path" id="btsLandingPath" />
+        <input type="hidden" name="submitted_at" id="btsSubmittedAt" />
+        <p class="honeypot">
+          <label>Do not fill this out if you are human: <input name="bot-field" /></label>
+        </p>
+
+        <div class="form-grid">
+          <label class="field-label">
+            Parent/guardian name <em aria-hidden="true">*</em>
+            <input type="text" name="parent_guardian_name" autocomplete="name" required />
+          </label>
+          <label class="field-label">
+            Phone <em aria-hidden="true">*</em>
+            <input type="tel" name="phone" autocomplete="tel" required />
+          </label>
+          <label class="field-label">
+            Email <em aria-hidden="true">*</em>
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+          <label class="field-label">
+            Student name <em aria-hidden="true">*</em>
+            <input type="text" name="student_name" autocomplete="off" required />
+          </label>
+          <label class="field-label">
+            Student age <em aria-hidden="true">*</em>
+            <input type="text" name="student_age" inputmode="numeric" autocomplete="off" required />
+          </label>
+          <label class="field-label">
+            Interested lesson <em aria-hidden="true">*</em>
+            <select name="interested_lesson" required>
+              <option value="">Choose one</option>
+              {lessons.map((lesson) => <option value={lesson}>{lesson}</option>)}
+            </select>
+          </label>
+          <label class="field-label field-wide">
+            Preferred location <em aria-hidden="true">*</em>
+            <select name="preferred_location" required>
+              <option value="">Choose one</option>
+              {locations.map((location) => <option value={location}>{location}</option>)}
+            </select>
+          </label>
+          <label class="field-label field-wide">
+            Best days/times <span>Optional</span>
+            <textarea
+              name="best_days_times"
+              rows="3"
+              placeholder="Example: Mondays after 4, Saturday mornings, or flexible"
+            ></textarea>
+          </label>
+          <label class="field-label field-wide">
+            Notes/questions <span>Optional</span>
+            <textarea
+              name="notes_questions"
+              rows="4"
+              placeholder="Share any goals, experience, scheduling needs, or questions"
+            ></textarea>
+          </label>
+        </div>
+
+        <button class="form-submit" type="submit">Get my $142 offer</button>
+        <p class="confirmation-note">
+          No payment is collected here. The CSM office will contact you to help arrange the intro lesson.
+        </p>
+        <p class="terms">{campaign.terms}</p>
+      </form>
+    </section>
+  </div>
+
+  <style>
+    .bts-page {
+      --paper: #fbf7ec;
+      --paper-deep: #f4ecd9;
+      --navy: #0b2547;
+      --teal: #236d73;
+      --coral: #df4635;
+      --mustard: #f1b936;
+      --ink-muted: #48606c;
+      overflow: hidden;
+      background: var(--paper);
+      color: var(--navy);
+    }
+
+    .bts-hero {
+      position: relative;
+      display: grid;
+      min-height: 650px;
+      grid-template-columns: minmax(0, 1.08fr) minmax(420px, .92fr);
+      background-color: var(--paper);
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 35px,
+        rgba(64, 134, 159, .14) 36px,
+        transparent 37px
+      );
+      border-bottom: 1px solid rgba(11, 37, 71, .12);
+    }
+
+    .bts-hero::before {
+      content: '';
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      bottom: 0;
+      left: clamp(54px, 6vw, 92px);
+      width: 1px;
+      background: rgba(223, 70, 53, .42);
+      pointer-events: none;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 64px 56px 58px clamp(112px, 10vw, 154px);
+    }
+
+    .campaign-kicker,
+    .eyebrow {
+      color: var(--teal);
+      font-size: .75rem;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    .campaign-kicker {
+      margin-bottom: 14px;
+      color: var(--navy);
+    }
+
+    .hero-copy h1 {
+      margin: 0;
+      color: var(--navy);
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      font-size: clamp(5rem, 8.6vw, 8.8rem);
+      font-weight: 900;
+      line-height: .76;
+      letter-spacing: .015em;
+      text-transform: uppercase;
+    }
+
+    .hero-copy h1 span,
+    .hero-copy h1 strong {
+      display: block;
+    }
+
+    .hero-copy h1 span {
+      font-size: .48em;
+      line-height: 1;
+      letter-spacing: .08em;
+    }
+
+    .hero-copy h1 strong {
+      color: var(--teal);
+      font-weight: inherit;
+    }
+
+    .school-year-banner {
+      margin: 20px 0 12px;
+      padding: 8px 15px 7px;
+      transform: rotate(-1deg);
+      background: var(--navy);
+      color: #fff;
+      font-size: clamp(.72rem, 1.25vw, 1rem);
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .hero-savings {
+      margin: 0;
+      color: var(--coral);
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      font-size: clamp(4.5rem, 8.1vw, 8rem);
+      font-weight: 900;
+      line-height: .92;
+      letter-spacing: .025em;
+      text-transform: uppercase;
+    }
+
+    .hero-support {
+      max-width: 570px;
+      margin: 16px 0 22px;
+      color: var(--ink-muted);
+      font-size: 1.03rem;
+      font-weight: 400;
+      line-height: 1.55;
+    }
+
+    .primary-cta,
+    .form-submit {
+      display: inline-flex;
+      min-height: 54px;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--navy);
+      background: var(--coral);
+      box-shadow: 5px 5px 0 var(--navy);
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      line-height: 1.2;
+      text-align: center;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    .primary-cta {
+      padding: 15px 25px;
+    }
+
+    .primary-cta:hover,
+    .form-submit:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 3px 3px 0 var(--navy);
+      background: #c93b2d;
+    }
+
+    .hero-deadline {
+      margin-top: 15px;
+      color: var(--navy);
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    .hero-photo {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      min-height: 650px;
+      margin: 0;
+      overflow: hidden;
+      background: var(--teal);
+    }
+
+    .hero-photo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 18px 0 38px rgba(11, 37, 71, .13);
+      pointer-events: none;
+    }
+
+    .hero-photo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 54% center;
+    }
+
+    .hero-photo figcaption {
+      position: absolute;
+      z-index: 2;
+      right: 22px;
+      bottom: 22px;
+      left: 22px;
+      padding: 12px 16px;
+      background: rgba(11, 37, 71, .92);
+      color: #fff;
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      line-height: 1.4;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .offer-section {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 82px 48px 76px;
+    }
+
+    .section-intro {
+      max-width: 710px;
+      margin-bottom: 36px;
+    }
+
+    .eyebrow {
+      margin-bottom: 10px;
+    }
+
+    .section-intro h2,
+    .proof-lead h2,
+    .claim-intro h2 {
+      margin: 0 0 13px;
+      color: var(--navy);
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      font-size: clamp(2.55rem, 5vw, 4.6rem);
+      font-weight: 900;
+      line-height: .98;
+      letter-spacing: .025em;
+      text-transform: uppercase;
+    }
+
+    .section-intro > p:last-child,
+    .proof-lead > p:last-child,
+    .claim-intro > p {
+      color: var(--ink-muted);
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.7;
+    }
+
+    .offer-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .offer-card {
+      display: grid;
+      grid-template-columns: 70px minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: center;
+      min-height: 102px;
+      padding: 18px 24px 18px 18px;
+      border: 2px solid rgba(11, 37, 71, .9);
+      background: rgba(255, 255, 255, .72);
+      box-shadow: 5px 5px 0 rgba(11, 37, 71, .12);
+    }
+
+    .offer-icon {
+      display: inline-flex;
+      width: 62px;
+      height: 62px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: #fff;
+    }
+
+    .offer-icon svg {
+      width: 34px;
+      height: 34px;
+      fill: currentColor;
+    }
+
+    .offer-icon-teal { background: var(--teal); }
+    .offer-icon-coral { background: var(--coral); }
+    .offer-icon-navy { background: var(--navy); }
+
+    .offer-copy h3 {
+      margin: 0 0 3px;
+      color: var(--navy);
+      font-size: clamp(1.15rem, 2.2vw, 1.55rem);
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .offer-copy p {
+      color: var(--ink-muted);
+      font-size: .9rem;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .offer-value {
+      color: var(--coral);
+      font-size: .82rem;
+      font-weight: 600;
+      letter-spacing: .13em;
+      text-align: right;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .deadline-strip {
+      position: relative;
+      display: flex;
+      min-height: 88px;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 24px;
+      background: var(--mustard);
+      color: var(--navy);
+      text-align: center;
+    }
+
+    .deadline-strip::before,
+    .deadline-strip::after {
+      content: '';
+      width: clamp(30px, 8vw, 110px);
+      height: 3px;
+      margin: 0 22px;
+      background: var(--navy);
+    }
+
+    .deadline-strip span {
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 3.3rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: .035em;
+      text-transform: uppercase;
+    }
+
+    .trust-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .trust-strip > div {
+      display: flex;
+      min-height: 128px;
+      align-items: center;
+      gap: 18px;
+      padding: 28px clamp(24px, 4vw, 54px);
+      border-right: 1px solid rgba(255, 255, 255, .17);
+    }
+
+    .trust-strip > div:last-child { border-right: 0; }
+
+    .trust-strip strong {
+      color: var(--mustard);
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      font-size: 2.7rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .trust-strip span {
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .07em;
+      line-height: 1.5;
+      text-transform: uppercase;
+    }
+
+    .proof-section {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr);
+      gap: 70px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 84px 48px;
+    }
+
+    .proof-details {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .locations {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-bottom: 22px;
+    }
+
+    .locations span {
+      padding: 8px 12px;
+      border: 1px solid var(--teal);
+      background: rgba(255, 255, 255, .55);
+      color: var(--teal);
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .11em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .award {
+      padding-left: 18px;
+      border-left: 5px solid var(--mustard);
+      color: var(--navy);
+      font-size: .82rem;
+      font-weight: 600;
+      letter-spacing: .07em;
+      line-height: 1.55;
+      text-transform: uppercase;
+    }
+
+    .claim-section {
+      display: grid;
+      grid-template-columns: minmax(280px, .72fr) minmax(0, 1.28fr);
+      gap: 64px;
+      align-items: start;
+      padding: 88px max(48px, calc((100vw - 1180px) / 2));
+      background-color: var(--paper-deep);
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 39px,
+        rgba(64, 134, 159, .1) 40px,
+        transparent 41px
+      );
+      scroll-margin-top: 82px;
+    }
+
+    .claim-intro {
+      position: sticky;
+      top: 98px;
+      padding-top: 22px;
+    }
+
+    .claim-contact {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 2px solid rgba(11, 37, 71, .15);
+    }
+
+    .claim-contact span,
+    .claim-contact a {
+      display: block;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      line-height: 1.5;
+      text-transform: uppercase;
+    }
+
+    .claim-contact span { color: var(--ink-muted); }
+    .claim-contact a { color: var(--coral); text-underline-offset: 4px; }
+
+    form {
+      min-width: 0;
+      padding: 36px;
+      border: 2px solid var(--navy);
+      background: rgba(255, 255, 255, .94);
+      box-shadow: 9px 9px 0 rgba(11, 37, 71, .14);
+    }
+
+    .honeypot { display: none; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .field-label {
+      display: block;
+      min-width: 0;
+      color: var(--navy);
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .11em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    .field-label em {
+      color: var(--coral);
+      font-style: normal;
+    }
+
+    .field-label > span {
+      color: #6f7f85;
+      font-size: .58rem;
+      letter-spacing: .08em;
+    }
+
+    .field-wide { grid-column: 1 / -1; }
+
+    input,
+    select,
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 48px;
+      margin-top: 8px;
+      border: 1px solid #9aa7a6;
+      border-radius: 0;
+      background: #fffdf8;
+      color: #19344a;
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: 1.4;
+      padding: 12px 13px;
+      text-transform: none;
+    }
+
+    select { cursor: pointer; }
+    textarea { min-height: 104px; resize: vertical; }
+
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    .primary-cta:focus-visible,
+    .form-submit:focus-visible,
+    .claim-contact a:focus-visible {
+      outline: 3px solid var(--mustard);
+      outline-offset: 3px;
+    }
+
+    .form-submit {
+      width: 100%;
+      margin-top: 26px;
+      padding: 15px 24px;
+    }
+
+    .confirmation-note {
+      margin: 18px 0 10px;
+      color: var(--navy);
+      font-size: .82rem;
+      font-weight: 500;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .terms {
+      color: #637175;
+      font-size: .7rem;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 980px) {
+      .bts-hero {
+        min-height: 0;
+        grid-template-columns: minmax(0, 1fr) minmax(330px, .8fr);
+      }
+
+      .hero-copy {
+        padding: 58px 36px 52px 92px;
+      }
+
+      .hero-photo { min-height: 620px; }
+
+      .trust-strip > div {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .proof-section,
+      .claim-section { gap: 44px; }
+    }
+
+    @media (max-width: 760px) {
+      .bts-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .bts-hero::before { left: 34px; }
+
+      .hero-copy {
+        min-height: 560px;
+        padding: 36px 20px 38px 58px;
+      }
+
+      .hero-copy h1 { font-size: clamp(4.35rem, 21vw, 6.6rem); }
+      .hero-savings { font-size: clamp(4rem, 19vw, 6rem); }
+      .school-year-banner { margin-top: 17px; }
+      .hero-support { margin: 13px 0 18px; font-size: .95rem; line-height: 1.48; }
+      .primary-cta { width: 100%; max-width: 330px; padding-inline: 14px; }
+      .hero-deadline { margin-top: 13px; }
+
+      .hero-photo {
+        min-height: 300px;
+        aspect-ratio: 4 / 3;
+      }
+
+      .hero-photo img { object-position: center 43%; }
+
+      .hero-photo figcaption {
+        right: 14px;
+        bottom: 14px;
+        left: 14px;
+      }
+
+      .offer-section { padding: 62px 20px 58px; }
+      .section-intro { margin-bottom: 28px; }
+
+      .offer-card {
+        grid-template-columns: 56px minmax(0, 1fr);
+        gap: 14px;
+        padding: 16px;
+      }
+
+      .offer-icon { width: 52px; height: 52px; }
+      .offer-icon svg { width: 29px; height: 29px; }
+      .offer-value { grid-column: 2; text-align: left; }
+
+      .deadline-strip::before,
+      .deadline-strip::after { display: none; }
+
+      .trust-strip { grid-template-columns: 1fr; }
+
+      .trust-strip > div {
+        min-height: 0;
+        flex-direction: row;
+        align-items: center;
+        padding: 22px 24px;
+        border-right: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, .17);
+      }
+
+      .trust-strip > div:last-child { border-bottom: 0; }
+      .trust-strip strong { min-width: 52px; font-size: 2.3rem; }
+
+      .proof-section,
+      .claim-section {
+        grid-template-columns: 1fr;
+        padding: 62px 22px;
+      }
+
+      .proof-section { gap: 32px; }
+      .claim-section { gap: 30px; scroll-margin-top: 72px; }
+      .claim-intro { position: static; padding-top: 0; }
+      form { padding: 25px 20px; box-shadow: 6px 6px 0 rgba(11, 37, 71, .14); }
+      .form-grid { grid-template-columns: 1fr; gap: 17px; }
+      .field-wide { grid-column: auto; }
+    }
+
+    @media (max-width: 380px) {
+      .bts-hero::before { left: 25px; }
+      .hero-copy { min-height: 550px; padding: 30px 15px 34px 43px; }
+      .campaign-kicker { font-size: .64rem; letter-spacing: .16em; }
+      .hero-copy h1 { font-size: clamp(4rem, 21vw, 5rem); }
+      .hero-savings { font-size: clamp(3.8rem, 19vw, 4.5rem); }
+      .school-year-banner { padding-inline: 10px; font-size: .67rem; }
+      .hero-support { font-size: .88rem; }
+      .hero-photo { min-height: 240px; }
+      .offer-card { grid-template-columns: 48px minmax(0, 1fr); gap: 11px; padding: 14px 12px; }
+      .offer-icon { width: 46px; height: 46px; }
+      .offer-copy h3 { font-size: 1rem; }
+      .offer-copy p { font-size: .8rem; }
+      .offer-value { font-size: .72rem; }
+      .deadline-strip span { font-size: 1.65rem; }
+      form { padding: 22px 15px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :global(html) { scroll-behavior: auto; }
+      .primary-cta,
+      .form-submit { transition: none; }
+    }
+  </style>
+
+  <script define:vars={{ promoName: campaign.name, promoDeadline: campaign.deadline, offerSavings: campaign.savings }}>
+    (function(){
+      var form = document.getElementById('backToSchoolClaimForm');
+      if(!form) return;
+
+      var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid'];
+      var STORAGE_KEY = 'csmBackToSchoolAttribution';
+      var THANK_YOU_PAYLOAD_KEY = 'csmBackToSchoolClaimPayload';
+
+      function getStoredAttribution(){
+        try {
+          return JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '{}') || {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function setStoredAttribution(value){
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+        } catch (error) {}
+      }
+
+      function hasNewAttribution(params){
+        return ATTRIBUTION_KEYS.some(function(key){
+          var value = params.get(key);
+          return Boolean(value && value.trim());
+        });
+      }
+
+      function captureAttribution(){
+        var params = new URLSearchParams(window.location.search);
+        var stored = getStoredAttribution();
+        var hasCampaignOnUrl = hasNewAttribution(params);
+
+        if(hasCampaignOnUrl || !stored.landing_path){
+          ATTRIBUTION_KEYS.forEach(function(key){
+            var value = params.get(key);
+            stored[key] = value && value.trim() ? value.trim() : '';
+          });
+          stored.landing_path = window.location.pathname + window.location.search;
+        } else {
+          ATTRIBUTION_KEYS.forEach(function(key){
+            var value = params.get(key);
+            if(value && value.trim()) stored[key] = value.trim();
+          });
+        }
+
+        setStoredAttribution(stored);
+        return stored;
+      }
+
+      function fieldValue(name){
+        var field = form.elements[name];
+        return field ? String(field.value || '').trim() : '';
+      }
+
+      function setValue(id, value){
+        var field = document.getElementById(id);
+        if(field) field.value = value || '';
+      }
+
+      function updateAttributionFields(){
+        var attribution = captureAttribution();
+        setValue('btsUtmSource', attribution.utm_source);
+        setValue('btsUtmMedium', attribution.utm_medium);
+        setValue('btsUtmCampaign', attribution.utm_campaign);
+        setValue('btsUtmContent', attribution.utm_content);
+        setValue('btsUtmTerm', attribution.utm_term);
+        setValue('btsFbclid', attribution.fbclid);
+        setValue('btsLandingPath', attribution.landing_path);
+      }
+
+      function buildPayload(){
+        var attribution = getStoredAttribution();
+        return {
+          promo_name: promoName,
+          promo_deadline: promoDeadline,
+          offer_savings: offerSavings,
+          parent_guardian_name: fieldValue('parent_guardian_name'),
+          phone: fieldValue('phone'),
+          email: fieldValue('email'),
+          student_name: fieldValue('student_name'),
+          student_age: fieldValue('student_age'),
+          interested_lesson: fieldValue('interested_lesson'),
+          preferred_location: fieldValue('preferred_location'),
+          best_days_times: fieldValue('best_days_times'),
+          notes_questions: fieldValue('notes_questions'),
+          utm_source: attribution.utm_source || '',
+          utm_medium: attribution.utm_medium || '',
+          utm_campaign: attribution.utm_campaign || '',
+          utm_content: attribution.utm_content || '',
+          utm_term: attribution.utm_term || '',
+          fbclid: attribution.fbclid || '',
+          landing_path: attribution.landing_path || '',
+          submitted_at: fieldValue('submitted_at')
+        };
+      }
+
+      updateAttributionFields();
+      form.addEventListener('change', updateAttributionFields);
+      form.addEventListener('submit', function(){
+        updateAttributionFields();
+        setValue('btsSubmittedAt', new Date().toISOString());
+        try {
+          window.sessionStorage.setItem(THANK_YOU_PAYLOAD_KEY, JSON.stringify(buildPayload()));
+        } catch (error) {}
+      });
+    })();
+  </script>
+</Base>

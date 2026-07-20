@@ -1,0 +1,213 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  title="Back-to-School Special Request Received | Cincinnati School of Music"
+  description="Thanks for requesting the Back-to-School Special from Cincinnati School of Music."
+  canonicalPath="/back-to-school/thank-you/"
+  noindex={true}
+>
+  <section class="thanks-page" aria-labelledby="thanks-title">
+    <div class="thanks-card">
+      <p class="thanks-kicker">Request received</p>
+      <h1 id="thanks-title">Your Back-to-School Special request is in.</h1>
+      <p class="thanks-lead">
+        Thanks — our team will follow up to help find the right lesson, teacher, location, and time.
+      </p>
+      <p>
+        No payment was collected. Your offer is reserved based on the August 31, 2026 claim deadline
+        and teacher availability.
+      </p>
+      <div class="thanks-actions" aria-label="Contact Cincinnati School of Music">
+        <a class="action-primary" href="tel:5135609175">Call CSM</a>
+        <a class="action-secondary" href="sms:5135609175">Text CSM</a>
+        <a class="action-secondary" href="mailto:info@cincinnatischoolofmusic.com">Email CSM</a>
+      </div>
+      <a class="return-link" href="/back-to-school/">Return to the Back-to-School Special</a>
+    </div>
+  </section>
+
+  <style>
+    .thanks-page {
+      --paper: #fbf7ec;
+      --navy: #0b2547;
+      --teal: #236d73;
+      --coral: #df4635;
+      --mustard: #f1b936;
+      position: relative;
+      display: grid;
+      min-height: 690px;
+      place-items: center;
+      overflow: hidden;
+      padding: 84px 24px;
+      background-color: var(--paper);
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 35px,
+        rgba(64, 134, 159, .14) 36px,
+        transparent 37px
+      );
+    }
+
+    .thanks-page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: clamp(28px, 8vw, 110px);
+      width: 1px;
+      background: rgba(223, 70, 53, .42);
+    }
+
+    .thanks-card {
+      position: relative;
+      z-index: 1;
+      width: min(760px, 100%);
+      padding: clamp(32px, 6vw, 62px);
+      border: 2px solid var(--navy);
+      background: rgba(255, 255, 255, .95);
+      box-shadow: 10px 10px 0 rgba(11, 37, 71, .15);
+    }
+
+    .thanks-kicker {
+      margin-bottom: 14px;
+      color: var(--teal);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .22em;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+
+    .thanks-card h1 {
+      margin: 0 0 22px;
+      color: var(--navy);
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+
+    .thanks-card p {
+      color: #48606c;
+      font-size: .98rem;
+      font-weight: 400;
+      line-height: 1.7;
+    }
+
+    .thanks-card .thanks-lead {
+      margin-bottom: 14px;
+      color: var(--navy);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .thanks-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .action-primary,
+    .action-secondary {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 24px;
+      border: 2px solid var(--navy);
+      color: var(--navy);
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      line-height: 1.2;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .action-primary {
+      background: var(--coral);
+      box-shadow: 4px 4px 0 var(--navy);
+      color: #fff;
+    }
+
+    .action-secondary { background: #fff; }
+
+    .action-primary:focus-visible,
+    .action-secondary:focus-visible,
+    .return-link:focus-visible {
+      outline: 3px solid var(--mustard);
+      outline-offset: 3px;
+    }
+
+    .return-link {
+      display: inline-block;
+      min-height: 44px;
+      margin-top: 26px;
+      padding: 10px 0;
+      color: var(--teal);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      line-height: 1.5;
+      text-underline-offset: 4px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 560px) {
+      .thanks-page { min-height: 620px; padding: 58px 20px 66px 42px; }
+      .thanks-page::before { left: 24px; }
+      .thanks-card { padding: 30px 22px; box-shadow: 6px 6px 0 rgba(11, 37, 71, .15); }
+      .thanks-actions { display: grid; }
+      .action-primary,
+      .action-secondary { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :global(html) { scroll-behavior: auto; }
+    }
+  </style>
+
+  <script>
+    (function(){
+      var PAYLOAD_KEY = 'csmBackToSchoolClaimPayload';
+      var LEAD_EVENT_PUSHED_KEY = 'csmBackToSchoolLeadEventPushedFor';
+
+      try {
+        var payload = JSON.parse(window.sessionStorage.getItem(PAYLOAD_KEY) || '{}') || {};
+        var submissionKey = payload.submitted_at || '';
+        var alreadyPushedFor = window.sessionStorage.getItem(LEAD_EVENT_PUSHED_KEY) || '';
+
+        if(payload.promo_name && submissionKey && alreadyPushedFor !== submissionKey){
+          payload.event = 'promo_claim_submit';
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push(payload);
+
+          if(typeof window.fbq === 'function'){
+            window.fbq('track', 'Lead', {
+              content_name: payload.promo_name,
+              content_category: 'Promo Claim',
+              value: 142,
+              currency: 'USD',
+              promotion_deadline: payload.promo_deadline || '',
+              utm_source: payload.utm_source || '',
+              utm_medium: payload.utm_medium || '',
+              utm_campaign: payload.utm_campaign || '',
+              utm_content: payload.utm_content || '',
+              utm_term: payload.utm_term || '',
+              fbclid: payload.fbclid || '',
+              landing_path: payload.landing_path || ''
+            });
+          }
+
+          window.sessionStorage.setItem(LEAD_EVENT_PUSHED_KEY, submissionKey);
+        }
+      } catch (error) {}
+    })();
+  </script>
+</Base>
