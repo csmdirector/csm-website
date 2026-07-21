@@ -5,6 +5,7 @@ const campaign = {
   name: 'Back-to-School Special',
   deadline: 'August 31, 2026',
   savings: '$142',
+  validity: 'Offer valid from July 20–August 31, 2026.',
   terms:
     'New students only. Offer includes one free 30-minute intro lesson ($42 value), the $50 registration fee waived upon enrollment, and $50 off the first full month after enrollment. Claim by August 31, 2026. One offer per student. Subject to teacher, instrument, schedule, and location availability. Cannot be combined with another offer. No cash value.'
 };
@@ -251,7 +252,10 @@ const locations = [
         <p class="confirmation-note">
           No payment is collected here. The CSM office will contact you to help arrange the intro lesson.
         </p>
-        <p class="terms">{campaign.terms}</p>
+        <div class="offer-terms">
+          <p class="offer-validity">{campaign.validity}</p>
+          <p class="terms">{campaign.terms}</p>
+        </div>
       </form>
     </section>
   </div>
@@ -809,11 +813,26 @@ const locations = [
       text-align: center;
     }
 
+    .offer-terms {
+      border-top: 1px solid rgba(5, 34, 64, .13);
+      padding-top: .85rem;
+    }
+
+    .offer-validity {
+      color: var(--navy);
+      font-size: .82rem;
+      font-weight: 800;
+      line-height: 1.45;
+      margin: 0 0 .3rem;
+      text-align: center;
+    }
+
     .terms {
       color: #637175;
       font-size: .7rem;
       font-weight: 400;
       line-height: 1.6;
+      margin: 0;
     }
 
     @media (max-width: 980px) {
