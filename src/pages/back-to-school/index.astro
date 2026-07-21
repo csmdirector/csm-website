@@ -654,21 +654,23 @@ const locations = [
     }
 
     .locations {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
       margin-bottom: 22px;
     }
 
     .locations span {
-      padding: 8px 12px;
+      min-width: 0;
+      padding: 8px 4px;
       border: 1px solid var(--teal);
       background: rgba(255, 255, 255, .55);
       color: var(--teal);
-      font-size: .7rem;
+      font-size: clamp(.58rem, 1vw, .66rem);
       font-weight: 600;
-      letter-spacing: .11em;
+      letter-spacing: .045em;
       line-height: 1.2;
+      text-align: center;
       text-transform: uppercase;
     }
 
@@ -931,6 +933,12 @@ const locations = [
       form { padding: 25px 20px; box-shadow: 6px 6px 0 rgba(11, 37, 71, .14); }
       .form-grid { grid-template-columns: 1fr; gap: 17px; }
       .field-wide { grid-column: auto; }
+    }
+
+    @media (max-width: 390px) {
+      .locations {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 380px) {
