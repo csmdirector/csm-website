@@ -1,5 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
+
+const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
+  String(import.meta.env.ENABLE_LEAD_PIPELINE || '').trim().toLowerCase()
+);
+const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
+  String(import.meta.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT || '').trim().toLowerCase()
+);
 ---
 <Base
   title="Find the Right Lesson Fit | Cincinnati School of Music"
@@ -45,6 +52,25 @@ import Base from '../../layouts/Base.astro';
           <textarea name="lesson_request" id="lessonRequestSummary" hidden></textarea>
           <textarea name="follow_up_notes" id="followUpNotes" hidden></textarea>
           <textarea name="tracking_summary" id="trackingSummary" hidden></textarea>
+          <input type="hidden" name="routing_outcome" id="routingOutcome" value="" />
+          <input type="hidden" name="recommended_url" id="recommendedUrl" value="" />
+          <input type="hidden" name="submitted_at" id="submittedAt" value="" />
+          <input type="hidden" name="client_submission_id" id="clientSubmissionId" value="" />
+          <input type="hidden" name="lead_pipeline_only" id="leadPipelineOnly" value="" />
+          <input type="hidden" name="utm_source" id="utmSource" value="" />
+          <input type="hidden" name="utm_medium" id="utmMedium" value="" />
+          <input type="hidden" name="utm_campaign" id="utmCampaign" value="" />
+          <input type="hidden" name="utm_content" id="utmContent" value="" />
+          <input type="hidden" name="utm_term" id="utmTerm" value="" />
+          <input type="hidden" name="gclid" id="gclid" value="" />
+          <input type="hidden" name="gbraid" id="gbraid" value="" />
+          <input type="hidden" name="wbraid" id="wbraid" value="" />
+          <input type="hidden" name="landing_path" id="landingPath" value="" />
+          <input type="hidden" name="first_landing_path" id="firstLandingPath" value="" />
+          <input type="hidden" name="latest_landing_path" id="latestLandingPath" value="" />
+          <input type="hidden" name="referrer" id="referrer" value="" />
+          <input type="hidden" name="attribution_timestamp" id="attributionTimestamp" value="" />
+          <input type="hidden" name="last_paid_click_timestamp" id="lastPaidClickTimestamp" value="" />
           <p class="hidden-field">
             <label>Do not fill this out if you are human: <input name="bot-field" /></label>
           </p>
@@ -206,6 +232,9 @@ import Base from '../../layouts/Base.astro';
               <a class="btn-c" href="mailto:info@cincinnatischoolofmusic.com">Email CSM</a>
             </div>
 
+            <p class="contact-intro is-hidden" id="contactIntro">
+              <strong>Optional contact:</strong> add the best email or mobile number for your household before continuing.
+            </p>
             <div class="contact-grid" id="contactGrid">
               <label class="field-label">
                 Your name
@@ -282,12 +311,17 @@ import Base from '../../layouts/Base.astro';
     select:focus,input:focus,textarea:focus{outline:2px solid rgba(60,181,198,.25);border-color:var(--slate);background:var(--white)}
     .recommendation-box{border:1px solid var(--offwb);background:var(--offwhite);padding:24px;margin-bottom:24px}
     .recommendation-box h2{font-size:clamp(1.25rem,2vw,1.65rem);margin-bottom:10px}
-    .recommendation-list{display:grid;grid-template-columns:max-content 1fr;gap:8px 16px;margin-top:18px}
-    .recommendation-list dt{font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
-    .recommendation-list dd{font-size:.86rem;color:var(--mid)}
+    .recommendation-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:22px;padding-top:18px;border-top:1px solid var(--offwb)}
+    .recommendation-item{min-width:0}
+    .recommendation-list dt{font-size:.58rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);margin-bottom:5px}
+    .recommendation-list dd{font-size:1rem;font-weight:400;color:var(--charcoal);line-height:1.35;overflow-wrap:anywhere}
     .help-details.is-hidden,.contact-grid.is-hidden{display:none}
     .help-actions{display:none;flex-wrap:wrap;gap:10px;margin:-4px 0 24px}
     .help-actions.is-visible{display:flex}
+    .contact-intro{font-size:.84rem;margin:-2px 0 18px;max-width:620px}
+    .contact-intro strong{font-weight:500;color:var(--charcoal)}
+    .contact-intro.is-hidden{display:none}
+    .intake-actions + .contact-intro{margin-top:24px}
     .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
     .contact-grid .field-label:last-child{grid-column:1 / -1}
     .handoff-note{font-size:.82rem;margin-top:4px}
@@ -308,21 +342,47 @@ import Base from '../../layouts/Base.astro';
       .progress-meta{flex-direction:column;gap:4px}
       .choice-grid{grid-template-columns:1fr}
       .contact-grid{grid-template-columns:1fr}
-      .recommendation-list{grid-template-columns:1fr;gap:2px 0}
+      .recommendation-list{grid-template-columns:1fr;gap:14px}
+      .recommendation-item{padding-bottom:14px;border-bottom:1px solid var(--offwb)}
+      .recommendation-item:last-child{padding-bottom:0;border-bottom:0}
     }
   </style>
 
-  <script>
+  <script define:vars={{ enableLeadPipelineCapture, enableLessonFitDirectSubmit }}>
     (function(){
       var form = document.getElementById('intakeForm');
       if(!form) return;
 
       var HELP_THANK_YOU_URL = '/lesson-fit/thank-you/?help=1';
+      var DIRECT_SUBMIT_URL = '/api/lesson-fit-submit';
       var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
+      var ENABLE_LEAD_PIPELINE_CAPTURE = Boolean(enableLeadPipelineCapture);
+      var ENABLE_LESSON_FIT_DIRECT_SUBMIT = Boolean(enableLessonFitDirectSubmit);
       var ATTRIBUTION_STORAGE_KEY = 'csmLessonFitAttribution';
       var STATE_STORAGE_KEY = 'csmLessonFitState';
       var HELP_SUBMIT_EVENT_PUSHED_KEY = 'csmLessonFitHelpSubmitEventPushed';
       var HELP_SUBMIT_PAYLOAD_KEY = 'csmLessonFitHelpSubmitPayload';
+      var LEAD_EVENT_FIELD_IDS = {
+        routing_outcome: 'routingOutcome',
+        recommended_url: 'recommendedUrl',
+        submitted_at: 'submittedAt',
+        client_submission_id: 'clientSubmissionId',
+        lead_pipeline_only: 'leadPipelineOnly',
+        utm_source: 'utmSource',
+        utm_medium: 'utmMedium',
+        utm_campaign: 'utmCampaign',
+        utm_content: 'utmContent',
+        utm_term: 'utmTerm',
+        gclid: 'gclid',
+        gbraid: 'gbraid',
+        wbraid: 'wbraid',
+        landing_path: 'landingPath',
+        first_landing_path: 'firstLandingPath',
+        latest_landing_path: 'latestLandingPath',
+        referrer: 'referrer',
+        attribution_timestamp: 'attributionTimestamp',
+        last_paid_click_timestamp: 'lastPaidClickTimestamp'
+      };
       var PIANO_LOCATION_URLS = {
         'CSM Montgomery': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-montgomery',
         'CSM Mason': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-mason',
@@ -348,7 +408,10 @@ import Base from '../../layouts/Base.astro';
       var formError = document.getElementById('formError');
       var helpDetails = document.getElementById('helpDetails');
       var helpActions = document.getElementById('helpActions');
+      var contactIntro = document.getElementById('contactIntro');
       var contactGrid = document.getElementById('contactGrid');
+      var intakeActions = document.querySelector('.intake-actions');
+      var handoffNote = document.querySelector('.handoff-note');
       var handoffNoteText = document.getElementById('handoffNoteText');
       var contactSummary = document.getElementById('contactSummary');
       var lessonRequestSummary = document.getElementById('lessonRequestSummary');
@@ -358,6 +421,21 @@ import Base from '../../layouts/Base.astro';
       var recommendationBody = document.getElementById('recommendationBody');
       var recommendationList = document.getElementById('recommendationList');
       var currentStep = 0;
+
+      function setLeadEventField(name, value){
+        var field = document.getElementById(LEAD_EVENT_FIELD_IDS[name]);
+        if(field) field.value = value || '';
+      }
+
+      function ensureClientSubmissionId(){
+        var field = document.getElementById('clientSubmissionId');
+        if(!field) return '';
+        if(!field.value){
+          var randomPart = Math.random().toString(36).slice(2, 10);
+          field.value = 'lesson-fit-' + Date.now().toString(36) + '-' + randomPart;
+        }
+        return field.value;
+      }
 
       function getStoredJson(key){
         try {
@@ -373,7 +451,42 @@ import Base from '../../layouts/Base.astro';
         } catch (error) {}
       }
 
+      function normalizeAttribution(value){
+        var attribution = value || {};
+        var flat = {};
+        ATTRIBUTION_KEYS.forEach(function(key){
+          flat[key] = attribution[key] || '';
+        });
+        flat.first_landing_path = attribution.first_landing_path || attribution.landing_path || '';
+        flat.latest_landing_path = attribution.latest_landing_path || attribution.landing_path || flat.first_landing_path || '';
+        flat.landing_path = flat.latest_landing_path;
+        flat.referrer = attribution.referrer || '';
+        flat.timestamp = attribution.timestamp || attribution.attribution_timestamp || '';
+        flat.last_paid_click_timestamp = attribution.last_paid_click_timestamp || '';
+        flat.source_type = attribution.source_type || '';
+        return flat;
+      }
+
+      function getSitewideAttribution(){
+        if(window.CSMAttribution && typeof window.CSMAttribution.getLatest === 'function'){
+          return normalizeAttribution(window.CSMAttribution.getLatest());
+        }
+        var stored = getStoredJson('csmAttribution');
+        var first = stored.first_touch || {};
+        var latest = stored.latest_touch || first || {};
+        var flat = normalizeAttribution(latest);
+        flat.first_landing_path = first.first_landing_path || first.latest_landing_path || flat.first_landing_path || '';
+        flat.latest_landing_path = latest.latest_landing_path || latest.first_landing_path || flat.latest_landing_path || flat.first_landing_path || '';
+        flat.landing_path = flat.latest_landing_path;
+        flat.last_paid_click_timestamp = stored.last_paid_click_timestamp || flat.last_paid_click_timestamp || '';
+        return flat;
+      }
+
       function captureAttribution(){
+        if(window.CSMAttribution && typeof window.CSMAttribution.capture === 'function'){
+          window.CSMAttribution.capture();
+        }
+        var sitewide = getSitewideAttribution();
         var params = new URLSearchParams(window.location.search);
         var stored = getStoredJson(ATTRIBUTION_STORAGE_KEY);
         ATTRIBUTION_KEYS.forEach(function(key){
@@ -382,33 +495,62 @@ import Base from '../../layouts/Base.astro';
             stored[key] = value.trim();
           }
         });
-        if(!stored.landing_path){
-          stored.landing_path = window.location.pathname + window.location.search;
+        var merged = normalizeAttribution(Object.assign({}, stored, sitewide));
+        ATTRIBUTION_KEYS.forEach(function(key){
+          if(stored[key]){
+            merged[key] = stored[key];
+          }
+        });
+        if(sitewide.first_landing_path){
+          merged.first_landing_path = sitewide.first_landing_path;
         }
-        if(document.referrer && !stored.referrer){
-          stored.referrer = document.referrer;
+        if(sitewide.latest_landing_path){
+          merged.latest_landing_path = sitewide.latest_landing_path;
+          merged.landing_path = sitewide.latest_landing_path;
         }
-        setStoredJson(ATTRIBUTION_STORAGE_KEY, stored);
-        return stored;
+        if(sitewide.referrer){
+          merged.referrer = sitewide.referrer;
+        }
+        if(sitewide.timestamp){
+          merged.timestamp = sitewide.timestamp;
+        }
+        if(sitewide.last_paid_click_timestamp){
+          merged.last_paid_click_timestamp = sitewide.last_paid_click_timestamp;
+        }
+        setStoredJson(ATTRIBUTION_STORAGE_KEY, merged);
+        return merged;
       }
 
       function getAttribution(){
-        return getStoredJson(ATTRIBUTION_STORAGE_KEY);
+        return normalizeAttribution(Object.assign(
+          {},
+          getStoredJson(ATTRIBUTION_STORAGE_KEY),
+          getSitewideAttribution()
+        ));
       }
 
       function appendAttribution(url){
         var attribution = getAttribution();
-        var outbound = new URL(url, window.location.origin);
+        var outbound = window.CSMAttribution && typeof window.CSMAttribution.decorateUrl === 'function'
+          ? new URL(window.CSMAttribution.decorateUrl(url), window.location.origin)
+          : new URL(url, window.location.origin);
         ATTRIBUTION_KEYS.forEach(function(key){
           if(attribution[key]){
             outbound.searchParams.set(key, attribution[key]);
           }
         });
-        if(attribution.landing_path){
-          outbound.searchParams.set('landing_path', attribution.landing_path);
+        if(attribution.first_landing_path){
+          outbound.searchParams.set('first_landing_path', attribution.first_landing_path);
+        }
+        if(attribution.latest_landing_path){
+          outbound.searchParams.set('latest_landing_path', attribution.latest_landing_path);
+          outbound.searchParams.set('landing_path', attribution.latest_landing_path);
         }
         if(attribution.referrer){
           outbound.searchParams.set('referrer', attribution.referrer);
+        }
+        if(attribution.timestamp){
+          outbound.searchParams.set('attribution_timestamp', attribution.timestamp);
         }
         return outbound.toString();
       }
@@ -437,8 +579,12 @@ import Base from '../../layouts/Base.astro';
           gbraid: attribution.gbraid || '',
           wbraid: attribution.wbraid || '',
           click_id: clickId,
-          landing_path: attribution.landing_path || '',
-          referrer: attribution.referrer || ''
+          landing_path: attribution.latest_landing_path || attribution.landing_path || '',
+          first_landing_path: attribution.first_landing_path || '',
+          latest_landing_path: attribution.latest_landing_path || '',
+          referrer: attribution.referrer || '',
+          attribution_timestamp: attribution.timestamp || '',
+          last_paid_click_timestamp: attribution.last_paid_click_timestamp || ''
         };
       }
 
@@ -560,6 +706,18 @@ import Base from '../../layouts/Base.astro';
 
       function updateNotificationFields(recommendation){
         var attribution = getAttribution();
+        setLeadEventField('routing_outcome', recommendation.outcome);
+        setLeadEventField('recommended_url', recommendation.url);
+        ATTRIBUTION_KEYS.forEach(function(key){
+          setLeadEventField(key, attribution[key] || '');
+        });
+        setLeadEventField('landing_path', attribution.latest_landing_path || attribution.landing_path || '');
+        setLeadEventField('first_landing_path', attribution.first_landing_path || '');
+        setLeadEventField('latest_landing_path', attribution.latest_landing_path || '');
+        setLeadEventField('referrer', attribution.referrer || '');
+        setLeadEventField('attribution_timestamp', attribution.timestamp || '');
+        setLeadEventField('last_paid_click_timestamp', attribution.last_paid_click_timestamp || '');
+
         contactSummary.value = [
           'Name: ' + (readFormValue('parent_name') || 'Not provided'),
           'Phone: ' + (readFormValue('phone') || 'Not provided')
@@ -584,7 +742,8 @@ import Base from '../../layouts/Base.astro';
           'Content: ' + (attribution.utm_content || ''),
           'Search term: ' + (attribution.utm_term || ''),
           'Click ID: ' + (attribution.gclid || attribution.gbraid || attribution.wbraid || ''),
-          'Landing page: ' + (attribution.landing_path || ''),
+          'First landing page: ' + (attribution.first_landing_path || ''),
+          'Latest landing page: ' + (attribution.latest_landing_path || attribution.landing_path || ''),
           'Referrer: ' + (attribution.referrer || '')
         ].join('\n');
       }
@@ -595,10 +754,27 @@ import Base from '../../layouts/Base.astro';
         recommendationBody.textContent = recommendation.body;
         helpDetails.classList.toggle('is-hidden', recommendation.outcome !== 'staff-help');
         helpActions.classList.toggle('is-visible', recommendation.outcome === 'staff-help');
-        contactGrid.classList.toggle('is-hidden', recommendation.outcome !== 'staff-help');
+        var shouldCollectContact = recommendation.outcome === 'staff-help' ||
+          (recommendation.outcome === 'self-booking' && ENABLE_LEAD_PIPELINE_CAPTURE);
+        if(contactIntro){
+          contactIntro.classList.toggle('is-hidden', !shouldCollectContact);
+          contactIntro.innerHTML = recommendation.outcome === 'staff-help'
+            ? '<strong>Contact info:</strong> add your details so CSM can follow up.'
+            : '<strong>Optional contact:</strong> add an email or mobile number so CSM can keep this booking path connected.';
+        }
+        contactGrid.classList.toggle('is-hidden', !shouldCollectContact);
+        if(contactIntro && contactGrid && intakeActions && handoffNote){
+          if(recommendation.outcome === 'self-booking'){
+            intakeActions.insertAdjacentElement('afterend', contactGrid);
+            intakeActions.insertAdjacentElement('afterend', contactIntro);
+          } else {
+            handoffNote.parentNode.insertBefore(contactGrid, handoffNote);
+            handoffNote.parentNode.insertBefore(contactIntro, contactGrid);
+          }
+        }
         handoffNoteText.textContent = recommendation.outcome === 'staff-help'
           ? 'We will use this information when we reach out.'
-          : 'After this step, you will continue to available Intro Lesson times.';
+          : 'This opens the CSM scheduling page for your selected Intro Lesson.';
 
         var items = [
           ['Instrument', readFormValue('instrument_interest') || 'Not selected'],
@@ -612,7 +788,7 @@ import Base from '../../layouts/Base.astro';
           }
         }
         recommendationList.innerHTML = items.map(function(item){
-          return '<dt>' + item[0] + '</dt><dd>' + item[1] + '</dd>';
+          return '<div class="recommendation-item"><dt>' + item[0] + '</dt><dd>' + item[1] + '</dd></div>';
         }).join('');
         updateNotificationFields(recommendation);
       }
@@ -621,6 +797,7 @@ import Base from '../../layouts/Base.astro';
         var data = {};
         Array.prototype.slice.call(form.elements).forEach(function(field){
           if(!field.name || field.name === 'form-name' || field.name === 'bot-field' || field.name === 'subject' || field.name === 'contact_summary' || field.name === 'lesson_request' || field.name === 'follow_up_notes' || field.name === 'tracking_summary') return;
+          if(field.name === 'parent_name' || field.name === 'phone' || field.name === 'email' || field.name === 'student_context') return;
           if((field.type === 'radio' || field.type === 'checkbox') && !field.checked) return;
           data[field.name] = field.value;
         });
@@ -663,7 +840,7 @@ import Base from '../../layouts/Base.astro';
           if(recommendation.outcome === 'staff-help'){
             submitButton.textContent = 'Send Help Request';
           } else {
-            submitButton.textContent = 'View Available Intro Times';
+            submitButton.textContent = 'Choose a Time';
           }
         }
         formError.textContent = '';
@@ -709,16 +886,35 @@ import Base from '../../layouts/Base.astro';
         return true;
       }
 
-      function submitToNetlify(){
+      function submitLegacyNetlify(){
         updateAttributionFields();
         var formData = new URLSearchParams();
         formData.set('form-name', 'lesson-fit-request');
         formData.set('subject', 'New Lesson Fit Help Request');
         formData.set('email', readFormValue('email'));
+        formData.set('client_submission_id', ensureClientSubmissionId());
+        formData.set('submitted_at', new Date().toISOString());
+        formData.set('lead_pipeline_only', '');
+        formData.set('routing_outcome', readFormValue('routing_outcome'));
+        formData.set('recommended_url', readFormValue('recommended_url'));
         formData.set('contact_summary', readFormValue('contact_summary'));
         formData.set('lesson_request', readFormValue('lesson_request'));
         formData.set('follow_up_notes', readFormValue('follow_up_notes'));
         formData.set('tracking_summary', readFormValue('tracking_summary'));
+        ATTRIBUTION_KEYS.forEach(function(key){
+          formData.set(key, readFormValue(key));
+        });
+        formData.set('landing_path', readFormValue('landing_path'));
+        formData.set('first_landing_path', readFormValue('first_landing_path'));
+        formData.set('latest_landing_path', readFormValue('latest_landing_path'));
+        formData.set('referrer', readFormValue('referrer'));
+        formData.set('attribution_timestamp', readFormValue('attribution_timestamp'));
+        formData.set('last_paid_click_timestamp', readFormValue('last_paid_click_timestamp'));
+        if(ENABLE_LEAD_PIPELINE_CAPTURE){
+          setLeadEventField('submitted_at', new Date().toISOString());
+          setLeadEventField('lead_pipeline_only', '');
+          formData = new URLSearchParams(new FormData(form));
+        }
         return fetch(form.action, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -728,6 +924,64 @@ import Base from '../../layouts/Base.astro';
             throw new Error('Lesson Fit form submission failed');
           }
           return response;
+        });
+      }
+
+      function submitDirect(){
+        updateAttributionFields();
+        ensureClientSubmissionId();
+        setLeadEventField('submitted_at', new Date().toISOString());
+        setLeadEventField('lead_pipeline_only', '');
+        var formData = new URLSearchParams(new FormData(form));
+        formData.set('form-name', 'lesson-fit-request');
+        formData.set('lead_pipeline_only', '');
+        return fetch(DIRECT_SUBMIT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        }).then(function(response){
+          if(!response.ok){
+            var error = new Error('Lesson Fit direct submission failed');
+            error.status = response.status;
+            throw error;
+          }
+          return response;
+        });
+      }
+
+      function shouldFallbackToLegacySubmit(error){
+        if(!error || typeof error.status === 'undefined') return true;
+        return error.status === 404 ||
+          error.status === 500 ||
+          error.status === 502 ||
+          error.status === 503 ||
+          error.status === 504;
+      }
+
+      function submitToNetlify(){
+        if(!ENABLE_LESSON_FIT_DIRECT_SUBMIT){
+          return submitLegacyNetlify();
+        }
+        return submitDirect().catch(function(error){
+          if(shouldFallbackToLegacySubmit(error)){
+            if(window.console && window.console.warn) window.console.warn('Lesson Fit direct submit failed operationally; falling back to Netlify form', error);
+            return submitLegacyNetlify();
+          }
+          throw error;
+        });
+      }
+
+      function submitPipelineOnly(){
+        updateAttributionFields();
+        ensureClientSubmissionId();
+        setLeadEventField('submitted_at', new Date().toISOString());
+        setLeadEventField('lead_pipeline_only', '1');
+        var formData = new URLSearchParams(new FormData(form));
+        formData.set('lead_pipeline_only', '1');
+        return fetch(ENABLE_LESSON_FIT_DIRECT_SUBMIT ? DIRECT_SUBMIT_URL : form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
         });
       }
 
@@ -761,7 +1015,15 @@ import Base from '../../layouts/Base.astro';
           try {
             window.localStorage.removeItem(STATE_STORAGE_KEY);
           } catch (error) {}
-          navigateAfterTracking(recommendation.url, 'lesson_fit_self_booking_handoff', recommendation);
+          if(!ENABLE_LEAD_PIPELINE_CAPTURE){
+            navigateAfterTracking(recommendation.url, 'lesson_fit_self_booking_handoff', recommendation);
+            return;
+          }
+          submitPipelineOnly().catch(function(error){
+            if(window.console && window.console.warn) window.console.warn('Lesson Fit pipeline capture failed', error);
+          }).then(function(){
+            navigateAfterTracking(recommendation.url, 'lesson_fit_self_booking_handoff', recommendation);
+          });
           return;
         }
         submitButton.textContent = 'Sending Request...';

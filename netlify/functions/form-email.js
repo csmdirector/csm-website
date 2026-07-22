@@ -98,7 +98,23 @@ const FORM_FIELD_SIGNATURES = [
   ['admin-application', ['first-name', 'last-name', 'why-interested', 'skills-experience']]
 ];
 
-const SKIP_FIELDS = new Set(['bot-field', 'form-name', 'subject', 'submitted_at', 'ip', 'user_agent']);
+const PIPELINE_CAPTURE_FIELDS = [
+  'routing_outcome',
+  'recommended_url',
+  'lead_pipeline_only',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_content',
+  'utm_term',
+  'gclid',
+  'gbraid',
+  'wbraid',
+  'landing_path',
+  'referrer'
+];
+const SKIP_FIELDS = new Set(['bot-field', 'form-name', 'subject', 'submitted_at', 'ip', 'user_agent', ...PIPELINE_CAPTURE_FIELDS]);
+SKIP_FIELDS.add('client_submission_id');
 const FIELD_LABELS = {
   'ack-no-family-contact': 'Office confirmation',
   'ack-not-2-already': 'Two-day limit',
@@ -163,7 +179,8 @@ const FIELD_LABELS = {
 
 function env(name) {
   if (typeof Netlify !== 'undefined' && Netlify.env && typeof Netlify.env.get === 'function') {
-    return Netlify.env.get(name);
+    const value = Netlify.env.get(name);
+    if (value) return value;
   }
   if (typeof process !== 'undefined' && process.env) {
     return process.env[name];
@@ -257,6 +274,22 @@ function getReplyTo(fields, keys) {
 
 function isEmailLike(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || '');
+}
+
+function shouldSkipOfficeEmail(fields) {
+  return valueFor(fields, 'lead_pipeline_only') === '1';
+}
+
+function isResendIdempotencyReplay(response, details, idempotencyId) {
+  if (!idempotencyId) return false;
+  if (response.status === 409) return true;
+
+  const text = String(details || '').toLowerCase();
+  return (
+    [400, 422].includes(response.status) &&
+    text.includes('idempotenc') &&
+    (text.includes('already') || text.includes('duplicate') || text.includes('conflict'))
+  );
 }
 
 function labelFor(key) {
@@ -431,8 +464,9 @@ async function sendEmail(route, formName, fields, meta) {
     'Content-Type': 'application/json'
   };
 
-  if (meta.id) {
-    headers['Idempotency-Key'] = `csm-${formName}-${meta.id}`.slice(0, 256);
+  const idempotencyId = valueFor(fields, 'client_submission_id') || meta.id;
+  if (idempotencyId) {
+    headers['Idempotency-Key'] = `csm-${formName}-${idempotencyId}`.slice(0, 256);
   }
 
   const response = await fetch('https://api.resend.com/emails', {
@@ -443,9 +477,31 @@ async function sendEmail(route, formName, fields, meta) {
 
   const details = await response.text();
   if (!response.ok) {
+    if (isResendIdempotencyReplay(response, details, idempotencyId)) {
+      console.log(`form-email: deduped ${formName} -> ${route.to} (${response.status}) ${details}`);
+      return { ok: true, sent: true, deduped: true, to: route.to, status: response.status };
+    }
     throw new Error(`Resend failed for ${formName}: ${response.status} ${details}`);
   }
   console.log(`form-email: sent ${formName} -> ${route.to} (${response.status}) ${details}`);
+  return { ok: true, sent: true, to: route.to, status: response.status };
+}
+
+async function sendFormEmailSubmission({ formName, data, id = '', createdAt = '' }) {
+  const fields = normalizeFields(data || {});
+  const route = ROUTES[formName];
+
+  if (!route) {
+    return { ok: true, skipped: true, reason: 'no_route' };
+  }
+  if (valueFor(fields, 'bot-field')) {
+    return { ok: true, skipped: true, reason: 'honeypot' };
+  }
+  if (shouldSkipOfficeEmail(fields)) {
+    return { ok: true, skipped: true, reason: 'pipeline_only' };
+  }
+
+  return sendEmail(route, formName, fields, { id, createdAt });
 }
 
 export default {
@@ -466,9 +522,9 @@ export default {
       );
       return;
     }
-    if (valueFor(submission.data, 'bot-field')) return;
-
-    await sendEmail(route, formName, submission.data, {
+    await sendFormEmailSubmission({
+      formName,
+      data: submission.data,
       id: submission.id,
       createdAt: submission.createdAt
     });
@@ -482,5 +538,9 @@ export const testables = {
   getFormName,
   getSubmission,
   inferFormName,
-  normalizeFields
+  normalizeFields,
+  sendFormEmailSubmission,
+  shouldSkipOfficeEmail
 };
+
+export { sendFormEmailSubmission };
