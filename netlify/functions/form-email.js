@@ -1,5 +1,6 @@
 const INFO_EMAIL = 'info@cincinnatischoolofmusic.com';
 const DIRECTOR_EMAIL = 'director@cincinnatischoolofmusic.com';
+const BACK_TO_SCHOOL_PROMO = 'Back-to-School Special';
 
 const ROUTES = {
   'promo-claim': {
@@ -438,6 +439,91 @@ function getSubmission(event) {
   };
 }
 
+function sheetSerialDate(value) {
+  const milliseconds = Date.parse(value || '');
+  if (!Number.isFinite(milliseconds)) return '';
+
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hourCycle: 'h23'
+    })
+      .formatToParts(new Date(milliseconds))
+      .filter(({ type }) => type !== 'literal')
+      .map(({ type, value }) => [type, value])
+  );
+
+  const localWallTime = Date.UTC(
+    Number(parts.year),
+    Number(parts.month) - 1,
+    Number(parts.day),
+    Number(parts.hour),
+    Number(parts.minute),
+    Number(parts.second)
+  );
+  return localWallTime / 86400000 + 25569;
+}
+
+function shouldMirrorBackToSchoolClaim(formName, fields) {
+  return formName === 'promo-claim' && valueFor(fields, 'promo_name') === BACK_TO_SCHOOL_PROMO;
+}
+
+function buildBackToSchoolSheetRow(fields, meta, syncedAt = new Date().toISOString()) {
+  return [
+    sheetSerialDate(meta.createdAt || valueFor(fields, 'submitted_at')),
+    meta.id || '',
+    valueFor(fields, 'parent_guardian_name'),
+    valueFor(fields, 'phone'),
+    valueFor(fields, 'email'),
+    valueFor(fields, 'student_name'),
+    valueFor(fields, 'student_age'),
+    valueFor(fields, 'interested_lesson'),
+    valueFor(fields, 'preferred_location'),
+    valueFor(fields, 'best_days_times'),
+    valueFor(fields, 'notes_questions'),
+    valueFor(fields, 'promo_name'),
+    valueFor(fields, 'promo_deadline'),
+    valueFor(fields, 'utm_source'),
+    valueFor(fields, 'utm_medium'),
+    valueFor(fields, 'utm_campaign'),
+    valueFor(fields, 'utm_content'),
+    valueFor(fields, 'utm_term'),
+    valueFor(fields, 'fbclid'),
+    valueFor(fields, 'landing_path'),
+    sheetSerialDate(syncedAt)
+  ];
+}
+
+async function mirrorBackToSchoolClaim(fields, meta) {
+  const webhookUrl = env('BACK_TO_SCHOOL_SHEET_WEBHOOK_URL');
+  const webhookSecret = env('BACK_TO_SCHOOL_SHEET_WEBHOOK_SECRET');
+  if (!webhookUrl || !webhookSecret) {
+    throw new Error('Back-to-School Sheet webhook is not configured.');
+  }
+
+  const response = await fetch(webhookUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      secret: webhookSecret,
+      row: buildBackToSchoolSheetRow(fields, meta)
+    })
+  });
+  const json = await response.json();
+  if (!response.ok || !json.ok) {
+    throw new Error(`Google Sheet webhook failed: ${response.status} ${json.error || 'unknown error'}`);
+  }
+
+  console.log(`form-email: mirrored Back-to-School claim ${meta.id || '(no id)'} to Sheet`);
+  return { skipped: Boolean(json.duplicate), duplicate: Boolean(json.duplicate) };
+}
+
 async function sendEmail(route, formName, fields, meta) {
   const apiKey = env('RESEND_API_KEY');
   const from = env('FORM_EMAIL_FROM') || env('RESEND_FROM') || `CSM Website <${route.to}>`;
@@ -528,6 +614,17 @@ export default {
       id: submission.id,
       createdAt: submission.createdAt
     });
+
+    if (shouldMirrorBackToSchoolClaim(formName, submission.data)) {
+      try {
+        await mirrorBackToSchoolClaim(submission.data, {
+          id: submission.id,
+          createdAt: submission.createdAt
+        });
+      } catch (error) {
+        console.error(`form-email: promo Sheet mirror failed: ${error.message}`);
+      }
+    }
   }
 };
 
@@ -535,11 +632,15 @@ export const testables = {
   ROUTES,
   buildText,
   buildHtml,
+  buildBackToSchoolSheetRow,
   getFormName,
   getSubmission,
   inferFormName,
+  mirrorBackToSchoolClaim,
   normalizeFields,
   sendFormEmailSubmission,
+  sheetSerialDate,
+  shouldMirrorBackToSchoolClaim,
   shouldSkipOfficeEmail
 };
 
