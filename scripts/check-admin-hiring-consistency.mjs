@@ -48,4 +48,22 @@ for (const [fieldName, pattern] of staleDescriptionPatterns) {
   }
 }
 
+if (description.includes("—")) {
+  throw new Error("job description contains a prohibited em dash");
+}
+
+const prohibitedAnonymousReviewPatterns = [
+  /class="quotes-wrap"/i,
+  /class="quote-item"/i,
+  /class="quote-text"/i,
+  /CSM Administrative Team Member/i,
+  /What the Current Admin Team Has to Say/i,
+];
+
+for (const pattern of prohibitedAnonymousReviewPatterns) {
+  if (pattern.test(description)) {
+    throw new Error("job description contains an anonymous employee review");
+  }
+}
+
 console.log("Administrative assistant application and job description match.");
