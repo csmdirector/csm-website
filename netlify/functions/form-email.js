@@ -1,6 +1,7 @@
 const INFO_EMAIL = 'info@cincinnatischoolofmusic.com';
 const DIRECTOR_EMAIL = 'director@cincinnatischoolofmusic.com';
 const BACK_TO_SCHOOL_PROMO = 'Back-to-School Special';
+const ADMIN_APPLICATION_FORM = 'admin-application';
 
 const ROUTES = {
   'promo-claim': {
@@ -500,6 +501,75 @@ function buildBackToSchoolSheetRow(fields, meta, syncedAt = new Date().toISOStri
   ];
 }
 
+function normalizeApplicationSource(value) {
+  const source = String(value || '').trim().toLowerCase();
+  if (source === 'indeed') return 'Indeed';
+  if (source === 'referral') return 'Referral';
+  if (source === 'other') return 'Other';
+  return 'CSM Website';
+}
+
+function shouldMirrorAdminApplication(formName) {
+  return formName === ADMIN_APPLICATION_FORM;
+}
+
+function buildAdminCandidateSheetRow(fields, meta, syncedAt = new Date().toISOString()) {
+  return [
+    meta.id || '',
+    sheetSerialDate(meta.createdAt || valueFor(fields, 'submitted_at')),
+    'New',
+    '',
+    'Review application, résumé, and voicemail',
+    '',
+    valueFor(fields, 'first-name'),
+    valueFor(fields, 'last-name'),
+    valueFor(fields, 'email'),
+    valueFor(fields, 'phone'),
+    valueFor(fields, 'city'),
+    valueFor(fields, 'position'),
+    valueFor(fields, 'anticipated-tenure'),
+    valueFor(fields, 'resume-sent') ? 'Applicant says sent' : 'Not checked',
+    valueFor(fields, 'voicemail-left') ? 'Applicant says left' : 'Not checked',
+    '',
+    '',
+    '',
+    '',
+    'Pending',
+    valueFor(fields, 'why-interested'),
+    valueFor(fields, 'skills-experience'),
+    valueFor(fields, 'additional-notes'),
+    '',
+    normalizeApplicationSource(valueFor(fields, 'source') || valueFor(fields, 'utm_source')),
+    sheetSerialDate(syncedAt)
+  ];
+}
+
+async function mirrorAdminApplication(fields, meta) {
+  const webhookUrl = env('ADMIN_CANDIDATE_SHEET_WEBHOOK_URL');
+  const webhookSecret = env('ADMIN_CANDIDATE_SHEET_WEBHOOK_SECRET');
+  if (!webhookUrl || !webhookSecret) {
+    throw new Error('Admin candidate Sheet webhook is not configured.');
+  }
+
+  const response = await fetch(webhookUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSM-Webhook-Secret': webhookSecret
+    },
+    body: JSON.stringify({
+      row: buildAdminCandidateSheetRow(fields, meta)
+    })
+  });
+  const json = await response.json();
+  if (!response.ok || !json.ok) {
+    throw new Error(`Admin candidate Sheet webhook failed: ${response.status} ${json.error || 'unknown error'}`);
+  }
+
+  console.log(`form-email: mirrored admin application ${meta.id || '(no id)'} to Sheet`);
+  return { skipped: Boolean(json.duplicate), duplicate: Boolean(json.duplicate) };
+}
+
 async function mirrorBackToSchoolClaim(fields, meta) {
   const webhookUrl = env('BACK_TO_SCHOOL_SHEET_WEBHOOK_URL');
   const webhookSecret = env('BACK_TO_SCHOOL_SHEET_WEBHOOK_SECRET');
@@ -625,21 +695,36 @@ export default {
         console.error(`form-email: promo Sheet mirror failed: ${error.message}`);
       }
     }
+
+    if (shouldMirrorAdminApplication(formName)) {
+      try {
+        await mirrorAdminApplication(submission.data, {
+          id: submission.id,
+          createdAt: submission.createdAt
+        });
+      } catch (error) {
+        console.error(`form-email: admin candidate Sheet mirror failed: ${error.message}`);
+      }
+    }
   }
 };
 
 export const testables = {
   ROUTES,
+  buildAdminCandidateSheetRow,
   buildText,
   buildHtml,
   buildBackToSchoolSheetRow,
   getFormName,
   getSubmission,
   inferFormName,
+  mirrorAdminApplication,
   mirrorBackToSchoolClaim,
+  normalizeApplicationSource,
   normalizeFields,
   sendFormEmailSubmission,
   sheetSerialDate,
+  shouldMirrorAdminApplication,
   shouldMirrorBackToSchoolClaim,
   shouldSkipOfficeEmail
 };

@@ -22,8 +22,11 @@ const {
 } = testables;
 const {
   ROUTES,
+  buildAdminCandidateSheetRow,
   buildText,
   normalizeFields: normalizeEmailFields,
+  normalizeApplicationSource,
+  shouldMirrorAdminApplication,
   shouldSkipOfficeEmail
 } = formEmailTestables;
 
@@ -289,6 +292,36 @@ assert.doesNotMatch(emailText, /Routing Outcome/i);
 assert.doesNotMatch(emailText, /Lead Pipeline Only/i);
 assert.equal(shouldSkipOfficeEmail(emailFields), false);
 assert.equal(shouldSkipOfficeEmail({ lead_pipeline_only: '1' }), true);
+
+const adminCandidateRow = buildAdminCandidateSheetRow({
+  'first-name': 'Anna',
+  'last-name': 'Applicant',
+  email: 'anna.applicant@example.com',
+  phone: '513-555-0101',
+  city: 'Montgomery',
+  position: 'Administrative Assistant',
+  'anticipated-tenure': '3+ years',
+  'resume-sent': 'Yes',
+  'voicemail-left': 'Yes',
+  'why-interested': 'I enjoy helping families.',
+  'skills-experience': 'Five years of front desk experience.',
+  'additional-notes': 'Available for the required schedule.',
+  source: 'Indeed'
+}, {
+  id: 'admin-submission-test',
+  createdAt: '2026-07-31T01:00:00Z'
+}, '2026-07-31T01:05:00Z');
+assert.equal(adminCandidateRow.length, 26);
+assert.equal(adminCandidateRow[0], 'admin-submission-test');
+assert.equal(adminCandidateRow[2], 'New');
+assert.equal(adminCandidateRow[13], 'Applicant says sent');
+assert.equal(adminCandidateRow[14], 'Applicant says left');
+assert.equal(adminCandidateRow[20], 'I enjoy helping families.');
+assert.equal(adminCandidateRow[24], 'Indeed');
+assert.equal(normalizeApplicationSource('indeed'), 'Indeed');
+assert.equal(normalizeApplicationSource('unknown'), 'CSM Website');
+assert.equal(shouldMirrorAdminApplication('admin-application'), true);
+assert.equal(shouldMirrorAdminApplication('lesson-fit-request'), false);
 
 const originalFetch = globalThis.fetch;
 const sentEmails = [];

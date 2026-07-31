@@ -652,6 +652,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Netlify Form — data-netlify="true" handles submission -->
     <form name="admin-application" method="POST" data-netlify="true" action="/thank-you">
       <input type="hidden" name="form-name" value="admin-application">
+      <input type="hidden" name="source" value="CSM Website">
+      <input type="hidden" name="utm_source" value="">
+      <input type="hidden" name="utm_medium" value="">
+      <input type="hidden" name="utm_campaign" value="">
+      <input type="hidden" name="landing_path" value="">
 
       <!-- PERSONAL INFO -->
       <div class="form-section">
@@ -795,6 +800,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 
 <script>
+/* Preserve the application source so the candidate tracker can distinguish Indeed traffic. */
+(function(){
+  var form = document.querySelector('form[name="admin-application"]');
+  if(!form) return;
+  var params = new URLSearchParams(window.location.search);
+  ['utm_source','utm_medium','utm_campaign'].forEach(function(name){
+    var input = form.querySelector('input[name="' + name + '"]');
+    if(input) input.value = params.get(name) || '';
+  });
+  var source = (params.get('utm_source') || params.get('source') || '').toLowerCase();
+  var sourceInput = form.querySelector('input[name="source"]');
+  if(sourceInput) sourceInput.value = source === 'indeed' ? 'Indeed' : 'CSM Website';
+  var landingInput = form.querySelector('input[name="landing_path"]');
+  if(landingInput) landingInput.value = window.location.pathname + window.location.search;
+})();
+
 /* Mobile nav: hamburger toggle + tap-to-expand dropdowns (≤880px) */
 (function(){
   var nav = document.querySelector('nav');
