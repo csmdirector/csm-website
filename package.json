@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
-    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/generate-sitemap.mjs && node scripts/preserve-static-site.mjs",
+    "build": "node scripts/check-admin-hiring-consistency.mjs && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/generate-sitemap.mjs && node scripts/preserve-static-site.mjs",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "check:preserved": "node scripts/check-preserved-output.mjs",
-    "check:lead-pipeline": "node scripts/check-lead-pipeline.mjs"
+    "check:lead-pipeline": "node scripts/check-lead-pipeline.mjs",
+    "check:admin-hiring": "node scripts/check-admin-hiring-consistency.mjs"
   },
   "dependencies": {
     "astro": "^6.4.2",
