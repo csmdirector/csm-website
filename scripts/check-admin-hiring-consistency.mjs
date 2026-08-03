@@ -18,7 +18,7 @@ const requiredPatterns = [
   ["address", /9865 Montgomery Rd, 45242/],
   ["pay", /\$17\/hour/],
   ["Monday–Thursday", /Monday–Thursday/],
-  ["Monday–Thursday start time", /1:00 PM/],
+  ["Monday–Thursday start time", /2:00 PM/],
   ["Monday–Thursday end time", /7:30 PM/],
   ["Friday", /Friday/],
   ["Friday start time", /2:00 PM/],
@@ -30,6 +30,25 @@ for (const [pageName, source] of pages) {
     if (!pattern.test(source)) {
       throw new Error(`${pageName} is missing the current ${fieldName}`);
     }
+  }
+}
+
+const exactSchedulePatterns = [
+  [
+    "application",
+    application,
+    /Monday–Thursday 2:00 PM\s*[–-]\s*7:30 PM, Friday 2:00 PM\s*[–-]\s*7:00 PM/,
+  ],
+  [
+    "job description",
+    description,
+    /Monday–Thursday[\s\S]{0,200}2:00 PM\s*[–-]\s*7:30 PM[\s\S]{0,200}Friday[\s\S]{0,200}2:00 PM\s*[–-]\s*7:00 PM/,
+  ],
+];
+
+for (const [pageName, source, pattern] of exactSchedulePatterns) {
+  if (!pattern.test(source)) {
+    throw new Error(`${pageName} does not contain the exact current schedule`);
   }
 }
 
@@ -48,8 +67,10 @@ for (const [fieldName, pattern] of staleDescriptionPatterns) {
   }
 }
 
-if (description.includes("—")) {
-  throw new Error("job description contains a prohibited em dash");
+for (const [pageName, source] of pages) {
+  if (source.includes("—")) {
+    throw new Error(`${pageName} contains a prohibited em dash`);
+  }
 }
 
 const prohibitedAnonymousReviewPatterns = [
