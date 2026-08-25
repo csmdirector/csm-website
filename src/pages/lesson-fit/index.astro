@@ -384,18 +384,18 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         last_paid_click_timestamp: 'lastPaidClickTimestamp'
       };
       var PIANO_LOCATION_URLS = {
-        'CSM Montgomery': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-montgomery',
-        'CSM Mason': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-mason',
-        'CSM Anderson': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-anderson',
-        'CSM Maineville': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-maineville',
-        'CSM Middletown': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-middletown'
+        'CSM Montgomery': '/book-piano-intro/?location=montgomery',
+        'CSM Mason': '/book-piano-intro/?location=mason',
+        'CSM Anderson': '/book-piano-intro/?location=anderson',
+        'CSM Maineville': '/book-piano-intro/?location=maineville',
+        'CSM Middletown': '/book-piano-intro/?location=middletown'
       };
       var MUSIC_DISCOVERY_LOCATION_URLS = {
-        'CSM Montgomery': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro-montgomery',
-        'CSM Mason': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro-mason',
-        'CSM Anderson': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro-anderson',
-        'CSM Maineville': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro-maineville',
-        'CSM Middletown': 'https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro-middletown'
+        'CSM Montgomery': '/book-intro/?service=music-discovery&location=montgomery',
+        'CSM Mason': '/book-intro/?service=music-discovery&location=mason',
+        'CSM Anderson': '/book-intro/?service=music-discovery&location=anderson',
+        'CSM Maineville': '/book-intro/?service=music-discovery&location=maineville',
+        'CSM Middletown': '/book-intro/?service=music-discovery&location=middletown'
       };
 
       var steps = Array.prototype.slice.call(form.querySelectorAll('.intake-step'));

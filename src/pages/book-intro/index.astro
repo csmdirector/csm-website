@@ -1,24 +1,36 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { PIANO_BOOKING_LOCATIONS } from '../../../shared/piano-booking-links.js';
+import {
+  INTRO_LOCATIONS,
+  INTRO_SERVICES,
+  introBookingUrl
+} from '../../../shared/intro-bridge-config.js';
 
-const locationOrder = ['mason', 'montgomery', 'anderson', 'maineville', 'middletown'];
-const locationOptions = locationOrder
-  .map((slug) => PIANO_BOOKING_LOCATIONS.find((location) => location.slug === slug))
-  .filter(Boolean)
-  .map(({ slug, name }) => ({ slug, name }));
+const services = INTRO_SERVICES.map((service) => ({
+  slug: service.slug,
+  name: service.displayName,
+  introName: service.introName,
+  ageMin: service.ageMin,
+  ageMax: service.ageMax,
+  priceCents: service.priceCents
+}));
+const locations = INTRO_LOCATIONS.map((location) => ({ slug: location.slug, name: location.name }));
+const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
+  service.slug,
+  Object.fromEntries(INTRO_LOCATIONS.map((location) => [location.slug, introBookingUrl(service, location)]))
+]));
 ---
 <Base
-  title="Book a Piano Intro Lesson | Cincinnati School of Music"
-  description="Start with a 30-minute private piano Intro Lesson for $42 at your preferred Cincinnati School of Music location."
-  canonicalPath="/book-piano-intro/"
+  title="Book an Intro Lesson | Cincinnati School of Music"
+  description="Start with a 30-minute private Intro Lesson for $42 at your preferred Cincinnati School of Music location."
+  canonicalPath="/book-intro/"
   noindex={true}
 >
   <section class="booking-hero">
     <div class="booking-hero-inner">
-      <span class="section-label">Piano Intro Lesson</span>
-      <h1>Start With a Piano Intro Lesson</h1>
-      <p class="intro-price">A 30-minute private piano lesson for $42.</p>
+      <span class="section-label" id="heroLabel">Intro Lesson</span>
+      <h1 id="heroHeading">Start With an Intro Lesson</h1>
+      <p class="intro-price">A 30-minute private lesson for $42.</p>
       <p class="intro-copy">
         Tell us a little about the student and choose your preferred CSM location. On the next step,
         you’ll see available lesson times and finish booking.
@@ -37,8 +49,8 @@ const locationOptions = locationOrder
 
   <section class="booking-section">
     <div class="booking-column">
-      <form class="booking-card" id="pianoPreregistrationForm" novalidate>
-        <input type="hidden" name="form-name" value="piano-preregistration" />
+      <form class="booking-card" id="introBridgeForm" novalidate>
+        <input type="hidden" name="form-name" value="intro-bridge" />
         <input type="hidden" name="client_submission_id" id="clientSubmissionId" />
         <input type="hidden" name="submitted_at" id="submittedAt" />
         <input type="hidden" name="attribution_json" id="attributionJson" />
@@ -50,6 +62,18 @@ const locationOptions = locationOrder
           <h2>A few details, then you’ll see times.</h2>
           <p>This takes about a minute. Nothing is reserved or charged on this page.</p>
         </div>
+
+        <fieldset>
+          <legend>What would you like to try?</legend>
+          <div class="service-grid">
+            {services.map((service) => (
+              <label class="choice-card service-card">
+                <input type="radio" name="service_slug" value={service.slug} required />
+                <span>{service.name}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
 
         <fieldset>
           <legend>Who is the lesson for?</legend>
@@ -73,6 +97,7 @@ const locationOptions = locationOrder
               <input type="email" name="parent_email" autocomplete="email" maxlength="254" required />
             </label>
           </div>
+          <p class="field-help" id="ageHelp" hidden></p>
           <label class="field-label phone-field">
             Mobile phone
             <input type="tel" name="parent_phone" autocomplete="tel" inputmode="tel" maxlength="40" required />
@@ -94,9 +119,9 @@ const locationOptions = locationOrder
         </fieldset>
 
         <fieldset>
-          <legend>Where would you like to take piano lessons?</legend>
+          <legend id="locationLegend">Where would you like to take lessons?</legend>
           <div class="location-grid">
-            {locationOptions.map((location) => (
+            {locations.map((location) => (
               <label class="choice-card location-card">
                 <input type="radio" name="preferred_location" value={location.slug} required />
                 <span>{location.name.replace('CSM ', '')}</span>
@@ -122,7 +147,7 @@ const locationOptions = locationOrder
         </fieldset>
 
         <div class="form-error" id="formError" role="alert" aria-live="polite"></div>
-        <button class="btn-a submit-button" id="submitButton" type="submit">See Piano Intro Times</button>
+        <button class="btn-a submit-button" id="submitButton" type="submit">See Intro Times</button>
         <p class="submit-help">Your intro lesson is $42. You’ll choose a time and enter payment on the next step.</p>
 
         <div class="help-line">
@@ -147,7 +172,6 @@ const locationOptions = locationOrder
     .booking-steps span{display:flex;align-items:center;gap:9px;white-space:nowrap}
     .booking-steps b{display:inline-flex;width:25px;height:25px;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.3);border-radius:50%;color:var(--white);font-size:.66rem}
     .booking-steps i{font-style:normal;color:rgba(255,255,255,.28)}
-
     .booking-section{background:linear-gradient(180deg,var(--offwhite) 0%,#fff 42%);padding:64px 24px 90px}
     .booking-column{width:min(100%,820px);margin:0 auto}
     .booking-card{border:1px solid var(--offwb);background:var(--white);padding:48px 52px;box-shadow:0 20px 58px rgba(28,30,32,.065)}
@@ -164,9 +188,9 @@ const locationOptions = locationOrder
     .field-label input,.field-label select{width:100%;min-height:50px;border:1px solid #d9d7d3;background:var(--white);color:var(--charcoal);font:inherit;font-size:.92rem;font-weight:400;letter-spacing:0;text-transform:none;padding:13px 14px;border-radius:0;transition:border-color .16s,box-shadow .16s}
     .field-label input:focus,.field-label select:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(247,79,87,.13)}
     .field-help{font-size:.8rem;line-height:1.6;margin:10px 0 0;color:#6d6a65}
-
-    .choice-row,.location-grid{display:grid;gap:12px}
+    .choice-row,.service-grid,.location-grid{display:grid;gap:12px}
     .choice-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .service-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     .location-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
     .choice-card{position:relative;display:block;cursor:pointer}
     .choice-card input{position:absolute;opacity:0;pointer-events:none}
@@ -175,8 +199,7 @@ const locationOptions = locationOrder
     .choice-card input:checked + span{border-color:var(--accent);background:#fff7f7;color:var(--charcoal);box-shadow:inset 0 0 0 1px var(--accent)}
     .choice-card input:checked + span::before{border-color:var(--accent);background:var(--accent)}
     .choice-card input:focus-visible + span{outline:3px solid rgba(247,79,87,.2);outline-offset:2px}
-    .location-card span{justify-content:center;min-height:64px;padding:16px 13px}
-
+    .service-card span,.location-card span{justify-content:center;min-height:64px;padding:16px 13px}
     .form-error{min-height:24px;color:var(--accent-dk);font-size:.8rem;margin:24px 0 8px}
     .submit-button{border:0;cursor:pointer;width:100%;font-family:inherit;font-size:.76rem}
     .submit-button:disabled{opacity:.62;cursor:wait}
@@ -186,53 +209,35 @@ const locationOptions = locationOrder
     .help-line a{color:var(--slate);font-weight:600;text-decoration:none}
     .hidden-field{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
     .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-
-    @media(max-width:760px){
-      .location-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-      .booking-steps{align-items:flex-start;display:grid;gap:12px}
-      .booking-steps i{display:none}
-    }
-    @media(max-width:620px){
-      .booking-hero-inner{width:min(100% - 40px,820px);padding:56px 0 50px}
-      .booking-section{padding:34px 16px 64px}
-      .booking-card{padding:34px 22px}
-      .form-heading h2{font-size:1.48rem}
-      fieldset{padding:29px 0}
-      .name-grid,.student-details-row,.choice-row,.location-grid{grid-template-columns:1fr}
-      .student-details-row,.phone-field{margin-top:16px}
-      .location-card span{justify-content:flex-start}
-      .help-line{align-items:flex-start;flex-direction:column}
-    }
+    @media(max-width:760px){.location-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.booking-steps{align-items:flex-start;display:grid;gap:12px}.booking-steps i{display:none}}
+    @media(max-width:620px){.booking-hero-inner{width:min(100% - 40px,820px);padding:56px 0 50px}.booking-section{padding:34px 16px 64px}.booking-card{padding:34px 22px}.form-heading h2{font-size:1.48rem}fieldset{padding:29px 0}.name-grid,.student-details-row,.choice-row,.service-grid,.location-grid{grid-template-columns:1fr}.student-details-row,.phone-field{margin-top:16px}.service-card span,.location-card span{justify-content:flex-start}.help-line{align-items:flex-start;flex-direction:column}}
   </style>
 
-  <script define:vars={{ locationOptions }}>
+  <script define:vars={{ services, locations, bookingRoutes }}>
     (function(){
-      var form = document.getElementById('pianoPreregistrationForm');
+      var form = document.getElementById('introBridgeForm');
       if(!form) return;
+      var params = new URLSearchParams(window.location.search);
       var submitButton = document.getElementById('submitButton');
       var errorBox = document.getElementById('formError');
       var age = document.getElementById('studentAge');
+      var ageHelp = document.getElementById('ageHelp');
       var familyChoices = form.querySelectorAll('input[name="existing_family"]');
+      var serviceChoices = form.querySelectorAll('input[name="service_slug"]');
       var submissionIdField = document.getElementById('clientSubmissionId');
       var submittedAtField = document.getElementById('submittedAt');
       var attributionField = document.getElementById('attributionJson');
 
+      function selectedService(){
+        var selected = form.querySelector('input[name="service_slug"]:checked');
+        return services.find(function(service){ return selected && service.slug === selected.value; }) || null;
+      }
       function randomId(){
-        if(window.crypto && typeof window.crypto.randomUUID === 'function'){
-          return 'piano-prereg-' + window.crypto.randomUUID().replace(/-/g,'');
-        }
-        return 'piano-prereg-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,14);
+        if(window.crypto && typeof window.crypto.randomUUID === 'function') return 'intro-bridge-' + window.crypto.randomUUID().replace(/-/g,'');
+        return 'intro-bridge-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,14);
       }
-
-      function ensureSubmissionId(){
-        if(!submissionIdField.value) submissionIdField.value = randomId();
-        return submissionIdField.value;
-      }
-
       function attribution(){
-        if(window.CSMAttribution && typeof window.CSMAttribution.getLatest === 'function'){
-          return window.CSMAttribution.getLatest() || {};
-        }
+        if(window.CSMAttribution && typeof window.CSMAttribution.getLatest === 'function') return window.CSMAttribution.getLatest() || {};
         try {
           var stored = JSON.parse(window.localStorage.getItem('csmAttribution') || '{}') || {};
           var first = stored.first_touch || {};
@@ -242,71 +247,93 @@ const locationOptions = locationOrder
             latest_landing_path: latest.latest_landing_path || latest.first_landing_path || '',
             last_paid_click_timestamp: stored.last_paid_click_timestamp || ''
           });
-        } catch(error){
-          return {};
-        }
+        } catch(error){ return {}; }
       }
-
-      function locationIsValid(value){
-        return locationOptions.some(function(location){ return location.slug === value; });
-      }
-
       function isExistingFamily(){
         var selected = form.querySelector('input[name="existing_family"]:checked');
         return selected && selected.value === 'yes';
       }
-
-      function updateButtonLabel(){
-        submitButton.textContent = isExistingFamily() ? 'Get Help Booking' : 'See Piano Intro Times';
+      function syncServiceCopy(){
+        var service = selectedService();
+        var name = service ? service.name : '';
+        document.getElementById('heroLabel').textContent = service ? service.introName : 'Intro Lesson';
+        document.getElementById('heroHeading').textContent = service ? 'Start With a ' + service.introName : 'Start With an Intro Lesson';
+        document.getElementById('locationLegend').textContent = 'Where would you like to take ' + (name ? name.toLowerCase() + ' ' : '') + 'lessons?';
+        if(service){
+          age.min = String(service.ageMin);
+          age.max = String(service.ageMax);
+          if(service.ageMin > 2 || service.ageMax < 99){
+            ageHelp.textContent = service.ageMax >= 99
+              ? service.name + ' lessons are available for ages ' + service.ageMin + ' and up.'
+              : service.ageMin === service.ageMax
+                ? service.name + ' is designed for age ' + service.ageMin + '.'
+                : service.name + ' is designed for ages ' + service.ageMin + '–' + service.ageMax + '.';
+            ageHelp.hidden = false;
+          } else ageHelp.hidden = true;
+        }
+        updateButtonLabel();
       }
-
+      function updateButtonLabel(){
+        var service = selectedService();
+        submitButton.textContent = isExistingFamily()
+          ? 'Get Help Booking'
+          : 'See ' + (service ? service.name + ' ' : '') + 'Intro Times';
+      }
       function validate(){
         errorBox.textContent = '';
         if(!form.reportValidity()) return false;
-        if(!age.value){
-          errorBox.textContent = 'Please enter the student’s current age.';
+        var service = selectedService();
+        if(!service){ errorBox.textContent = 'Please choose a lesson type.'; return false; }
+        var studentAge = Number(age.value);
+        if(studentAge < service.ageMin || studentAge > service.ageMax){
+          errorBox.textContent = service.ageMax >= 99
+            ? service.name + ' is available for students age ' + service.ageMin + ' and up.'
+            : service.name + ' is available for students between ages ' + service.ageMin + ' and ' + service.ageMax + '.';
           age.focus();
           return false;
         }
-        var selectedLocation = new FormData(form).get('preferred_location');
-        if(!locationIsValid(selectedLocation)){
+        var location = new FormData(form).get('preferred_location');
+        if(!locations.some(function(item){ return item.slug === location; })){
           errorBox.textContent = 'Please choose a CSM location.';
           return false;
         }
         return true;
       }
 
-      ensureSubmissionId();
-      var requestedLocation = new URLSearchParams(window.location.search).get('location') || '';
+      submissionIdField.value = randomId();
+      var requestedService = params.get('service') || '';
+      var requestedLocation = params.get('location') || '';
+      var presetService = form.querySelector('input[name="service_slug"][value="' + CSS.escape(requestedService) + '"]');
       var presetLocation = form.querySelector('input[name="preferred_location"][value="' + CSS.escape(requestedLocation) + '"]');
+      if(presetService) presetService.checked = true;
       if(presetLocation) presetLocation.checked = true;
+      serviceChoices.forEach(function(choice){ choice.addEventListener('change', syncServiceCopy); });
       familyChoices.forEach(function(choice){ choice.addEventListener('change', updateButtonLabel); });
+      syncServiceCopy();
 
       form.addEventListener('submit', async function(event){
         event.preventDefault();
         if(!validate()) return;
         var existingFamily = isExistingFamily();
+        var service = selectedService();
         submitButton.disabled = true;
-        submitButton.textContent = existingFamily ? 'Sending your request…' : 'Finding piano times…';
+        submitButton.textContent = existingFamily ? 'Sending your request…' : 'Finding ' + service.name.toLowerCase() + ' times…';
         submittedAtField.value = new Date().toISOString();
         attributionField.value = JSON.stringify(attribution());
-
         try {
           var payload = Object.fromEntries(new FormData(form).entries());
-          var response = await fetch('/api/piano-preregistration-submit', {
+          var response = await fetch('/api/intro-bridge-submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           });
           var result = await response.json().catch(function(){ return {}; });
-          if(!response.ok || !result.ok || !result.stored){
-            throw new Error(result.error || 'We couldn’t save your information.');
-          }
-          var next = new URL('/book-piano-intro/thank-you/', window.location.origin);
+          if(!response.ok || !result.ok || !result.stored) throw new Error(result.error || 'We couldn’t save your information.');
+          var next = new URL('/book-intro/thank-you/', window.location.origin);
+          next.searchParams.set('service', result.service_slug);
           next.searchParams.set('location', result.location_slug);
           next.searchParams.set('lead_id', result.lead_id);
           if(result.existing_family) next.searchParams.set('existing_family', '1');
-          if(result.office_follow_up_required) next.searchParams.set('office_follow_up', '1');
           window.location.assign(next.pathname + next.search);
         } catch(error){
           errorBox.textContent = error.message || 'We couldn’t save your information. Please call or text CSM at (513) 560-9175.';

@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS piano_preregistrations (
   student_name text NOT NULL,
   student_birthdate date,
   student_age text,
+  service_slug text NOT NULL DEFAULT 'piano',
   instrument text NOT NULL DEFAULT 'Piano',
   preferred_location text NOT NULL,
   preferred_location_slug text NOT NULL,
@@ -132,6 +133,9 @@ CREATE TABLE IF NOT EXISTS piano_preregistrations (
 
 CREATE INDEX IF NOT EXISTS piano_preregistrations_dedupe_created_idx
   ON piano_preregistrations (dedupe_fingerprint, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS piano_preregistrations_service_created_idx
+  ON piano_preregistrations (service_slug, created_at DESC);
 
 CREATE INDEX IF NOT EXISTS piano_preregistrations_opus_status_idx
   ON piano_preregistrations (opus_post_status, created_at DESC);

@@ -44,6 +44,21 @@ const ROUTES = {
       ['CSM context', ['csm_context']]
     ]
   },
+  'intro-bridge': {
+    to: INFO_EMAIL,
+    label: 'Intro Booking Request',
+    subject: 'New intro booking request',
+    replyTo: ['parent_email'],
+    groups: [
+      ['CSM record', ['csm_lead_id', 'submitted_at', 'existing_family', 'duplicate_of_lead_id']],
+      ['Parent', ['parent_name', 'parent_email', 'parent_phone']],
+      ['Student', ['student_name', 'student_birthdate', 'student_age', 'service_slug', 'instrument']],
+      ['Requested intro', ['preferred_location', 'preferred_time_window', 'booking_url']],
+      ['Booking handoff', ['handoff_mode', 'opus_client_create_attempted', 'opus_post_status', 'office_follow_up_required']],
+      ['Attribution', ['attribution_summary']],
+      ['CSM context', ['csm_context']]
+    ]
+  },
   'smart-intro-intake': {
     to: INFO_EMAIL,
     label: 'Smart Intro Intake',
@@ -109,6 +124,7 @@ const FORM_FIELD_SIGNATURES = [
   ['promo-claim', ['promo_name', 'promo_deadline', 'parent_guardian_name']],
   ['lesson-fit-request', ['contact_summary', 'lesson_request', 'follow_up_notes', 'tracking_summary']],
   ['piano-preregistration', ['csm_lead_id', 'parent_email', 'preferred_time_window', 'handoff_mode']],
+  ['intro-bridge', ['csm_lead_id', 'parent_email', 'service_slug', 'handoff_mode']],
   ['smart-intro-intake', ['routing_outcome', 'recommended_opus_url', 'recommendation_summary', 'attribution_payload']],
   ['withdraw', ['student_first_name', 'student_last_name', 'reason_for_withdrawing', 'selected_action']],
   ['teacher-makeup-day-request', ['teacher-name', 'teacher-email', 'proposed-date', 'ack-no-family-contact']],
@@ -177,6 +193,7 @@ const FIELD_LABELS = {
   reason_for_withdrawing: 'Reason for withdrawing',
   'resume-sent': 'Resume sent',
   selected_action: 'Selected action',
+  service_slug: 'Intro service',
   sender_email: 'Sender email',
   skills_experience: 'Skills/experience',
   'skills-experience': 'Skills/experience',

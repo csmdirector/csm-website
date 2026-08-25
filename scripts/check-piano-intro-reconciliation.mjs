@@ -85,6 +85,8 @@ const baseLead = {
   parent_email_norm: 'pianoreconcile@gmail.com',
   parent_phone_norm: '+15135550242',
   student_name: 'Fake Reconcile Student',
+  service_slug: 'piano',
+  instrument: 'Piano',
   preferred_location: 'CSM Mason',
   preferred_location_slug: 'mason',
   submitted_at: '2026-08-11T16:00:00Z',
@@ -299,7 +301,9 @@ class MemoryRepository {
     const lead = this.leads.find((item) => item.csm_lead_id === leadId);
     lead.reconciliation_status = 'matched_paid';
     lead.reconciliation_match_method = method;
-    lead.reconciliation_reason = 'verified_paid_opus_piano_intro';
+    lead.reconciliation_reason = evidence.serviceSlug === 'piano'
+      ? 'verified_paid_opus_piano_intro'
+      : 'verified_paid_opus_intro';
     lead.reconciliation_manual_review_required = false;
     lead.matched_opus_event_id = eventId;
     lead.matched_opus_client_id = evidence.opusClientId;
@@ -409,8 +413,38 @@ const nonPianoEvent = {
   } }
 };
 const nonPianoResult = await nonPianoReconcile(nonPianoEvent, {}, { source: 'stripe' });
-assert.equal(nonPianoResult.reconciliation_status, 'ignored_unverified');
+assert.equal(nonPianoResult.reconciliation_status, 'manual_review');
+assert.equal(nonPianoResult.reason, 'missing_exact_email_and_phone');
 assert.equal(nonPianoRepository.leads[0].reconciliation_status, 'pending');
+
+const guitarLead = {
+  ...baseLead,
+  csm_lead_id: 'CSM-PRE-20260811-GUITAR01',
+  service_slug: 'guitar',
+  instrument: 'Guitar'
+};
+const guitarRepository = new MemoryRepository([guitarLead]);
+const guitarReconcile = createPianoIntroReconciler({ repository: guitarRepository });
+await guitarReconcile({
+  ...clientPayload,
+  client: { ...clientPayload.client, id: 'opus-client-guitar-1' }
+});
+const guitarResult = await guitarReconcile({
+  ...paidIntroPayload,
+  subscription: {
+    ...paidIntroPayload.subscription,
+    id: 'opus-subscription-guitar-1',
+    client_id: 'opus-client-guitar-1',
+    service: {
+      id: 'e09f1dcd-3231-4502-970b-6314ca1cc898',
+      name: 'Guitar Private Intro Lesson - 30 min'
+    },
+    booking: { id: 'opus-booking-guitar-1' }
+  }
+});
+assert.equal(guitarResult.reconciliation_status, 'matched_paid');
+assert.equal(guitarRepository.leads[0].reconciliation_reason, 'verified_paid_opus_intro');
+assert.equal(guitarRepository.leads[0].opus_payment_status, 'paid');
 
 const existingFamilyRepository = new MemoryRepository([{ ...baseLead, csm_lead_id: 'CSM-PRE-20260811-EXISTING', existing_family: true }]);
 const existingFamilyReconcile = createPianoIntroReconciler({ repository: existingFamilyRepository });

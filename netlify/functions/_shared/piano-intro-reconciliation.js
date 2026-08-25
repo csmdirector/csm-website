@@ -2,12 +2,18 @@ import crypto from 'node:crypto';
 import { getConnectionString } from '@netlify/database';
 import pg from 'pg';
 import { normalizeEmail, normalizePhone } from './piano-preregistration.js';
+import {
+  introService,
+  introServiceFromText
+} from '../../../shared/intro-bridge-config.js';
 
 const { Pool } = pg;
 
 export const PIANO_INTRO_AMOUNT_CENTS = 4200;
 export const PIANO_INTRO_CURRENCY = 'usd';
 export const PIANO_INTRO_SERVICE_ID = '567f7305-b997-46cd-b24b-60b129879ef8';
+export const INTRO_AMOUNT_CENTS = PIANO_INTRO_AMOUNT_CENTS;
+export const INTRO_CURRENCY = PIANO_INTRO_CURRENCY;
 
 const PAID_VALUES = new Set(['paid', 'succeeded', 'successful', 'complete', 'completed', 'settled']);
 const BOOKED_VALUES = new Set(['active', 'booked', 'confirmed', 'complete', 'completed', 'scheduled']);
@@ -170,12 +176,11 @@ function bookedSignal(pairs, eventType, subscriptionId, bookingId) {
   return false;
 }
 
-function serviceIsPianoIntro(pairs, serviceId, serviceName) {
-  if (serviceId === PIANO_INTRO_SERVICE_ID) return true;
+function resolveIntroService(pairs, serviceId, serviceName) {
+  const byId = introService(serviceId);
+  if (byId) return byId;
   const corpus = pairs.map((pair) => clean(pair.value, 300).toLowerCase()).join(' | ');
-  const explicitPianoIntro = /piano[^|]{0,80}intro|intro[^|]{0,80}piano/.test(corpus);
-  const singleVisitIntro = /single\s+visit\s*-?\s*intro/.test(corpus) && /piano/.test(corpus);
-  return explicitPianoIntro || singleVisitIntro || (/piano/.test(serviceName.toLowerCase()) && /intro/.test(serviceName.toLowerCase()));
+  return introServiceFromText(`${serviceName} | ${corpus}`);
 }
 
 function inferParentName(pairs) {
@@ -226,15 +231,17 @@ export function extractOpusEvidence(payload, headers = {}) {
   const emailRaw = valueFor(pairs, ['parent1_email', 'parent_email', 'account_manager_email', 'primary_email', 'email_address', 'email']);
   const phoneRaw = valueFor(pairs, ['parent1_primary_phone', 'parent1_phone', 'parent_phone', 'account_manager_phone', 'primary_phone', 'mobile_phone', 'phone']);
   const amountCents = findAmountCents(pairs);
-  const currency = clean(valueFor(pairs, ['currency', 'currency_code']) || PIANO_INTRO_CURRENCY, 10).toLowerCase();
+  const currency = clean(valueFor(pairs, ['currency', 'currency_code']) || INTRO_CURRENCY, 10).toLowerCase();
   const paidAt = safeDate(valueFor(pairs, ['paid_at', 'payment_completed_at', 'completed_at', 'created_at', 'createdAt']));
   const bookingStartAt = safeDate(valueFor(pairs, ['booking_start_at', 'appointment_start_at', 'start_at', 'startAt', 'scheduled_at']));
   const paymentStatus = explicitPaidSignal(pairs) ? 'paid' : 'unverified';
   const bookingStatus = bookedSignal(pairs, eventType, subscriptionId, bookingId) ? 'booked' : 'unverified';
-  const pianoIntro = serviceIsPianoIntro(pairs, serviceId, serviceName);
-  const expectedAmount = amountCents === null || amountCents === PIANO_INTRO_AMOUNT_CENTS;
-  const expectedCurrency = !currency || currency === PIANO_INTRO_CURRENCY;
-  const verifiedPaidIntro = EVENT_TYPES.has(eventType) && pianoIntro && paymentStatus === 'paid' && bookingStatus === 'booked' && expectedAmount && expectedCurrency;
+  const matchedService = resolveIntroService(pairs, serviceId, serviceName);
+  const supportedIntro = Boolean(matchedService);
+  const pianoIntro = matchedService?.slug === 'piano';
+  const expectedAmount = amountCents === null || amountCents === matchedService?.priceCents;
+  const expectedCurrency = !currency || currency === matchedService?.currency;
+  const verifiedPaidIntro = EVENT_TYPES.has(eventType) && supportedIntro && paymentStatus === 'paid' && bookingStatus === 'booked' && expectedAmount && expectedCurrency;
 
   return {
     eventType,
@@ -251,6 +258,8 @@ export function extractOpusEvidence(payload, headers = {}) {
     studentName: inferStudentName(pairs),
     serviceId,
     serviceName,
+    serviceSlug: matchedService?.slug || '',
+    instrument: matchedService?.instrument || '',
     locationName,
     bookingStartAt,
     paidAt,
@@ -258,10 +267,12 @@ export function extractOpusEvidence(payload, headers = {}) {
     currency,
     bookingStatus,
     paymentStatus,
+    supportedIntro,
     pianoIntro,
     verifiedPaidIntro,
     verificationChecks: {
       recognized_event_type: EVENT_TYPES.has(eventType),
+      supported_intro: supportedIntro,
       piano_intro: pianoIntro,
       explicit_paid: paymentStatus === 'paid',
       booked: bookingStatus === 'booked',
@@ -290,13 +301,14 @@ export function extractStripeEvidence(event) {
   const paidAt = eventType === 'payment_intent.succeeded' && stripeEvent.created
     ? safeDate(Number(stripeEvent.created) * 1000)
     : null;
-  const pianoIntro = /piano/.test(serviceName.toLowerCase()) &&
-    (/intro/.test(serviceName.toLowerCase()) || /single\s+visit/.test(serviceName.toLowerCase()));
-  const expectedAmount = Number(amountCents) === PIANO_INTRO_AMOUNT_CENTS;
-  const expectedCurrency = currency === PIANO_INTRO_CURRENCY;
+  const matchedService = introServiceFromText(serviceName);
+  const supportedIntro = Boolean(matchedService);
+  const pianoIntro = matchedService?.slug === 'piano';
+  const expectedAmount = Number(amountCents) === matchedService?.priceCents;
+  const expectedCurrency = currency === matchedService?.currency;
   const businessIsCsm = clean(object.metadata?.business, 120).toLowerCase() === 'cincinnatischoolofmusic';
   const verifiedPaidIntro = eventType === 'payment_intent.succeeded' &&
-    status === 'succeeded' && pianoIntro && expectedAmount && expectedCurrency && businessIsCsm &&
+    status === 'succeeded' && supportedIntro && expectedAmount && expectedCurrency && businessIsCsm &&
     Boolean(customerId && locationId && orderId && paymentIntentId);
 
   return {
@@ -320,6 +332,8 @@ export function extractStripeEvidence(event) {
     studentName: '',
     serviceId: '',
     serviceName,
+    serviceSlug: matchedService?.slug || '',
+    instrument: matchedService?.instrument || '',
     locationName: '',
     bookingStartAt: null,
     paidAt,
@@ -327,11 +341,13 @@ export function extractStripeEvidence(event) {
     currency,
     bookingStatus: verifiedPaidIntro ? 'booked' : 'unverified',
     paymentStatus: verifiedPaidIntro ? 'paid' : 'unverified',
+    supportedIntro,
     pianoIntro,
     verifiedPaidIntro,
     verificationChecks: {
       recognized_event_type: STRIPE_EVENT_TYPES.has(eventType),
       csm_business_metadata: businessIsCsm,
+      supported_intro: supportedIntro,
       piano_intro: pianoIntro,
       explicit_paid: status === 'succeeded',
       booked: verifiedPaidIntro,
@@ -366,6 +382,10 @@ function mergeIdentity(current, prior = []) {
 
 function sanityConflicts(lead, evidence, eventAt = new Date().toISOString()) {
   const conflicts = [];
+  const leadService = clean(lead.service_slug || lead.instrument, 100).toLowerCase().replace(/\s+/g, '-');
+  if (evidence.serviceSlug && leadService && leadService !== evidence.serviceSlug) {
+    conflicts.push('service_conflict');
+  }
   if (evidence.studentName && normalizeName(lead.student_name) !== normalizeName(evidence.studentName)) {
     conflicts.push('student_identity_conflict');
   }
@@ -606,7 +626,7 @@ export function createPostgresReconciliationRepository() {
           `UPDATE piano_preregistrations
            SET reconciliation_status = 'matched_paid',
                reconciliation_match_method = $2,
-               reconciliation_reason = 'verified_paid_opus_piano_intro',
+               reconciliation_reason = $15,
                reconciliation_manual_review_required = false,
                reconciled_at = now(),
                matched_opus_event_id = $3,
@@ -640,7 +660,8 @@ export function createPostgresReconciliationRepository() {
             evidence.paidAt,
             evidence.amountCents,
             evidence.currency || null,
-            JSON.stringify(evidence)
+            JSON.stringify(evidence),
+            evidence.serviceSlug === 'piano' ? 'verified_paid_opus_piano_intro' : 'verified_paid_opus_intro'
           ]
         );
         await client.query('COMMIT');
@@ -657,7 +678,7 @@ export function createPostgresReconciliationRepository() {
       const result = await db.query(
         `SELECT
            csm_lead_id, client_submission_id, parent_name, parent_email, parent_phone,
-           student_name, student_birthdate, student_age, instrument,
+           student_name, student_birthdate, student_age, service_slug, instrument,
            preferred_location, preferred_location_slug, preferred_time_window,
            existing_family, booking_url, attribution, attribution_summary,
            conversion_eligible, conversion_exclusion_reason,
@@ -706,7 +727,7 @@ export function createPostgresReconciliationRepository() {
     async listManual(limit = 50) {
       const result = await db.query(
         `SELECT csm_lead_id, parent_name, parent_email, parent_phone, student_name,
-                preferred_location, submitted_at, reconciliation_status,
+                service_slug, instrument, preferred_location, submitted_at, reconciliation_status,
                 reconciliation_reason, office_follow_up_required
          FROM piano_preregistrations
          WHERE reconciliation_manual_review_required = true
@@ -719,7 +740,7 @@ export function createPostgresReconciliationRepository() {
   };
 }
 
-export function createPianoIntroReconciler({ repository, now = () => new Date() }) {
+export function createIntroReconciler({ repository, now = () => new Date() }) {
   return async function reconcile(payload, headers = {}, options = {}) {
     const initialEvidence = options.source === 'stripe'
       ? extractStripeEvidence(payload)
@@ -763,10 +784,13 @@ export function createPianoIntroReconciler({ repository, now = () => new Date() 
 
       if (decision.action === 'match') {
         const lead = await repository.markMatched(decision.lead.csm_lead_id, targetEventId, paidEvidence, decision.method);
+        const matchedReason = paidEvidence.serviceSlug === 'piano'
+          ? 'verified_paid_opus_piano_intro'
+          : 'verified_paid_opus_intro';
         await repository.updateEvent(targetEventId, {
           evidence: paidEvidence,
           status: 'matched_paid',
-          reason: 'verified_paid_opus_piano_intro',
+          reason: matchedReason,
           matchMethod: decision.method,
           leadId: lead.csm_lead_id
         });
@@ -827,7 +851,7 @@ export function createPianoIntroReconciler({ repository, now = () => new Date() 
         const status = identityObserved ? 'identity_observed' : 'ignored_unverified';
         const reason = identityObserved
           ? 'identity_saved_waiting_for_verified_paid_intro'
-          : 'event_did_not_prove_paid_piano_intro';
+          : 'event_did_not_prove_paid_intro';
         await repository.updateEvent(eventId, { evidence, status, reason });
         const recovered = [];
         if (identityObserved && repository.reprocessablePaidEvents) {
@@ -864,6 +888,8 @@ export function createPianoIntroReconciler({ repository, now = () => new Date() 
   };
 }
 
+export const createPianoIntroReconciler = createIntroReconciler;
+
 export const testables = {
   EVENT_TYPES,
   amountToCents,
@@ -874,5 +900,6 @@ export const testables = {
   flatten,
   mergeIdentity,
   normalizeEventType,
+  resolveIntroService,
   sanityConflicts
 };
