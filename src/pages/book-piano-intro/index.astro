@@ -1,0 +1,316 @@
+---
+import Base from '../../layouts/Base.astro';
+import { PIANO_BOOKING_LOCATIONS } from '../../../shared/piano-booking-links.js';
+
+const locationOrder = ['mason', 'montgomery', 'anderson', 'maineville', 'middletown'];
+const locationOptions = locationOrder
+  .map((slug) => PIANO_BOOKING_LOCATIONS.find((location) => location.slug === slug))
+  .filter(Boolean)
+  .map(({ slug, name }) => ({ slug, name }));
+---
+<Base
+  title="Book a Piano Intro Lesson | Cincinnati School of Music"
+  description="Start with a 30-minute private piano Intro Lesson for $42 at your preferred Cincinnati School of Music location."
+  canonicalPath="/book-piano-intro/"
+  noindex={true}
+>
+  <section class="booking-hero">
+    <div class="booking-hero-inner">
+      <span class="section-label">Piano Intro Lesson</span>
+      <h1>Start With a Piano Intro Lesson</h1>
+      <p class="intro-price">A 30-minute private piano lesson for $42.</p>
+      <p class="intro-copy">
+        Tell us a little about the student and choose your preferred CSM location. On the next step,
+        you’ll see available lesson times and finish booking.
+      </p>
+      <p class="intro-reassurance">No ongoing commitment. You’re just booking the intro lesson.</p>
+
+      <div class="booking-steps" aria-label="Three-step booking overview">
+        <span><b>1</b> Tell us about the student</span>
+        <i aria-hidden="true">→</i>
+        <span><b>2</b> Choose a time</span>
+        <i aria-hidden="true">→</i>
+        <span><b>3</b> You’re booked</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="booking-section">
+    <div class="booking-column">
+      <form class="booking-card" id="pianoPreregistrationForm" novalidate>
+        <input type="hidden" name="form-name" value="piano-preregistration" />
+        <input type="hidden" name="client_submission_id" id="clientSubmissionId" />
+        <input type="hidden" name="submitted_at" id="submittedAt" />
+        <input type="hidden" name="attribution_json" id="attributionJson" />
+        <p class="hidden-field" aria-hidden="true">
+          <label>Leave this blank <input type="text" name="bot-field" tabindex="-1" autocomplete="off" /></label>
+        </p>
+
+        <div class="form-heading">
+          <h2>A few details, then you’ll see times.</h2>
+          <p>This takes about a minute. Nothing is reserved or charged on this page.</p>
+        </div>
+
+        <fieldset>
+          <legend>Who is the lesson for?</legend>
+          <div class="field-grid name-grid">
+            <label class="field-label">
+              Parent or guardian name
+              <input type="text" name="parent_name" autocomplete="name" maxlength="160" required />
+            </label>
+            <label class="field-label">
+              Student name
+              <input type="text" name="student_name" autocomplete="off" maxlength="160" required />
+            </label>
+          </div>
+          <div class="student-details-row">
+            <label class="field-label age-field">
+              Student age
+              <input type="number" name="student_age" id="studentAge" min="2" max="99" inputmode="numeric" required />
+            </label>
+            <label class="field-label">
+              Email
+              <input type="email" name="parent_email" autocomplete="email" maxlength="254" required />
+            </label>
+          </div>
+          <label class="field-label phone-field">
+            Mobile phone
+            <input type="tel" name="parent_phone" autocomplete="tel" inputmode="tel" maxlength="40" required />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Have you taken lessons at CSM before?</legend>
+          <div class="choice-row family-choice">
+            <label class="choice-card">
+              <input type="radio" name="existing_family" value="no" required />
+              <span>No, we’re new to CSM</span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="existing_family" value="yes" required />
+              <span>Yes, we’re already a CSM family</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Where would you like to take piano lessons?</legend>
+          <div class="location-grid">
+            {locationOptions.map((location) => (
+              <label class="choice-card location-card">
+                <input type="radio" name="preferred_location" value={location.slug} required />
+                <span>{location.name.replace('CSM ', '')}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>When are you usually available?</legend>
+          <label class="field-label">
+            <span class="visually-hidden">General availability</span>
+            <select name="preferred_time_window" required>
+              <option value="">Choose what usually works</option>
+              <option>Weekday mornings</option>
+              <option>Weekday afternoons</option>
+              <option>Weekday evenings</option>
+              <option>Saturday</option>
+              <option>Flexible / not sure</option>
+            </select>
+          </label>
+          <p class="field-help">You’ll choose the exact lesson time on the next step.</p>
+        </fieldset>
+
+        <div class="form-error" id="formError" role="alert" aria-live="polite"></div>
+        <button class="btn-a submit-button" id="submitButton" type="submit">See Piano Intro Times</button>
+        <p class="submit-help">Your intro lesson is $42. You’ll choose a time and enter payment on the next step.</p>
+
+        <div class="help-line">
+          <span>Would you rather talk with us?</span>
+          <a href="tel:5135609175">Call (513) 560-9175</a>
+          <a href="sms:5135609175">Text CSM</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <style>
+    .booking-hero{background:linear-gradient(135deg,var(--charcoal) 0%,#292a2b 62%,#34383b 100%);color:var(--white);position:relative;overflow:hidden}
+    .booking-hero::after{content:"";position:absolute;width:390px;height:390px;border:1px solid rgba(255,255,255,.075);border-radius:50%;right:-120px;top:-190px;box-shadow:0 0 0 72px rgba(255,255,255,.025),0 0 0 144px rgba(255,255,255,.017)}
+    .booking-hero-inner{width:min(100% - 48px,820px);margin:0 auto;padding:72px 0 64px;position:relative;z-index:1}
+    .booking-hero .section-label{color:var(--slate-lt)}
+    .booking-hero h1{color:var(--white);max-width:720px;margin:0 0 16px}
+    .intro-price{color:var(--white);font-size:1.12rem;font-weight:500;margin:0 0 12px}
+    .intro-copy{color:rgba(255,255,255,.74);max-width:690px;font-size:.96rem;line-height:1.75;margin:0}
+    .intro-reassurance{display:inline-block;color:rgba(255,255,255,.83);font-size:.75rem;font-weight:600;letter-spacing:.055em;text-transform:uppercase;margin:19px 0 0;padding:8px 12px;border:1px solid rgba(255,255,255,.18)}
+    .booking-steps{display:flex;align-items:center;gap:13px;margin-top:34px;color:rgba(255,255,255,.7);font-size:.72rem;letter-spacing:.045em;text-transform:uppercase}
+    .booking-steps span{display:flex;align-items:center;gap:9px;white-space:nowrap}
+    .booking-steps b{display:inline-flex;width:25px;height:25px;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.3);border-radius:50%;color:var(--white);font-size:.66rem}
+    .booking-steps i{font-style:normal;color:rgba(255,255,255,.28)}
+
+    .booking-section{background:linear-gradient(180deg,var(--offwhite) 0%,#fff 42%);padding:64px 24px 90px}
+    .booking-column{width:min(100%,820px);margin:0 auto}
+    .booking-card{border:1px solid var(--offwb);background:var(--white);padding:48px 52px;box-shadow:0 20px 58px rgba(28,30,32,.065)}
+    .form-heading{padding-bottom:30px;border-bottom:1px solid var(--offwb)}
+    .form-heading h2{font-size:1.75rem;margin:0 0 9px}
+    .form-heading p{font-size:.9rem;line-height:1.65;margin:0;color:#66635f}
+    fieldset{border:0;margin:0;padding:34px 0;border-bottom:1px solid var(--offwb)}
+    legend{font-size:1.12rem;font-weight:500;color:var(--charcoal);margin:0 0 18px;line-height:1.4}
+    .field-grid,.student-details-row{display:grid;gap:18px}
+    .name-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .student-details-row{grid-template-columns:minmax(120px,.5fr) minmax(0,1.5fr);margin-top:18px}
+    .phone-field{margin-top:18px}
+    .field-label{display:flex;flex-direction:column;gap:8px;font-size:.7rem;font-weight:600;letter-spacing:.095em;text-transform:uppercase;color:var(--mid)}
+    .field-label input,.field-label select{width:100%;min-height:50px;border:1px solid #d9d7d3;background:var(--white);color:var(--charcoal);font:inherit;font-size:.92rem;font-weight:400;letter-spacing:0;text-transform:none;padding:13px 14px;border-radius:0;transition:border-color .16s,box-shadow .16s}
+    .field-label input:focus,.field-label select:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(247,79,87,.13)}
+    .field-help{font-size:.8rem;line-height:1.6;margin:10px 0 0;color:#6d6a65}
+
+    .choice-row,.location-grid{display:grid;gap:12px}
+    .choice-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .location-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .choice-card{position:relative;display:block;cursor:pointer}
+    .choice-card input{position:absolute;opacity:0;pointer-events:none}
+    .choice-card span{display:flex;align-items:center;gap:10px;min-height:58px;border:1px solid #ddd9d5;background:var(--offwhite);padding:13px 15px;font-size:.78rem;color:var(--mid);line-height:1.4;transition:border-color .16s,background .16s,color .16s,box-shadow .16s}
+    .choice-card span::before{content:"";flex:0 0 auto;width:14px;height:14px;border:1px solid #aaa6a1;border-radius:50%;background:var(--white);box-shadow:inset 0 0 0 3px var(--white)}
+    .choice-card input:checked + span{border-color:var(--accent);background:#fff7f7;color:var(--charcoal);box-shadow:inset 0 0 0 1px var(--accent)}
+    .choice-card input:checked + span::before{border-color:var(--accent);background:var(--accent)}
+    .choice-card input:focus-visible + span{outline:3px solid rgba(247,79,87,.2);outline-offset:2px}
+    .location-card span{justify-content:center;min-height:64px;padding:16px 13px}
+
+    .form-error{min-height:24px;color:var(--accent-dk);font-size:.8rem;margin:24px 0 8px}
+    .submit-button{border:0;cursor:pointer;width:100%;font-family:inherit;font-size:.76rem}
+    .submit-button:disabled{opacity:.62;cursor:wait}
+    .submit-help{text-align:left;font-size:.78rem;line-height:1.55;margin:12px 0 0;color:#66635f}
+    .help-line{display:flex;align-items:center;flex-wrap:wrap;gap:7px 18px;margin-top:27px;padding-top:22px;border-top:1px solid var(--offwb);font-size:.73rem}
+    .help-line span{color:var(--mid)}
+    .help-line a{color:var(--slate);font-weight:600;text-decoration:none}
+    .hidden-field{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+    .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+
+    @media(max-width:760px){
+      .location-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .booking-steps{align-items:flex-start;display:grid;gap:12px}
+      .booking-steps i{display:none}
+    }
+    @media(max-width:620px){
+      .booking-hero-inner{width:min(100% - 40px,820px);padding:56px 0 50px}
+      .booking-section{padding:34px 16px 64px}
+      .booking-card{padding:34px 22px}
+      .form-heading h2{font-size:1.48rem}
+      fieldset{padding:29px 0}
+      .name-grid,.student-details-row,.choice-row,.location-grid{grid-template-columns:1fr}
+      .student-details-row,.phone-field{margin-top:16px}
+      .location-card span{justify-content:flex-start}
+      .help-line{align-items:flex-start;flex-direction:column}
+    }
+  </style>
+
+  <script define:vars={{ locationOptions }}>
+    (function(){
+      var form = document.getElementById('pianoPreregistrationForm');
+      if(!form) return;
+      var submitButton = document.getElementById('submitButton');
+      var errorBox = document.getElementById('formError');
+      var age = document.getElementById('studentAge');
+      var familyChoices = form.querySelectorAll('input[name="existing_family"]');
+      var submissionIdField = document.getElementById('clientSubmissionId');
+      var submittedAtField = document.getElementById('submittedAt');
+      var attributionField = document.getElementById('attributionJson');
+
+      function randomId(){
+        if(window.crypto && typeof window.crypto.randomUUID === 'function'){
+          return 'piano-prereg-' + window.crypto.randomUUID().replace(/-/g,'');
+        }
+        return 'piano-prereg-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,14);
+      }
+
+      function ensureSubmissionId(){
+        if(!submissionIdField.value) submissionIdField.value = randomId();
+        return submissionIdField.value;
+      }
+
+      function attribution(){
+        if(window.CSMAttribution && typeof window.CSMAttribution.getLatest === 'function'){
+          return window.CSMAttribution.getLatest() || {};
+        }
+        try {
+          var stored = JSON.parse(window.localStorage.getItem('csmAttribution') || '{}') || {};
+          var first = stored.first_touch || {};
+          var latest = stored.latest_touch || first || {};
+          return Object.assign({}, latest, {
+            first_landing_path: first.first_landing_path || first.latest_landing_path || '',
+            latest_landing_path: latest.latest_landing_path || latest.first_landing_path || '',
+            last_paid_click_timestamp: stored.last_paid_click_timestamp || ''
+          });
+        } catch(error){
+          return {};
+        }
+      }
+
+      function locationIsValid(value){
+        return locationOptions.some(function(location){ return location.slug === value; });
+      }
+
+      function isExistingFamily(){
+        var selected = form.querySelector('input[name="existing_family"]:checked');
+        return selected && selected.value === 'yes';
+      }
+
+      function updateButtonLabel(){
+        submitButton.textContent = isExistingFamily() ? 'Get Help Booking' : 'See Piano Intro Times';
+      }
+
+      function validate(){
+        errorBox.textContent = '';
+        if(!form.reportValidity()) return false;
+        if(!age.value){
+          errorBox.textContent = 'Please enter the student’s current age.';
+          age.focus();
+          return false;
+        }
+        var selectedLocation = new FormData(form).get('preferred_location');
+        if(!locationIsValid(selectedLocation)){
+          errorBox.textContent = 'Please choose a CSM location.';
+          return false;
+        }
+        return true;
+      }
+
+      ensureSubmissionId();
+      familyChoices.forEach(function(choice){ choice.addEventListener('change', updateButtonLabel); });
+
+      form.addEventListener('submit', async function(event){
+        event.preventDefault();
+        if(!validate()) return;
+        var existingFamily = isExistingFamily();
+        submitButton.disabled = true;
+        submitButton.textContent = existingFamily ? 'Sending your request…' : 'Finding piano times…';
+        submittedAtField.value = new Date().toISOString();
+        attributionField.value = JSON.stringify(attribution());
+
+        try {
+          var payload = Object.fromEntries(new FormData(form).entries());
+          var response = await fetch('/api/piano-preregistration-submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          var result = await response.json().catch(function(){ return {}; });
+          if(!response.ok || !result.ok || !result.stored){
+            throw new Error(result.error || 'We couldn’t save your information.');
+          }
+          var next = new URL('/book-piano-intro/thank-you/', window.location.origin);
+          next.searchParams.set('location', result.location_slug);
+          next.searchParams.set('lead_id', result.lead_id);
+          if(result.existing_family) next.searchParams.set('existing_family', '1');
+          if(result.office_follow_up_required) next.searchParams.set('office_follow_up', '1');
+          window.location.assign(next.pathname + next.search);
+        } catch(error){
+          errorBox.textContent = error.message || 'We couldn’t save your information. Please call or text CSM at (513) 560-9175.';
+          submitButton.disabled = false;
+          updateButtonLabel();
+        }
+      });
+    })();
+  </script>
+</Base>

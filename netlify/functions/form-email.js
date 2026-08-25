@@ -29,6 +29,21 @@ const ROUTES = {
       ['Tracking', ['tracking_summary']]
     ]
   },
+  'piano-preregistration': {
+    to: INFO_EMAIL,
+    label: 'Piano Pre-Registration',
+    subject: 'New piano pre-registration',
+    replyTo: ['parent_email'],
+    groups: [
+      ['CSM record', ['csm_lead_id', 'submitted_at', 'existing_family', 'duplicate_of_lead_id']],
+      ['Parent', ['parent_name', 'parent_email', 'parent_phone']],
+      ['Student', ['student_name', 'student_birthdate', 'student_age', 'instrument']],
+      ['Requested intro', ['preferred_location', 'preferred_time_window', 'booking_url']],
+      ['Booking handoff', ['handoff_mode', 'opus_client_create_attempted', 'opus_post_status', 'office_follow_up_required']],
+      ['Attribution', ['attribution_summary']],
+      ['CSM context', ['csm_context']]
+    ]
+  },
   'smart-intro-intake': {
     to: INFO_EMAIL,
     label: 'Smart Intro Intake',
@@ -93,6 +108,7 @@ const ROUTES = {
 const FORM_FIELD_SIGNATURES = [
   ['promo-claim', ['promo_name', 'promo_deadline', 'parent_guardian_name']],
   ['lesson-fit-request', ['contact_summary', 'lesson_request', 'follow_up_notes', 'tracking_summary']],
+  ['piano-preregistration', ['csm_lead_id', 'parent_email', 'preferred_time_window', 'handoff_mode']],
   ['smart-intro-intake', ['routing_outcome', 'recommended_opus_url', 'recommendation_summary', 'attribution_payload']],
   ['withdraw', ['student_first_name', 'student_last_name', 'reason_for_withdrawing', 'selected_action']],
   ['teacher-makeup-day-request', ['teacher-name', 'teacher-email', 'proposed-date', 'ack-no-family-contact']],
@@ -127,12 +143,16 @@ const FIELD_LABELS = {
   'additional-notes': 'Additional notes',
   'anticipated-tenure': 'Anticipated tenure',
   best_days_times: 'Best days/times',
+  csm_context: 'CSM booking context',
+  csm_lead_id: 'CSM lead ID',
   email: 'Email',
   experience_feedback: 'Experience feedback',
   fbclid: 'Facebook click ID',
   'first-name': 'First name',
   help_reason: 'Help reason',
+  handoff_mode: 'Booking handoff mode',
   instrument_type: 'Instrument type',
+  instrument: 'Instrument',
   interested_lesson: 'Interested lesson/instrument',
   issue_description: 'Issue description',
   landing_path: 'Landing path',
@@ -144,8 +164,11 @@ const FIELD_LABELS = {
   other_issues: 'Other issues',
   parent_guardian_name: 'Parent/guardian name',
   parent_name: 'Parent/guardian name',
+  parent_email: 'Parent email',
+  parent_phone: 'Parent phone',
   phone: 'Phone',
   preferred_location: 'Preferred location',
+  preferred_time_window: 'Preferred time window',
   primary_phone: 'Primary phone',
   promo_deadline: 'Promo deadline',
   promo_name: 'Promo name',
@@ -158,6 +181,7 @@ const FIELD_LABELS = {
   skills_experience: 'Skills/experience',
   'skills-experience': 'Skills/experience',
   student_age: 'Student age',
+  student_birthdate: 'Student birthdate',
   student_context: 'Student context',
   student_first_name: 'Student first name',
   student_last_name: 'Student last name',
