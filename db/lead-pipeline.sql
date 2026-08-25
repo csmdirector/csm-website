@@ -123,6 +123,8 @@ CREATE TABLE IF NOT EXISTS piano_preregistrations (
   opus_amount_cents integer,
   opus_currency text,
   reconciliation_evidence jsonb NOT NULL DEFAULT '{}'::jsonb,
+  conversion_eligible boolean NOT NULL DEFAULT true,
+  conversion_exclusion_reason text,
   submitted_at timestamptz NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
@@ -169,6 +171,10 @@ CREATE INDEX IF NOT EXISTS piano_intro_opus_events_status_idx
 
 CREATE INDEX IF NOT EXISTS piano_preregistrations_reconciliation_status_idx
   ON piano_preregistrations (reconciliation_status, created_at DESC);
+
+CREATE UNIQUE INDEX IF NOT EXISTS piano_preregistrations_matched_booking_unique_idx
+  ON piano_preregistrations (matched_opus_booking_id)
+  WHERE matched_opus_booking_id IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS piano_intro_payment_experiments (
   experiment_id text PRIMARY KEY,

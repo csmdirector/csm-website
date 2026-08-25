@@ -90,6 +90,7 @@ const baseLead = {
   submitted_at: '2026-08-11T16:00:00Z',
   existing_family: false,
   reconciliation_status: 'pending',
+  conversion_eligible: true,
   attribution: { utm_source: 'google', utm_medium: 'cpc', gclid: 'acceptance-click-id' },
   attribution_summary: 'Source: Google Ads\nClick ID: acceptance-click-id'
 };
@@ -148,6 +149,11 @@ assert.equal(stripePaid.amountCents, 4200);
 assert.equal(stripePaid.bookingStatus, 'booked');
 assert.equal(stripePaid.paymentStatus, 'paid');
 assert.equal(stripePaid.verifiedPaidIntro, true);
+assert.equal(stripePaid.externalId, 'pi_acceptance');
+assert.equal(
+  eventDedupeKey(stripePaid, stripePaidEvent),
+  eventDedupeKey(extractStripeEvidence({ ...stripePaidEvent, id: 'evt_same_payment_redelivered' }), { ...stripePaidEvent, id: 'evt_same_payment_redelivered' })
+);
 
 assert.equal(chooseReconciliationMatch({
   evidence: { ...paidEvidence, ...clientEvidence },
@@ -173,6 +179,38 @@ assert.equal(chooseReconciliationMatch({
   phoneCandidates: [],
   eventAt: paidEvidence.paidAt
 }).reason, 'phone_conflict_after_email_match');
+
+assert.equal(chooseReconciliationMatch({
+  evidence: { ...paidEvidence, parentEmailNorm: '', parentPhoneNorm: baseLead.parent_phone_norm },
+  emailCandidates: [],
+  phoneCandidates: [baseLead],
+  eventAt: paidEvidence.paidAt
+}).method, 'phone');
+
+assert.equal(chooseReconciliationMatch({
+  evidence: { ...paidEvidence, parentEmailNorm: '', parentPhoneNorm: baseLead.parent_phone_norm },
+  emailCandidates: [],
+  phoneCandidates: [baseLead, { ...baseLead, csm_lead_id: 'CSM-PRE-20260811-PHONE02' }],
+  eventAt: paidEvidence.paidAt
+}).reason, 'multiple_exact_phone_candidates');
+
+assert.equal(chooseReconciliationMatch({
+  evidence: { ...paidEvidence, parentEmailNorm: baseLead.parent_email_norm, parentPhoneNorm: '+15135550999' },
+  emailCandidates: [baseLead],
+  phoneCandidates: [{ ...baseLead, csm_lead_id: 'CSM-PRE-20260811-OTHER01', parent_email_norm: 'other@example.com', parent_phone_norm: '+15135550999' }],
+  eventAt: paidEvidence.paidAt
+}).reason, 'phone_conflict_after_email_match');
+
+assert.deepEqual(chooseReconciliationMatch({
+  evidence: { ...paidEvidence, parentEmailNorm: '', parentPhoneNorm: '', parentName: baseLead.parent_name, studentName: baseLead.student_name },
+  emailCandidates: [],
+  phoneCandidates: [],
+  eventAt: paidEvidence.paidAt
+}), {
+  action: 'manual_review',
+  reason: 'missing_exact_email_and_phone',
+  candidateLeadIds: []
+});
 
 class MemoryRepository {
   constructor(leads = []) {
@@ -219,6 +257,17 @@ class MemoryRepository {
     return this.events
       .filter((event) => event.id !== beforeEventId && event.evidence.stripeCustomerId === stripeCustomerId)
       .map((event) => event.evidence);
+  }
+
+  async reprocessablePaidEvents(identity, beforeEventId) {
+    return this.events.filter((event) =>
+      event.id !== beforeEventId &&
+      !event.matched_csm_lead_id &&
+      ['received', 'manual_review', 'verified_no_match'].includes(event.reconciliation_status) &&
+      event.evidence.verifiedPaidIntro === true &&
+      ((identity.stripeCustomerId && event.evidence.stripeCustomerId === identity.stripeCustomerId) ||
+        (identity.opusClientId && event.evidence.opusClientId === identity.opusClientId))
+    );
   }
 
   async candidates(emailNorm, phoneNorm) {
@@ -293,18 +342,95 @@ const stripeReconcile = createPianoIntroReconciler({ repository: stripeRepositor
 const stripePaidFirst = await stripeReconcile(stripePaidEvent, {}, { source: 'stripe' });
 assert.equal(stripePaidFirst.reconciliation_status, 'manual_review');
 assert.equal(stripePaidFirst.reason, 'missing_exact_email_and_phone');
-stripeRepository.leads[0].reconciliation_status = 'pending';
-stripeRepository.leads[0].reconciliation_reason = null;
-stripeRepository.leads[0].reconciliation_manual_review_required = false;
 const stripeIdentitySecond = await stripeReconcile(stripeCustomerEvent, {}, { source: 'stripe' });
 assert.equal(stripeIdentitySecond.reconciliation_status, 'identity_observed');
-const replayPaid = { ...stripePaidEvent, id: 'evt_paid_acceptance_replay' };
-const stripeMatched = await stripeReconcile(replayPaid, {}, { source: 'stripe' });
+assert.equal(stripeIdentitySecond.recovered_paid_events, 1);
+assert.equal(stripeIdentitySecond.recovered_matched_csm_lead_id, stripeLead.csm_lead_id);
+const stripeMatched = await stripeReconcile(stripePaidEvent, {}, { source: 'stripe' });
+assert.equal(stripeMatched.duplicate, true);
 assert.equal(stripeMatched.reconciliation_status, 'matched_paid');
-assert.equal(stripeMatched.match_method, 'email');
 assert.equal(stripeRepository.leads[0].matched_opus_client_id, 'opus-client-acceptance-1');
 assert.equal(stripeRepository.leads[0].matched_opus_booking_id, 'order-acceptance-1');
 assert.deepEqual(stripeRepository.leads[0].attribution, stripeLead.attribution);
+
+const phoneLead = {
+  ...baseLead,
+  csm_lead_id: 'CSM-PRE-20260811-PHONE01',
+  parent_email_norm: 'phone-fallback-lead@example.com',
+  parent_phone_norm: '+15135550242'
+};
+const phoneRepository = new MemoryRepository([phoneLead]);
+const phoneReconcile = createPianoIntroReconciler({ repository: phoneRepository });
+const phonePaidEvent = {
+  ...stripePaidEvent,
+  id: 'evt_paid_phone',
+  data: { object: {
+    ...stripePaidEvent.data.object,
+    id: 'pi_phone',
+    customer: 'cus_phone',
+    metadata: { ...stripePaidEvent.data.object.metadata, order_id: 'order-phone' }
+  } }
+};
+const phoneCustomerEvent = {
+  ...stripeCustomerEvent,
+  id: 'evt_customer_phone',
+  data: { object: {
+    ...stripeCustomerEvent.data.object,
+    id: 'cus_phone',
+    email: null,
+    metadata: { ...stripeCustomerEvent.data.object.metadata, id: 'opus-client-phone' }
+  } }
+};
+const phoneOpusIdentity = {
+  ...clientPayload,
+  client: {
+    ...clientPayload.client,
+    id: 'opus-client-phone',
+    parent1_email: '',
+    parent1_primary_phone: '(513) 555-0242'
+  }
+};
+await phoneReconcile(phonePaidEvent, {}, { source: 'stripe' });
+await phoneReconcile(phoneOpusIdentity);
+const phoneIdentityResult = await phoneReconcile(phoneCustomerEvent, {}, { source: 'stripe' });
+assert.equal(phoneIdentityResult.recovered_matched_csm_lead_id, phoneLead.csm_lead_id);
+assert.equal(phoneRepository.leads[0].reconciliation_match_method, 'phone');
+
+const nonPianoRepository = new MemoryRepository([{ ...baseLead, csm_lead_id: 'CSM-PRE-20260811-NONPIANO' }]);
+const nonPianoReconcile = createPianoIntroReconciler({ repository: nonPianoRepository });
+const nonPianoEvent = {
+  ...stripePaidEvent,
+  id: 'evt_paid_guitar',
+  data: { object: {
+    ...stripePaidEvent.data.object,
+    id: 'pi_guitar',
+    description: 'Guitar Private Intro Lesson - 30 mins - Single Visit - Intro',
+    metadata: { ...stripePaidEvent.data.object.metadata, order_id: 'order-guitar' }
+  } }
+};
+const nonPianoResult = await nonPianoReconcile(nonPianoEvent, {}, { source: 'stripe' });
+assert.equal(nonPianoResult.reconciliation_status, 'ignored_unverified');
+assert.equal(nonPianoRepository.leads[0].reconciliation_status, 'pending');
+
+const existingFamilyRepository = new MemoryRepository([{ ...baseLead, csm_lead_id: 'CSM-PRE-20260811-EXISTING', existing_family: true }]);
+const existingFamilyReconcile = createPianoIntroReconciler({ repository: existingFamilyRepository });
+await existingFamilyReconcile(clientPayload);
+const existingFamilyResult = await existingFamilyReconcile({
+  ...paidIntroPayload,
+  subscription: { ...paidIntroPayload.subscription, id: 'existing-family-subscription', booking: { id: 'existing-family-booking' } }
+});
+assert.equal(existingFamilyResult.reconciliation_status, 'manual_review');
+assert.equal(existingFamilyRepository.leads[0].reconciliation_status, 'existing_family_office');
+
+const excludedRepository = new MemoryRepository([{ ...baseLead, csm_lead_id: 'CSM-PRE-20260811-EXCLUDED', conversion_eligible: false }]);
+const excludedReconcile = createPianoIntroReconciler({ repository: excludedRepository });
+await excludedReconcile(clientPayload);
+const excludedResult = await excludedReconcile({
+  ...paidIntroPayload,
+  subscription: { ...paidIntroPayload.subscription, id: 'excluded-subscription', booking: { id: 'excluded-booking' } }
+});
+assert.equal(excludedResult.reconciliation_status, 'matched_paid');
+assert.equal(excludedRepository.leads[0].conversion_eligible, false);
 
 const stripeSecret = 'whsec_unit_test_only';
 const stripeRaw = JSON.stringify(stripePaidEvent);
@@ -363,5 +489,11 @@ const stripeMigration = readFileSync(
   'utf8'
 );
 assert.match(stripeMigration, /stripeCustomerId/);
+const hardeningMigration = readFileSync(
+  new URL('../netlify/database/migrations/20260825073000_harden_piano_intro_reconciliation.sql', import.meta.url),
+  'utf8'
+);
+assert.match(hardeningMigration, /conversion_eligible boolean NOT NULL DEFAULT true/);
+assert.match(hardeningMigration, /matched_opus_booking_id/);
 
 console.log('Piano Intro reconciliation checks passed.');

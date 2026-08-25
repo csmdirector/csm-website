@@ -59,6 +59,8 @@ export default async function pianoIntroStripeReconciliation(req) {
       duplicate: Boolean(result.duplicate),
       reconciliation_status: result.reconciliation_status,
       matched_csm_lead_id: result.matched_csm_lead_id || undefined,
+      recovered_paid_events: result.recovered_paid_events || undefined,
+      recovered_matched_csm_lead_id: result.recovered_matched_csm_lead_id || undefined,
       reason: result.reason || undefined
     });
   } catch (error) {

@@ -246,6 +246,7 @@ function publicResult(record, extra = {}) {
     handoff_mode: READY_BUYER_HANDOFF_MODE,
     opus_client_create_attempted: false,
     reconciliation_status: record.reconciliation_status || (record.existing_family ? 'existing_family_office' : 'pending'),
+    conversion_eligible: record.conversion_eligible !== false,
     office_follow_up_required: Boolean(record.office_follow_up_required),
     duplicate_detected: Boolean(record.duplicate_of_lead_id),
     existing_family: Boolean(record.existing_family),
@@ -319,12 +320,13 @@ export function createPostgresPreregistrationRepository() {
              existing_family, booking_url, attribution, attribution_summary, student_note,
              dedupe_fingerprint, duplicate_of_lead_id, opus_payload, opus_post_status,
              office_follow_up_required, reconciliation_status, reconciliation_reason,
-             reconciliation_manual_review_required, submitted_at
+             reconciliation_manual_review_required, conversion_eligible,
+             conversion_exclusion_reason, submitted_at
            ) VALUES (
              $1, $2, $3, $4, $5, $6, $7,
              $8, $9::date, $10, 'Piano',
              $11, $12, $13, $14, $15, $16::jsonb, $17, $18,
-             $19, $20, $21::jsonb, $22, $23, $24, $25, $26, $27
+             $19, $20, $21::jsonb, $22, $23, $24, $25, $26, $27, $28, $29
            ) RETURNING *`,
           [
             input.leadId,
@@ -353,6 +355,8 @@ export function createPostgresPreregistrationRepository() {
             input.existingFamily ? 'existing_family_office' : 'pending',
             input.existingFamily ? 'existing_family_launch_path' : null,
             input.existingFamily,
+            input.conversionEligible,
+            input.conversionExclusionReason || null,
             input.submittedAt
           ]
         );
@@ -406,6 +410,8 @@ export function buildOfficeNotification(record) {
     opus_client_create_attempted: 'No',
     opus_post_status: record.opus_post_status,
     reconciliation_status: record.reconciliation_status || (record.existing_family ? 'existing_family_office' : 'pending'),
+    conversion_eligible: record.conversion_eligible === false ? 'No' : 'Yes',
+    conversion_exclusion_reason: record.conversion_exclusion_reason || '',
     office_follow_up_required: record.office_follow_up_required ? 'Yes' : 'No',
     attribution_summary: record.attribution_summary,
     csm_context: record.student_note
@@ -448,6 +454,10 @@ export function createPianoPreregistrationBridge({
       attributionSummary: attributionSummary(fields.attribution),
       studentNote,
       dedupeFingerprint: dedupeFingerprint(fields),
+      conversionEligible: config.conversionEligible !== false,
+      conversionExclusionReason: config.conversionEligible === false
+        ? clean(config.conversionExclusionReason || 'non_production_test', 160)
+        : '',
       submittedAt
     });
 

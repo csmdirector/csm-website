@@ -47,10 +47,14 @@ export default async function pianoPreregistrationSubmit(req) {
   }
 
   try {
+    const deployContext = String(env('CONTEXT') || 'unknown').trim().toLowerCase();
+    const conversionEligible = deployContext === 'production';
     const bridge = createPianoPreregistrationBridge({
       repository: createPostgresPreregistrationRepository(),
       config: {
-        officeEmailEnabled: isEnabled(env('ENABLE_PIANO_PREREGISTRATION_OFFICE_EMAIL'))
+        officeEmailEnabled: isEnabled(env('ENABLE_PIANO_PREREGISTRATION_OFFICE_EMAIL')),
+        conversionEligible,
+        conversionExclusionReason: conversionEligible ? '' : `non_production_deploy:${deployContext}`
       },
       notifyOffice: async (notificationPayload, record) => sendFormEmailSubmission({
         formName: PIANO_PREREGISTRATION_FORM,
