@@ -9,7 +9,28 @@ import {
   normalizeSubmission,
   validateSubmission
 } from '../netlify/functions/_shared/piano-preregistration.js';
+import { testables as submitTestables } from '../netlify/functions/piano-preregistration-submit.js';
 import { PIANO_BOOKING_LOCATIONS } from '../shared/piano-booking-links.js';
+
+const conversionsDisabled = submitTestables.resolveConversionEligibility({
+  enabledValue: '',
+  deployContext: 'unknown'
+});
+assert.deepEqual(conversionsDisabled, {
+  conversionEligible: false,
+  conversionExclusionReason: 'production_conversions_disabled:unknown',
+  deployContext: 'unknown'
+});
+
+const conversionsEnabled = submitTestables.resolveConversionEligibility({
+  enabledValue: 'true',
+  deployContext: 'production'
+});
+assert.deepEqual(conversionsEnabled, {
+  conversionEligible: true,
+  conversionExclusionReason: '',
+  deployContext: 'production'
+});
 
 const bookingUrls = Object.fromEntries(PIANO_BOOKING_LOCATIONS.map((item) => [item.slug, item.bookingUrl]));
 assert.deepEqual(bookingUrls, {

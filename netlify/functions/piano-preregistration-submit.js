@@ -22,6 +22,20 @@ function jsonResponse(body, status = 200) {
   });
 }
 
+let conversionGateLogged = false;
+
+function resolveConversionEligibility({ enabledValue = '', deployContext = 'unknown' } = {}) {
+  const context = String(deployContext || 'unknown').trim().toLowerCase() || 'unknown';
+  const conversionEligible = isEnabled(enabledValue);
+  return {
+    conversionEligible,
+    conversionExclusionReason: conversionEligible
+      ? ''
+      : `production_conversions_disabled:${context}`,
+    deployContext: context
+  };
+}
+
 async function parseSubmission(req) {
   const contentType = req.headers.get('content-type') || '';
   const rawText = await req.text();
@@ -47,14 +61,22 @@ export default async function pianoPreregistrationSubmit(req) {
   }
 
   try {
-    const deployContext = String(env('CONTEXT') || 'unknown').trim().toLowerCase();
-    const conversionEligible = deployContext === 'production';
+    const conversionGate = resolveConversionEligibility({
+      enabledValue: env('PIANO_INTRO_PRODUCTION_CONVERSIONS_ENABLED'),
+      deployContext: env('CONTEXT') || 'unknown'
+    });
+    if (!conversionGateLogged) {
+      console.info(
+        `piano-preregistration-submit: production conversion eligibility ${conversionGate.conversionEligible ? 'enabled' : 'disabled'}; deploy_context=${conversionGate.deployContext}`
+      );
+      conversionGateLogged = true;
+    }
     const bridge = createPianoPreregistrationBridge({
       repository: createPostgresPreregistrationRepository(),
       config: {
         officeEmailEnabled: isEnabled(env('ENABLE_PIANO_PREREGISTRATION_OFFICE_EMAIL')),
-        conversionEligible,
-        conversionExclusionReason: conversionEligible ? '' : `non_production_deploy:${deployContext}`
+        conversionEligible: conversionGate.conversionEligible,
+        conversionExclusionReason: conversionGate.conversionExclusionReason
       },
       notifyOffice: async (notificationPayload, record) => sendFormEmailSubmission({
         formName: PIANO_PREREGISTRATION_FORM,
@@ -80,5 +102,6 @@ export const config = {
 };
 
 export const testables = {
-  parseSubmission
+  parseSubmission,
+  resolveConversionEligibility
 };
