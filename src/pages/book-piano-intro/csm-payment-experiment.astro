@@ -1,0 +1,93 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base
+  title="CSM Piano Payment Experiment | Cincinnati School of Music"
+  description="Private preview for the CSM-hosted Piano Intro payment architecture."
+  canonicalPath="/book-piano-intro/csm-payment-experiment/"
+  noindex={true}
+>
+  <section class="experiment-shell">
+    <div class="experiment-card">
+      <span class="section-label">Preview Architecture Experiment</span>
+      <h1>CSM-hosted Piano Intro payment</h1>
+      <p class="lead">This private preview tests the payment boundary only. It does not expose live Opus availability and it never accepts a Stripe live-mode key.</p>
+
+      <div class="flow-map" aria-label="Experiment flow">
+        <div><strong>1</strong><span>CSM lead already stored</span></div>
+        <div><strong>2</strong><span>Opus client creation confirmed</span></div>
+        <div><strong>3</strong><span>Stripe-hosted test checkout</span></div>
+        <div><strong>4</strong><span>Manual Opus fulfillment queue</span></div>
+      </div>
+
+      <div class="guardrail">
+        <strong>Known boundary</strong>
+        <p>Opus documents inbound client creation, but not an appointment-creation API. A successful CSM payment is therefore recorded as <code>opus_fulfillment_pending</code>; it does not silently manufacture an Opus booking.</p>
+      </div>
+
+      <dl>
+        <div><dt>CSM lead</dt><dd id="leadRef">Missing</dd></div>
+        <div><dt>Verified preview slot</dt><dd id="slotRef">Missing</dd></div>
+        <div><dt>Amount</dt><dd>$42.00 test mode</dd></div>
+      </dl>
+
+      <p class="status" id="statusText" role="status">Add a staged lead and verified test slot to evaluate this experiment.</p>
+      <button id="checkoutButton" class="btn-a" type="button" disabled>Continue to Stripe Test Checkout</button>
+      <p class="fine-print">No purchase or advertising conversion event is emitted by this page.</p>
+    </div>
+  </section>
+
+  <style>
+    .experiment-shell{min-height:76vh;padding:72px 24px 96px;background:linear-gradient(180deg,var(--offwhite),#fff)}
+    .experiment-card{width:min(100%,820px);margin:0 auto;background:#fff;border:1px solid var(--offwb);padding:52px;box-shadow:0 24px 64px rgba(25,28,30,.07)}
+    h1{max-width:660px}.lead{max-width:700px}
+    .flow-map{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:34px 0}
+    .flow-map div{border:1px solid var(--offwb);padding:18px 14px;min-height:116px}
+    .flow-map strong{display:block;color:var(--accent);font-size:1.2rem;margin-bottom:9px}
+    .flow-map span{font-size:.72rem;line-height:1.5;color:var(--mid)}
+    .guardrail{padding:22px 24px;background:#fff6ed;border-left:3px solid #e88a38;margin-bottom:28px}
+    .guardrail strong{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase}.guardrail p{font-size:.8rem;line-height:1.65;margin-top:6px}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
+    dl{border-top:1px solid var(--offwb);margin:0 0 28px}
+    dl div{display:flex;justify-content:space-between;gap:20px;padding:13px 0;border-bottom:1px solid var(--offwb)}
+    dt{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mid)}
+    dd{font-size:.78rem;color:var(--charcoal);text-align:right}
+    .status{font-size:.78rem;margin-bottom:18px}.btn-a{border:0;cursor:pointer}.btn-a:disabled{opacity:.45;cursor:not-allowed}
+    .fine-print{font-size:.68rem;margin-top:13px;color:#8e8c88}
+    @media(max-width:720px){.experiment-card{padding:38px 23px}.flow-map{grid-template-columns:1fr 1fr}.btn-a{width:100%;padding-left:14px;padding-right:14px}}
+  </style>
+
+  <script>
+    (function(){
+      var params = new URLSearchParams(window.location.search);
+      var leadId = (params.get('lead_id') || '').slice(0,64);
+      var slotId = (params.get('slot_id') || '').slice(0,160);
+      var leadRef = document.getElementById('leadRef');
+      var slotRef = document.getElementById('slotRef');
+      var button = document.getElementById('checkoutButton');
+      var status = document.getElementById('statusText');
+      leadRef.textContent = leadId || 'Missing';
+      slotRef.textContent = slotId || 'Missing';
+      button.disabled = !(leadId && slotId);
+      if(leadId && slotId) status.textContent = 'Ready to request a Stripe test-mode Checkout Session.';
+
+      button.addEventListener('click', async function(){
+        button.disabled = true;
+        status.textContent = 'Creating a Stripe test-mode session…';
+        try {
+          var response = await fetch('/api/piano-csm-payment-session', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({lead_id: leadId, slot_id: slotId})
+          });
+          var result = await response.json();
+          if(!response.ok || !result.checkout_url) throw new Error(result.error || 'Checkout is unavailable.');
+          window.location.assign(result.checkout_url);
+        } catch(error) {
+          status.textContent = error.message || 'Checkout is unavailable.';
+          button.disabled = false;
+        }
+      });
+    })();
+  </script>
+</Base>

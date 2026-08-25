@@ -1,0 +1,91 @@
+---
+import Base from '../../layouts/Base.astro';
+import { PIANO_BOOKING_LOCATIONS } from '../../../shared/piano-booking-links.js';
+
+const bookingLocations = PIANO_BOOKING_LOCATIONS;
+---
+<Base
+  title="Choose Your Piano Intro Time | Cincinnati School of Music"
+  description="Choose an available Cincinnati School of Music Piano Intro Lesson time and finish booking."
+  canonicalPath="/book-piano-intro/thank-you/"
+  noindex={true}
+>
+  <section class="confirmation-shell">
+    <div class="confirmation-card">
+      <div class="confirmation-mark" aria-hidden="true">✓</div>
+      <span class="section-label" id="confirmationLabel">Almost There</span>
+      <h1 id="confirmationHeading">Great. Let’s find a time.</h1>
+      <p class="lead" id="confirmationLead">We’ve saved your information. Choose an available piano intro time to finish booking.</p>
+      <p class="detail-copy" id="detailCopy">Your intro lesson is $42. You’ll enter payment when you choose a time.</p>
+
+      <a class="btn-a choose-time" id="chooseTimeLink" href="/book-piano-intro/" aria-disabled="true" hidden>
+        See Piano Intro Times
+      </a>
+
+      <div class="support-actions">
+        <span>Need a hand?</span>
+        <a href="tel:5135609175">Call (513) 560-9175</a>
+        <a href="sms:5135609175">Text CSM</a>
+        <a href="mailto:info@cincinnatischoolofmusic.com">Email CSM</a>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .confirmation-shell{min-height:72vh;display:flex;align-items:center;justify-content:center;padding:74px 24px 90px;background:linear-gradient(180deg,var(--offwhite),#fff)}
+    .confirmation-card{width:min(100%,760px);text-align:left;background:var(--white);border:1px solid var(--offwb);padding:54px 58px;box-shadow:0 24px 64px rgba(25,28,30,.07)}
+    .confirmation-mark{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 0 24px;background:#fff3f3;border:1px solid #ffd5d7;color:var(--accent);font-size:1.35rem;font-weight:700}
+    .confirmation-card .section-label{color:var(--accent)}
+    .confirmation-card h1{max-width:610px;margin:8px 0 18px}
+    .lead{max-width:640px;margin:0;font-size:1rem;line-height:1.75;color:var(--mid)}
+    .detail-copy{max-width:640px;margin:14px 0 0;font-size:.82rem;line-height:1.65;color:#777570}
+    .choose-time{border:0;cursor:pointer;width:100%;text-align:center;margin-top:32px}
+    .choose-time[hidden]{display:none}
+    .choose-time[aria-disabled="true"]{opacity:.5;pointer-events:none}
+    .support-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px 20px;margin-top:30px;padding-top:24px;border-top:1px solid var(--offwb)}
+    .support-actions span{font-size:.73rem;color:var(--mid)}
+    .support-actions a{font-size:.69rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);text-decoration:none}
+    @media(max-width:620px){
+      .confirmation-shell{align-items:flex-start;padding:36px 16px 64px}
+      .confirmation-card{padding:40px 24px}
+      .support-actions{align-items:flex-start;flex-direction:column}
+    }
+  </style>
+
+  <script define:vars={{ bookingLocations }}>
+    (function(){
+      var params = new URLSearchParams(window.location.search);
+      var requested = params.get('location') || '';
+      var location = bookingLocations.find(function(item){ return item.slug === requested; });
+      var link = document.getElementById('chooseTimeLink');
+      var label = document.getElementById('confirmationLabel');
+      var heading = document.getElementById('confirmationHeading');
+      var lead = document.getElementById('confirmationLead');
+      var detail = document.getElementById('detailCopy');
+      var existingFamily = params.get('existing_family') === '1';
+
+      if(existingFamily){
+        label.textContent = 'Request Received';
+        heading.textContent = 'We’ll help you from here.';
+        lead.textContent = 'Since you already have a CSM account, our office will help arrange the intro lesson without creating a duplicate account.';
+        detail.textContent = 'We’ve received your information and will follow up with you.';
+      } else if(location){
+        var shortName = location.name.replace('CSM ', '');
+        lead.textContent = 'We’ve saved your information. Choose an available piano intro time at ' + location.name + ' to finish booking.';
+        link.href = location.bookingUrl;
+        link.textContent = 'See ' + shortName + ' Piano Times';
+        link.setAttribute('aria-disabled','false');
+        link.hidden = false;
+      } else {
+        label.textContent = 'One More Step';
+        heading.textContent = 'Let’s choose your location again.';
+        lead.textContent = 'Choose your preferred CSM location so we can show the right piano intro times.';
+        detail.textContent = '';
+        link.href = '/book-piano-intro/';
+        link.textContent = 'Choose a Location';
+        link.setAttribute('aria-disabled','false');
+        link.hidden = false;
+      }
+    })();
+  </script>
+</Base>

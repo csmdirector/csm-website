@@ -9,10 +9,15 @@
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "check:preserved": "node scripts/check-preserved-output.mjs",
     "check:lead-pipeline": "node scripts/check-lead-pipeline.mjs",
+    "check:piano-preregistration": "node scripts/check-piano-preregistration.mjs",
+    "check:piano-reconciliation": "node scripts/check-piano-intro-reconciliation.mjs",
+    "check:piano-csm-payment": "node scripts/check-piano-csm-payment-experiment.mjs",
     "check:admin-hiring": "node scripts/check-admin-hiring-consistency.mjs"
   },
   "dependencies": {
+    "@netlify/database": "^1.1.0",
     "astro": "^6.4.2",
-    "pg": "^8.22.0"
+    "pg": "^8.22.0",
+    "stripe": "^22.4.0"
   }
 }

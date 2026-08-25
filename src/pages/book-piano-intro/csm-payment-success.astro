@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base
+  title="Piano Intro Payment Test | Cincinnati School of Music"
+  description="Private completion page for the CSM-hosted Piano Intro payment experiment."
+  canonicalPath="/book-piano-intro/csm-payment-success/"
+  noindex={true}
+>
+  <section class="success-shell">
+    <div class="success-card">
+      <span class="section-label">Test Payment Return</span>
+      <h1>Payment returned to CSM.</h1>
+      <p>Stripe’s signed webhook—not this browser redirect—must confirm the test payment. Even after confirmation, the Opus booking remains an explicit office-fulfillment step until Opus provides a supported booking interface.</p>
+      <div class="notice"><strong>No automatic Opus booking is claimed here.</strong></div>
+      <a class="btn-c" href="/book-piano-intro/">Return to Piano Intro</a>
+    </div>
+  </section>
+  <style>
+    .success-shell{min-height:72vh;display:flex;align-items:center;justify-content:center;padding:70px 24px;background:linear-gradient(180deg,var(--offwhite),#fff)}
+    .success-card{width:min(100%,700px);background:#fff;border:1px solid var(--offwb);padding:52px;text-align:center;box-shadow:0 24px 64px rgba(25,28,30,.07)}
+    .notice{margin:26px 0;padding:18px;background:#fff6ed;border:1px solid #f1d4b9;font-size:.8rem;color:var(--charcoal)}
+    @media(max-width:620px){.success-card{padding:40px 23px}}
+  </style>
+</Base>
