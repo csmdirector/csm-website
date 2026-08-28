@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { NEW_STUDENT_OFFER } from '../../../shared/new-student-offer.js';
 
 const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
   String(import.meta.env.ENABLE_LEAD_PIPELINE || '').trim().toLowerCase()
@@ -7,6 +8,8 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
 const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
   String(import.meta.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT || '').trim().toLowerCase()
 );
+const freeIntroTitle = `A ${NEW_STUDENT_OFFER.introName} is the best starting point.`;
+const welcomeRateSummary = `${NEW_STUDENT_OFFER.welcomeRateDescription} ${NEW_STUDENT_OFFER.registrationDescription}`;
 ---
 <Base
   title="Find the Right Lesson Fit | Cincinnati School of Music"
@@ -19,9 +22,10 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
       <span class="section-label">Lesson Fit</span>
       <h1>Find the right lesson fit.</h1>
       <p>
-        Start with a $42 Intro Lesson - a one-time private lesson to meet the teacher,
-        try the fit, and see how lessons feel before enrolling.
+        Start with a <strong>Free Intro Lesson</strong> — a one-time private lesson to meet the
+        teacher, experience the lesson, and make sure the schedule and fit feel right before enrolling.
       </p>
+      <p>{welcomeRateSummary}</p>
     </div>
   </section>
 
@@ -200,7 +204,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
             <legend>Your recommended next step</legend>
             <div class="recommendation-box" id="recommendationBox" aria-live="polite">
               <span class="section-label">Intro Lesson</span>
-              <h2 id="recommendationTitle">A $42 Intro Lesson is the best starting point.</h2>
+              <h2 id="recommendationTitle">{freeIntroTitle}</h2>
               <p id="recommendationBody">
                 Based on your answers, this is a good next step.
               </p>
@@ -259,7 +263,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
           <div class="intake-actions">
             <button type="button" class="btn-back" id="backButton">Back</button>
             <button type="button" class="btn-a" id="nextButton">Next</button>
-            <button type="submit" class="btn-a submit-button" id="submitButton">View Available Intro Times</button>
+            <button type="submit" class="btn-a submit-button" id="submitButton">View Available Free Intro Times</button>
           </div>
         </form>
       </div>
@@ -268,9 +272,10 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         <span class="section-label">What This Does</span>
         <h2 id="intake-note-title">A clear first step.</h2>
         <p>
-          The Intro Lesson is a one-time private lesson. It helps the student meet the teacher,
-          try the fit, and see how lessons feel before enrolling.
+          The Intro Lesson is free. It helps the student meet the teacher, experience the lesson,
+          and decide whether the schedule and fit feel right before enrolling.
         </p>
+        <p>{welcomeRateSummary}</p>
         <p>
           If you know the instrument and location, you can go straight to available
           Intro Lesson times. If you want help choosing, CSM can follow up first.
@@ -328,7 +333,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
     .form-error{min-height:24px;color:var(--accent-dk);font-size:.8rem;font-weight:400;margin:4px 0 18px}
     .intake-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
     .intake-actions .btn-a{border:0;cursor:pointer}
-    .btn-back{border:1px solid var(--offwb);background:var(--white);color:var(--mid);font-size:.68rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:14px 30px;cursor:pointer;transition:all .18s}
+    .btn-back{min-height:44px;border:1px solid var(--offwb);background:var(--white);color:var(--mid);font-size:.68rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:14px 30px;cursor:pointer;transition:all .18s}
     .btn-back:hover{border-color:var(--slate);color:var(--charcoal)}
     .btn-back[hidden],.submit-button[hidden],#nextButton[hidden]{display:none}
     .intake-note{border-left:1px solid var(--offwb);padding-left:32px}
@@ -348,7 +353,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
     }
   </style>
 
-  <script define:vars={{ enableLeadPipelineCapture, enableLessonFitDirectSubmit }}>
+  <script define:vars={{ enableLeadPipelineCapture, enableLessonFitDirectSubmit, freeIntroTitle }}>
     (function(){
       var form = document.getElementById('intakeForm');
       if(!form) return;
@@ -658,7 +663,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         var studentContext = readFormValue('student_context');
         var canSelfBook = hasKnownSelfBookingRoute(instrument, location, nextStep);
 
-        var title = 'A $42 Intro Lesson is the best starting point.';
+        var title = freeIntroTitle;
         var body = 'Tell us a little about what you are looking for. We will use this information when we reach out.';
         var outcome = 'staff-help';
         var url = appendAttribution(HELP_THANK_YOU_URL);
@@ -667,11 +672,11 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
           outcome = 'self-booking';
           url = getSelfBookingUrl(instrument, location);
           if(instrument === 'Early childhood music'){
-            title = 'Start with a $42 Music Discovery Intro Lesson at ' + location + '.';
-            body = 'Based on your answers, the next step is a Music Discovery Intro Lesson at ' + location + '.';
+            title = 'Start with a Free Music Discovery Intro Lesson at ' + location + '.';
+            body = 'Based on your answers, the next step is a free Music Discovery Intro Lesson at ' + location + '.';
           } else {
-            title = 'Start with a $42 Piano Intro Lesson at ' + location + '.';
-            body = 'Based on your answers, the next step is an Intro Lesson for Piano at ' + location + '.';
+            title = 'Start with a Free Piano Intro Lesson at ' + location + '.';
+            body = 'Based on your answers, the next step is a free Intro Lesson for Piano at ' + location + '.';
           }
         } else if(instrument === 'Not sure yet' || location === 'Flexible or not sure'){
           title = 'CSM can help you choose a starting point.';

@@ -229,7 +229,7 @@ export function buildStudentNote({ fields, leadId, submittedAt }) {
   ];
   if (fields.studentBirthdate) lines.push(`Student birthdate: ${fields.studentBirthdate}`);
   else if (fields.studentAge) lines.push(`Student age: ${fields.studentAge}`);
-  lines.push('Parent still needs to complete the normal Opus booking/payment flow.');
+  lines.push('Parent still needs to complete the normal Opus booking flow.');
   lines.push('CSM did not pre-create an Opus parent or student for this ready-to-book lead.');
   return lines.join('\n');
 }

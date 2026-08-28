@@ -1,29 +1,32 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { PIANO_BOOKING_LOCATIONS } from '../../../shared/piano-booking-links.js';
+import { NEW_STUDENT_OFFER } from '../../../shared/new-student-offer.js';
 
 const locationOrder = ['mason', 'montgomery', 'anderson', 'maineville', 'middletown'];
 const locationOptions = locationOrder
   .map((slug) => PIANO_BOOKING_LOCATIONS.find((location) => location.slug === slug))
   .filter(Boolean)
   .map(({ slug, name }) => ({ slug, name }));
+const welcomeRateSummary = `${NEW_STUDENT_OFFER.welcomeRateDescription} ${NEW_STUDENT_OFFER.registrationDescription}`;
 ---
 <Base
   title="Book a Piano Intro Lesson | Cincinnati School of Music"
-  description="Start with a 30-minute private piano Intro Lesson for $42 at your preferred Cincinnati School of Music location."
+  description="Book a free 30-minute private piano Intro Lesson at your preferred Cincinnati School of Music location."
   canonicalPath="/book-piano-intro/"
   noindex={true}
 >
   <section class="booking-hero">
     <div class="booking-hero-inner">
-      <span class="section-label">Piano Intro Lesson</span>
-      <h1>Start With a Piano Intro Lesson</h1>
-      <p class="intro-price">A 30-minute private piano lesson for $42.</p>
+      <span class="section-label">Free Intro Lesson</span>
+      <h1>Start With a Free Piano Intro Lesson</h1>
+      <p class="intro-price">Your 30-minute private piano Intro Lesson is free.</p>
       <p class="intro-copy">
         Tell us a little about the student and choose your preferred CSM location. On the next step,
         you’ll see available lesson times and finish booking.
       </p>
-      <p class="intro-reassurance">No ongoing commitment. You’re just booking the intro lesson.</p>
+      <p class="intro-reassurance">No ongoing commitment. You’re just booking the Intro Lesson.</p>
+      <p class="welcome-rate">{welcomeRateSummary}</p>
 
       <div class="booking-steps" aria-label="Three-step booking overview">
         <span><b>1</b> Tell us about the student</span>
@@ -123,7 +126,7 @@ const locationOptions = locationOrder
 
         <div class="form-error" id="formError" role="alert" aria-live="polite"></div>
         <button class="btn-a submit-button" id="submitButton" type="submit">See Piano Intro Times</button>
-        <p class="submit-help">Your intro lesson is $42. You’ll choose a time and enter payment on the next step.</p>
+        <p class="submit-help">Your Intro Lesson is free. You’ll choose a time and complete booking on the next step.</p>
 
         <div class="help-line">
           <span>Would you rather talk with us?</span>
@@ -143,6 +146,7 @@ const locationOptions = locationOrder
     .intro-price{color:var(--white);font-size:1.12rem;font-weight:500;margin:0 0 12px}
     .intro-copy{color:rgba(255,255,255,.74);max-width:690px;font-size:.96rem;line-height:1.75;margin:0}
     .intro-reassurance{display:inline-block;color:rgba(255,255,255,.83);font-size:.75rem;font-weight:600;letter-spacing:.055em;text-transform:uppercase;margin:19px 0 0;padding:8px 12px;border:1px solid rgba(255,255,255,.18)}
+    .welcome-rate{color:rgba(255,255,255,.72);max-width:720px;font-size:.82rem;line-height:1.7;margin:18px 0 0}
     .booking-steps{display:flex;align-items:center;gap:13px;margin-top:34px;color:rgba(255,255,255,.7);font-size:.72rem;letter-spacing:.045em;text-transform:uppercase}
     .booking-steps span{display:flex;align-items:center;gap:9px;white-space:nowrap}
     .booking-steps b{display:inline-flex;width:25px;height:25px;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.3);border-radius:50%;color:var(--white);font-size:.66rem}

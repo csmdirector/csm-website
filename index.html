@@ -447,7 +447,7 @@ nav {
   /* ── NAV: hamburger pattern ── */
   nav{padding:0 22px;height:64px;flex-wrap:wrap}
   .nav-logo{height:52px}
-  .nav-toggle{display:flex;align-items:center;justify-content:center;order:3;width:42px;height:42px;border:1px solid var(--offwb);background:var(--white);color:var(--charcoal)}
+  .nav-toggle{display:flex;align-items:center;justify-content:center;order:3;width:44px;height:44px;border:1px solid var(--offwb);background:var(--white);color:var(--charcoal)}
   .nav-toggle svg{width:22px;height:22px}
   .nav-links{order:4;flex-basis:100%;flex-direction:column;align-items:stretch;gap:0;background:var(--offwhite);max-height:0;overflow:hidden;transition:max-height .35s ease;border-top:1px solid transparent}
   nav.nav-open .nav-links{max-height:calc(100vh - 64px);overflow-y:auto;border-top-color:var(--offwb);padding:8px 0 16px}
@@ -482,7 +482,7 @@ nav {
   .hero-stats{font-size:.58rem;letter-spacing:.16em;line-height:2}
 
   /* ── BUTTONS: tap targets ≥ 44px ── */
-  .btn-a,.btn-c,.btn-a-lg{padding:15px 28px;font-size:.7rem;letter-spacing:.16em;display:inline-block;line-height:1.2}
+  .btn-a,.btn-c,.btn-a-lg{min-height:44px;padding:15px 28px;font-size:.7rem;letter-spacing:.16em;display:inline-block;line-height:1.2}
   .btn-a-lg{padding:17px 32px;margin:0 0 12px 0}
   .btn-a + .btn-c,.btn-c + .btn-a,.btn-a-lg + .btn-c{margin-top:12px}
 
@@ -548,7 +548,7 @@ nav {
   h2{font-size:1.35rem}
 
   /* ── BUTTONS: full-width stacked ── */
-  .btn-a,.btn-c,.btn-a-lg{display:block;text-align:center;width:100%;padding-left:18px;padding-right:18px;letter-spacing:.14em}
+  .btn-a,.btn-c,.btn-a-lg{min-height:44px;display:block;text-align:center;width:100%;padding-left:18px;padding-right:18px;letter-spacing:.14em}
   .btn-a + .btn-c,.btn-c + .btn-a,.btn-a-lg + .btn-c,.btn-a-lg + .btn-a-lg{margin-top:12px}
   .nav-cta a{margin:6px 18px}
 
@@ -836,7 +836,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <a href="/maineville">Maineville</a>
       </div>
     </li>
-    <li class="nav-cta"><a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book a Lesson</a></li>
+    <li class="nav-cta"><a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book a Free Intro Lesson</a></li>
   </ul>
 </nav>
 
@@ -847,9 +847,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <p class="hero-lead">With five locations and 60+ teachers, CSM helps Cincinnati families find music lessons that fit their child, their teacher, and their week.</p>
     <p class="hero-stats">5 locations <span class="dot">·</span> 60+ teachers <span class="dot">·</span> 1,000+ students <span class="dot">·</span> Since 2012</p>
     <div class="cta-row" style="justify-content:flex-start">
-      <a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson" class="btn-a">Book Your Intro Lesson</a>
+      <a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson" class="btn-a">Book a Free Intro Lesson</a>
     </div>
-    <p style="margin:16px 0 0;max-width:560px;font-size:.88rem;font-weight:300;line-height:1.7;color:rgba(255,255,255,.82)">Start with a $42 Intro Lesson — a one-time private lesson to meet the teacher and try the fit before enrolling.</p>
+    <p style="margin:16px 0 0;max-width:560px;font-size:.88rem;font-weight:300;line-height:1.7;color:rgba(255,255,255,.82)"><strong>Free Intro Lesson.</strong> Meet your teacher, experience the lesson, and make sure the schedule and fit feel right before enrolling.</p>
+    <p style="margin:9px 0 0;max-width:580px;font-size:.82rem;font-weight:300;line-height:1.65;color:rgba(255,255,255,.72)"><strong>New Student Welcome Rate:</strong> continue into recurring lessons and receive 5% off tuition for your first six consecutive months. A 30-minute lesson is $39.90 during the welcome period and returns automatically to the standard $42 rate afterward. A one-time $50 registration fee applies at enrollment.</p>
   </div>
   <div class="hero-right">
     <img src="images/piano_recital.jpg" alt="Student performing at Cincinnati School of Music recital" />
@@ -990,10 +991,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="cta-wrap">
   <div class="cta-inner">
     <span class="section-label">Get Started</span>
-    <h2>Book a <em>First Lesson</em></h2>
-    <p>Start with one intro lesson at any of our five Greater Cincinnati locations.</p>
-    <p style="margin-top:-24px">Start with a $42 Intro Lesson — a one-time private lesson to meet the teacher and try the fit before enrolling.</p>
-    <a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson" class="btn-a-lg">Book Your Intro Lesson</a>
+    <h2>Book a <em>Free Intro Lesson</em></h2>
+    <p>Meet your teacher, experience the lesson, and make sure the schedule and fit feel right before enrolling.</p>
+    <a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson" class="btn-a-lg">Book a Free Intro Lesson</a>
     <a href="/request-info" class="btn-c">Request Info</a>
   </div>
 </div>
@@ -1001,7 +1001,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <footer>
   
   <div class="ft-logo" style="display:flex;justify-content:center;margin-bottom:18px;"><img src="/images/CSM_2.0_Full_Lockup_White.svg" alt="Cincinnati School of Music" loading="lazy" style="width:min(260px,70vw);height:auto;margin:0 auto;"></div>
-<div class="ft-nav"><a href="/piano-lessons">Piano</a><a href="/voice-lessons">Voice</a><a href="/guitar-lessons">Guitar</a><a href="/drum-lessons">Drums</a><a href="/violin-lessons">Strings</a><a href="/flute-clarinet-lessons">Winds</a><a href="/locations">Locations</a><a href="/teachers">Teachers</a><a href="/about-us">About</a><a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book a Lesson</a></div>
+<div class="ft-nav"><a href="/piano-lessons">Piano</a><a href="/voice-lessons">Voice</a><a href="/guitar-lessons">Guitar</a><a href="/drum-lessons">Drums</a><a href="/violin-lessons">Strings</a><a href="/flute-clarinet-lessons">Winds</a><a href="/locations">Locations</a><a href="/teachers">Teachers</a><a href="/about-us">About</a><a href="https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson">Book a Free Intro Lesson</a></div>
   <div class="ft-award"><em>★</em> Cincy Magazine Best of the North — Music Instruction — 10 Consecutive Years</div>
   <div class="ft-copy">© 2026 Cincinnati School of Music LLC &nbsp;·&nbsp; <a href="/privacy-policy">Privacy Policy</a> &nbsp;·&nbsp; <a href="/sms-terms">SMS Terms</a></div>
 </footer>

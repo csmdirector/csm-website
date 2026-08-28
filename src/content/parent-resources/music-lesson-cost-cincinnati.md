@@ -2,6 +2,7 @@
 title: How Much Do Music Lessons Cost in Cincinnati? A 2026 Parent Guide
 description: A practical 2026 guide to music lesson costs in Cincinnati. What prices usually include, why rates differ, and what to ask before you enroll.
 publishDate: 2026-07-04
+updatedDate: 2026-08-28
 audience:
   - Parents
   - Adult Students
@@ -29,7 +30,7 @@ status: published
 seoTitle: How Much Do Music Lessons Cost in Cincinnati? (2026 Guide)
 seoDescription: A practical 2026 guide to music lesson costs in Cincinnati. What prices usually include, why rates differ, and what to ask before you enroll.
 canonicalPath: /parent-resources/music-lesson-cost-cincinnati
-ctaLabel: Book an Intro Lesson
+ctaLabel: Book a Free Intro Lesson
 ctaHref: https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson
 ---
 
@@ -39,7 +40,7 @@ If you've been comparing music lessons in Cincinnati, you may have noticed that 
 
 Based on publicly listed rates and local pricing we reviewed, many weekly 30-minute private lessons in Greater Cincinnati fall roughly between $30 and $50 per lesson.
 
-At Cincinnati School of Music, a weekly 30-minute private lesson is **$42**.
+At Cincinnati School of Music, the standard rate for a weekly 30-minute private lesson is **$42**. New students who continue after their Free Intro Lesson receive the **New Student Welcome Rate: 5% off recurring tuition for their first six consecutive months**. That makes a 30-minute lesson **$39.90** during the welcome period; after six months, the standard $42 rate applies automatically.
 
 CSM is not the least expensive option in town, and we do not try to be. Our price reflects a professionally operated school model: carefully hired teachers, scheduling and billing assistance, consistent and fair policies, performance opportunities, parent support, and five locations across Greater Cincinnati. This page explains what that price includes, and when a lower-priced option may be the better fit for your family.
 
@@ -57,9 +58,13 @@ Music lessons in Cincinnati are offered through three common models, and the pri
 
 Each model has its own benefits and tradeoffs. The important thing is to compare what is actually included, not just the price.
 
-## What CSM's $42 Lesson Price Includes
+## Start With a Free Intro Lesson
 
-At CSM, teachers are hired selectively and backed by the school itself. Every teacher we have ever hired, from our first teacher in 2012 to today, completes a criminal background check and a national sex offender registry (NSOPW) check before teaching. It's the same standard parents expect from preschools and childcare providers, and we think music education should be no different. Alongside your teacher, the $42 includes:
+Your Intro Lesson is free. It is a private lesson where the student can meet the teacher, experience the lesson, and make sure the schedule and teacher feel like a good fit before enrolling. There is no charge for the Intro Lesson and no ongoing commitment to book one.
+
+## What CSM's Standard Lesson Price Includes
+
+At CSM, teachers are hired selectively and backed by the school itself. Every teacher we have ever hired, from our first teacher in 2012 to today, completes a criminal background check and a national sex offender registry (NSOPW) check before teaching. It's the same standard parents expect from preschools and childcare providers, and we think music education should be no different. The standard lesson rate includes:
 
 - **One policy, for everyone.** Every teacher and every student follows the same tuition, make-up, and cancellation policies. If you have three kids with three teachers, the rules and the price are identical for all three. No decoding each teacher's individual system.
 - **One bill.** Automatic monthly billing through one office, payable by debit, credit, or ACH. Instead of managing separate teachers, separate invoices, and separate policies for make-up lessons, credits, and refunds, families have one place to go for tuition, scheduling, billing questions, and assistance.
@@ -69,7 +74,7 @@ At CSM, teachers are hired selectively and backed by the school itself. Every te
 - **Every instrument under one roof.** [Piano](/piano-lessons), [voice](/voice-lessons), [guitar](/guitar-lessons), [strings](/violin-lessons), [drums](/drum-lessons), [woodwinds](/flute-clarinet-lessons) and more at each location, so siblings can learn different instruments in one place. Ask about simultaneous lesson times for siblings; we arrange them whenever availability allows, and it happens often.
 - **[Five locations across Greater Cincinnati](/locations),** each with easy parking, so lessons fit your week instead of the other way around.
 
-We've been doing this since 2012, with 60+ teachers and 1,000+ active students across Greater Cincinnati. Enrollment is month-to-month, with a one-time $50 registration fee per student at enrollment. You can see our full lesson pricing on our [FAQ page](/lessons).
+We've been doing this since 2012, with 60+ teachers and 1,000+ active students across Greater Cincinnati. Enrollment is month-to-month. A one-time **$50 registration fee per student** applies when a student enrolls in recurring lessons. You can see our full lesson pricing on our [FAQ page](/lessons).
 
 ## Questions to Ask Before You Enroll
 
@@ -99,9 +104,12 @@ Because everything is uniform: one policy, one bill, one office that sees every 
 **How do I pay for lessons?**
 At CSM, tuition is billed automatically each month, payable by debit, credit, or ACH. There are no separate checks to individual teachers.
 
+**How does the New Student Welcome Rate work?**
+After the Free Intro Lesson, new students who enroll in recurring lessons receive 5% off tuition for their first six consecutive months. A 30-minute lesson is $39.90 during the welcome period and returns automatically to the standard $42 rate after six months. The one-time $50 registration fee applies at enrollment.
+
 **What should I ask before choosing a music school?**
 Ask whether policies and billing are the same for every teacher, who coordinates schedules across teachers, how teachers are screened, what fees are added to tuition, and how quickly the office responds when you have a question.
 
 ---
 
-Prices in this guide reflect Greater Cincinnati lesson rates as of 2026 and the different ways music lessons are commonly offered. If you'd like to see what a professionally operated school feels like before deciding anything, we'd love to meet you. [Schedule an intro lesson](https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson) at any of our [five locations](/locations).
+Prices in this guide reflect Greater Cincinnati lesson rates as of 2026 and the different ways music lessons are commonly offered. If you'd like to see what a professionally operated school feels like before deciding anything, we'd love to meet you. [Book a Free Intro Lesson](https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson) at any of our [five locations](/locations).

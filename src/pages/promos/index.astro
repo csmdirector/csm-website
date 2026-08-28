@@ -1,22 +1,22 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { GENERAL_INTRO_BOOKING_URL, NEW_STUDENT_OFFER } from '../../../shared/new-student-offer.js';
 
 const promo = {
   active: true,
-  name: 'July Start Special',
-  savingsAmount: '$142',
-  deadline: '7/14/26',
-  headline: 'Save $142 when you start music lessons this summer.',
+  name: NEW_STUDENT_OFFER.name,
+  savingsAmount: '5% off for six months',
+  deadline: '',
+  headline: 'Start with a Free Intro Lesson.',
   supportingMessage:
-    'Beat the August rush for lesson times and get help finding the right teacher, location, and starting point.',
-  ctaLabel: 'Claim July Start Special',
+    'Meet your teacher, experience the lesson, and make sure the schedule and fit feel right before enrolling.',
+  ctaLabel: 'Ask CSM to Help Me',
   offerBullets: [
-    { label: 'Free Registration', value: '$50 value' },
-    { label: 'Free Intro Lesson', value: '$42 value' },
-    { label: '$50 Off First Full Month', value: 'when you enroll' }
+    { label: NEW_STUDENT_OFFER.introName, value: 'No lesson charge' },
+    { label: '5% off recurring tuition', value: 'First six months' },
+    { label: '30-minute welcome rate', value: NEW_STUDENT_OFFER.welcomeThirtyMinuteRate }
   ],
-  terms:
-    'July Start Special includes free registration, a free intro lesson, and $50 off the first full month after enrollment. Offer valid through 7/14/26. New students only. One offer per student. Cannot be combined with any other offer and is not redeemable for cash. Subject to teacher, instrument, and location availability.'
+  terms: `${NEW_STUDENT_OFFER.welcomeRateDescription} ${NEW_STUDENT_OFFER.registrationDescription} New students only. Subject to teacher, instrument, schedule, and location availability.`
 };
 
 const lessons = [
@@ -47,7 +47,7 @@ const locations = [
 ---
 <Base
   title={`${promo.name} | Cincinnati School of Music`}
-  description="Claim a limited-time Cincinnati School of Music summer lesson offer and get help finding the right teacher, location, and starting point."
+  description="Book a Free Intro Lesson and learn about the New Student Welcome Rate at Cincinnati School of Music."
   canonicalPath="/promos/"
   noindex={true}
 >
@@ -78,7 +78,7 @@ const locations = [
             </div>
           ))}
         </div>
-        <p class="deadline">Offer valid through {promo.deadline}</p>
+        <a class="btn-a" href={GENERAL_INTRO_BOOKING_URL}>Book a Free Intro Lesson</a>
       </div>
 
       <div class="promo-form-wrap" id="claim">
@@ -108,8 +108,8 @@ const locations = [
             </p>
 
             <div class="form-heading">
-              <span class="section-label">Claim Offer</span>
-              <h2>{promo.ctaLabel}</h2>
+              <span class="section-label">Need Help Choosing?</span>
+              <h2>Let our office help find the right lesson.</h2>
               <p>Share a few details and the CSM office will help with the best next step.</p>
             </div>
 

@@ -1,13 +1,13 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { GENERAL_INTRO_BOOKING_URL, NEW_STUDENT_OFFER } from '../../../shared/new-student-offer.js';
 
 const campaign = {
-  name: 'Back-to-School Special',
+  name: 'Back-to-School Welcome Offer',
   deadline: 'August 31, 2026',
-  savings: '$142',
+  savings: '5% off for six months',
   validity: 'Offer valid from July 20–August 31, 2026.',
-  terms:
-    'New students only. Offer includes one free 30-minute intro lesson ($42 value), the $50 registration fee waived upon enrollment, and $50 off the first full month after enrollment. Claim by August 31, 2026. One offer per student. Subject to teacher, instrument, schedule, and location availability. Cannot be combined with another offer. No cash value.'
+  terms: `New students only. The Intro Lesson is free. ${NEW_STUDENT_OFFER.welcomeRateDescription} ${NEW_STUDENT_OFFER.registrationDescription} Offer valid from July 20–August 31, 2026. Subject to teacher, instrument, schedule, and location availability. Cannot be combined with another offer. No cash value.`
 };
 
 const lessons = [
@@ -38,26 +38,27 @@ const locations = [
 ---
 
 <Base
-  title="Back-to-School Music Lesson Special | Cincinnati School of Music"
-  description="Save $142 when starting private music lessons at Cincinnati School of Music: a free intro lesson, free registration, and $50 off the first full month."
+  title="Back-to-School Music Lesson Welcome Offer | Cincinnati School of Music"
+  description="Start with a Free Intro Lesson and receive 5% off recurring tuition for the first six months at Cincinnati School of Music."
   canonicalPath="/back-to-school/"
   noindex={true}
 >
   <div class="bts-page">
     <section class="bts-hero" aria-labelledby="campaign-title">
       <div class="hero-copy">
-        <p class="campaign-kicker">Back-to-School Special</p>
+        <p class="campaign-kicker">Back-to-School Welcome Offer</p>
         <h1 id="campaign-title">
           <span>Back to</span>
           <strong>Music</strong>
         </h1>
         <p class="school-year-banner">Start strong this school year</p>
-        <p class="hero-savings">$142 Off</p>
+        <p class="hero-savings">Free Intro</p>
         <p class="hero-support">
           Start strong this school year with private music lessons for kids, teens, and adults.
         </p>
-        <a class="primary-cta" href="#claim">Claim my $142 offer</a>
-        <p class="hero-deadline">Claim by August 31, 2026</p>
+        <a class="primary-cta" href={GENERAL_INTRO_BOOKING_URL}>Book a Free Intro Lesson</a>
+        <a class="hero-help-link" href="#claim">Need help choosing? Ask our office</a>
+        <p class="hero-deadline">Offer valid July 20–August 31, 2026</p>
       </div>
 
       <figure class="hero-photo">
@@ -76,12 +77,12 @@ const locations = [
 
     <section class="offer-section" aria-labelledby="offer-title">
       <div class="section-intro">
-        <p class="eyebrow">Three ways to save</p>
-        <h2 id="offer-title">Save $142 to start</h2>
-        <p>Everything in the Back-to-School Special is designed to make starting lessons easier.</p>
+        <p class="eyebrow">A comfortable way to start</p>
+        <h2 id="offer-title">Meet your teacher before enrolling.</h2>
+        <p>The Free Intro Lesson and New Student Welcome Rate make the first step clear and low-pressure.</p>
       </div>
 
-      <div class="offer-stack" aria-label="Back-to-School Special includes">
+      <div class="offer-stack" aria-label="Back-to-School Welcome Offer includes">
         <article class="offer-card">
           <span class="offer-icon offer-icon-teal" aria-hidden="true">
             <svg viewBox="0 0 48 48" focusable="false">
@@ -89,10 +90,10 @@ const locations = [
             </svg>
           </span>
           <div class="offer-copy">
-            <h3>Free intro lesson</h3>
-            <p>One private 30-minute intro lesson</p>
+            <h3>Free Intro Lesson</h3>
+            <p>One private 30-minute Intro Lesson</p>
           </div>
-          <strong class="offer-value">$42 value</strong>
+          <strong class="offer-value">Free</strong>
         </article>
 
         <article class="offer-card">
@@ -102,10 +103,10 @@ const locations = [
             </svg>
           </span>
           <div class="offer-copy">
-            <h3>Free registration</h3>
-            <p>The registration fee is waived when you enroll</p>
+            <h3>New Student Welcome Rate</h3>
+            <p>5% off recurring tuition for the first six consecutive months</p>
           </div>
-          <strong class="offer-value">$50 value</strong>
+          <strong class="offer-value">6 months</strong>
         </article>
 
         <article class="offer-card">
@@ -115,16 +116,17 @@ const locations = [
             </svg>
           </span>
           <div class="offer-copy">
-            <h3>$50 off your first full month</h3>
-            <p>Applied to the first full month after enrollment</p>
+            <h3>$39.90 for 30-minute lessons</h3>
+            <p>During the welcome period; the standard $42 rate applies automatically after six months</p>
           </div>
-          <strong class="offer-value">$50 savings</strong>
+          <strong class="offer-value">$39.90</strong>
         </article>
       </div>
+      <p class="registration-note">A one-time $50 registration fee applies when a student enrolls in recurring lessons.</p>
     </section>
 
     <div class="deadline-strip" role="note">
-      <span>Claim by August 31, 2026</span>
+      <span>Offer valid July 20–August 31, 2026</span>
     </div>
 
     <section class="trust-strip" aria-label="Music lesson highlights">
@@ -159,8 +161,8 @@ const locations = [
 
     <section class="claim-section" id="claim" aria-labelledby="claim-title">
       <div class="claim-intro">
-        <p class="eyebrow">Ready to start?</p>
-        <h2 id="claim-title">Get your $142 offer</h2>
+        <p class="eyebrow">Need help choosing?</p>
+        <h2 id="claim-title">Let our office help find the right lesson.</h2>
         <p>
           Tell us a little about the student and our office will help find the right teacher,
           location, and lesson time.
@@ -180,8 +182,8 @@ const locations = [
         id="backToSchoolClaimForm"
       >
         <input type="hidden" name="form-name" value="promo-claim" />
-        <input type="hidden" name="subject" data-remove-prefix value="New Back-to-School Special Claim" />
-        <input type="hidden" name="promo_name" value="Back-to-School Special" />
+        <input type="hidden" name="subject" data-remove-prefix value="New Back-to-School Welcome Offer Request" />
+        <input type="hidden" name="promo_name" value="Back-to-School Welcome Offer" />
         <input type="hidden" name="promo_deadline" value="August 31, 2026" />
         <input type="hidden" name="utm_source" id="btsUtmSource" />
         <input type="hidden" name="utm_medium" id="btsUtmMedium" />
@@ -248,9 +250,9 @@ const locations = [
           </label>
         </div>
 
-        <button class="form-submit" type="submit">Get my $142 offer</button>
+        <button class="form-submit" type="submit">Ask CSM to help me</button>
         <p class="confirmation-note">
-          No payment is collected here. The CSM office will contact you to help arrange the intro lesson.
+          No payment is collected here. The CSM office will contact you to help arrange the Intro Lesson.
         </p>
         <div class="offer-terms">
           <p class="offer-validity">{campaign.validity}</p>
@@ -413,6 +415,21 @@ const locations = [
       padding: 15px 25px;
     }
 
+    .hero-help-link {
+      display: block;
+      width: fit-content;
+      min-height: 44px;
+      margin-top: 13px;
+      padding: 11px 0;
+      color: var(--teal);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      line-height: 1.4;
+      text-underline-offset: 4px;
+      text-transform: uppercase;
+    }
+
     .primary-cta:hover,
     .form-submit:hover {
       transform: translate(2px, 2px);
@@ -572,6 +589,15 @@ const locations = [
       text-align: right;
       text-transform: uppercase;
       white-space: nowrap;
+    }
+
+    .registration-note {
+      max-width: 760px;
+      margin: 24px auto 0;
+      color: var(--ink-muted);
+      font-size: .9rem;
+      line-height: 1.65;
+      text-align: center;
     }
 
     .deadline-strip {
@@ -794,6 +820,7 @@ const locations = [
     select:focus-visible,
     textarea:focus-visible,
     .primary-cta:focus-visible,
+    .hero-help-link:focus-visible,
     .form-submit:focus-visible,
     .claim-contact a:focus-visible {
       outline: 3px solid var(--mustard);
