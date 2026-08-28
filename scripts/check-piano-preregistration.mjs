@@ -210,9 +210,11 @@ assert.match(notification.csm_context, /did not pre-create an Opus parent or stu
 const pageSource = readFileSync(new URL('../src/pages/book-piano-intro/index.astro', import.meta.url), 'utf8');
 assert.doesNotMatch(pageSource, /dataLayer\.push/);
 assert.doesNotMatch(pageSource, /google_ads_booking|purchase|generate_lead/i);
-assert.match(pageSource, /Start With a Piano Intro Lesson/);
-assert.match(pageSource, /A 30-minute private piano lesson for \$42\./);
-assert.match(pageSource, /See Piano Intro Times/);
+assert.match(pageSource, /Fall in Love With Music Special/);
+assert.match(pageSource, /Start With a Free Piano Intro Lesson/);
+assert.match(pageSource, /A free 30-minute private piano intro lesson\./);
+assert.match(pageSource, /See Free Piano Intro Times/);
+assert.doesNotMatch(pageSource, /\$42|enter payment/);
 assert.match(pageSource, /No ongoing commitment\. You’re just booking the intro lesson\./);
 assert.match(pageSource, /<span class="visually-hidden">General availability<\/span>/);
 assert.doesNotMatch(pageSource, /Pre-Registration<\/span>|Save &amp; Continue to Times|Choose an Opus time|does not pre-create/);
@@ -221,7 +223,9 @@ const thankYouSource = readFileSync(new URL('../src/pages/book-piano-intro/thank
 assert.match(thankYouSource, /if\(existingFamily\)/);
 assert.match(thankYouSource, /We’ll help you from here\./);
 assert.match(thankYouSource, /without creating a duplicate account/);
-assert.match(thankYouSource, /See ' \+ shortName \+ ' Piano Times/);
+assert.match(thankYouSource, /See Free ' \+ shortName \+ ' Piano Times/);
+assert.match(thankYouSource, /Your intro lesson is free/);
+assert.doesNotMatch(thankYouSource, /\$42|enter payment/);
 assert.match(thankYouSource, /else if\(location\)/);
 assert.match(thankYouSource, /\.choose-time\[hidden\]\{display:none\}/);
 assert.doesNotMatch(thankYouSource, /Pre-Registration Saved|Choose a Time in Opus|office follow-up required|keeping you out/);

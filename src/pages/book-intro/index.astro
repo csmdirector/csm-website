@@ -22,15 +22,15 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
 ---
 <Base
   title="Book an Intro Lesson | Cincinnati School of Music"
-  description="Start with a 30-minute private Intro Lesson for $42 at your preferred Cincinnati School of Music location."
+  description="Claim a free 30-minute private Intro Lesson at your preferred Cincinnati School of Music location."
   canonicalPath="/book-intro/"
   noindex={true}
 >
   <section class="booking-hero">
     <div class="booking-hero-inner">
-      <span class="section-label" id="heroLabel">Intro Lesson</span>
-      <h1 id="heroHeading">Start With an Intro Lesson</h1>
-      <p class="intro-price">A 30-minute private lesson for $42.</p>
+      <span class="section-label" id="heroLabel">Fall in Love With Music Special</span>
+      <h1 id="heroHeading">Start With a Free Intro Lesson</h1>
+      <p class="intro-price">A free 30-minute private intro lesson.</p>
       <p class="intro-copy">
         Tell us a little about the student and choose your preferred CSM location. On the next step,
         you’ll see available lesson times and finish booking.
@@ -147,8 +147,8 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
         </fieldset>
 
         <div class="form-error" id="formError" role="alert" aria-live="polite"></div>
-        <button class="btn-a submit-button" id="submitButton" type="submit">See Intro Times</button>
-        <p class="submit-help">Your intro lesson is $42. You’ll choose a time and enter payment on the next step.</p>
+        <button class="btn-a submit-button" id="submitButton" type="submit">See Free Intro Times</button>
+        <p class="submit-help">Your intro lesson is free. You’ll choose a time on the next step.</p>
 
         <div class="help-line">
           <span>Would you rather talk with us?</span>
@@ -256,8 +256,8 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
       function syncServiceCopy(){
         var service = selectedService();
         var name = service ? service.name : '';
-        document.getElementById('heroLabel').textContent = service ? service.introName : 'Intro Lesson';
-        document.getElementById('heroHeading').textContent = service ? 'Start With a ' + service.introName : 'Start With an Intro Lesson';
+        document.getElementById('heroLabel').textContent = 'Fall in Love With Music Special';
+        document.getElementById('heroHeading').textContent = service ? 'Start With a Free ' + service.introName : 'Start With a Free Intro Lesson';
         document.getElementById('locationLegend').textContent = 'Where would you like to take ' + (name ? name.toLowerCase() + ' ' : '') + 'lessons?';
         if(service){
           age.min = String(service.ageMin);
@@ -277,7 +277,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
         var service = selectedService();
         submitButton.textContent = isExistingFamily()
           ? 'Get Help Booking'
-          : 'See ' + (service ? service.name + ' ' : '') + 'Intro Times';
+          : 'See Free ' + (service ? service.name + ' ' : '') + 'Intro Times';
       }
       function validate(){
         errorBox.textContent = '';

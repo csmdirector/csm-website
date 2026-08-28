@@ -40,7 +40,9 @@ export const INTRO_SERVICES = Object.freeze([
     locationSpecificPublicPages: true,
     ageMin: 2,
     ageMax: 99,
-    priceCents: 4200,
+    priceCents: 0,
+    paymentRequired: false,
+    acceptedPaidPriceCents: [4200],
     currency: 'usd',
     durationMinutes: 30
   },
@@ -55,7 +57,9 @@ export const INTRO_SERVICES = Object.freeze([
     locationSpecificPublicPages: true,
     ageMin: 3,
     ageMax: 5,
-    priceCents: 4200,
+    priceCents: 0,
+    paymentRequired: false,
+    acceptedPaidPriceCents: [4200],
     currency: 'usd',
     durationMinutes: 30
   },
@@ -70,7 +74,9 @@ export const INTRO_SERVICES = Object.freeze([
     locationSpecificPublicPages: false,
     ageMin: 5,
     ageMax: 99,
-    priceCents: 4200,
+    priceCents: 0,
+    paymentRequired: false,
+    acceptedPaidPriceCents: [4200],
     currency: 'usd',
     durationMinutes: 30
   },
@@ -85,7 +91,9 @@ export const INTRO_SERVICES = Object.freeze([
     locationSpecificPublicPages: false,
     ageMin: 2,
     ageMax: 99,
-    priceCents: 4200,
+    priceCents: 0,
+    paymentRequired: false,
+    acceptedPaidPriceCents: [4200],
     currency: 'usd',
     durationMinutes: 30
   },
@@ -100,7 +108,9 @@ export const INTRO_SERVICES = Object.freeze([
     locationSpecificPublicPages: false,
     ageMin: 2,
     ageMax: 99,
-    priceCents: 4200,
+    priceCents: 0,
+    paymentRequired: false,
+    acceptedPaidPriceCents: [4200],
     currency: 'usd',
     durationMinutes: 30
   },
@@ -115,7 +125,9 @@ export const INTRO_SERVICES = Object.freeze([
     locationSpecificPublicPages: false,
     ageMin: 2,
     ageMax: 99,
-    priceCents: 4200,
+    priceCents: 0,
+    paymentRequired: false,
+    acceptedPaidPriceCents: [4200],
     currency: 'usd',
     durationMinutes: 30
   }

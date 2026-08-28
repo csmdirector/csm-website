@@ -10,15 +10,15 @@ const locationOptions = locationOrder
 ---
 <Base
   title="Book a Piano Intro Lesson | Cincinnati School of Music"
-  description="Start with a 30-minute private piano Intro Lesson for $42 at your preferred Cincinnati School of Music location."
+  description="Claim a free 30-minute private piano Intro Lesson at your preferred Cincinnati School of Music location."
   canonicalPath="/book-piano-intro/"
   noindex={true}
 >
   <section class="booking-hero">
     <div class="booking-hero-inner">
-      <span class="section-label">Piano Intro Lesson</span>
-      <h1>Start With a Piano Intro Lesson</h1>
-      <p class="intro-price">A 30-minute private piano lesson for $42.</p>
+      <span class="section-label">Fall in Love With Music Special</span>
+      <h1>Start With a Free Piano Intro Lesson</h1>
+      <p class="intro-price">A free 30-minute private piano intro lesson.</p>
       <p class="intro-copy">
         Tell us a little about the student and choose your preferred CSM location. On the next step,
         you’ll see available lesson times and finish booking.
@@ -122,8 +122,8 @@ const locationOptions = locationOrder
         </fieldset>
 
         <div class="form-error" id="formError" role="alert" aria-live="polite"></div>
-        <button class="btn-a submit-button" id="submitButton" type="submit">See Piano Intro Times</button>
-        <p class="submit-help">Your intro lesson is $42. You’ll choose a time and enter payment on the next step.</p>
+        <button class="btn-a submit-button" id="submitButton" type="submit">See Free Piano Intro Times</button>
+        <p class="submit-help">Your intro lesson is free. You’ll choose a time on the next step.</p>
 
         <div class="help-line">
           <span>Would you rather talk with us?</span>
@@ -257,7 +257,7 @@ const locationOptions = locationOrder
       }
 
       function updateButtonLabel(){
-        submitButton.textContent = isExistingFamily() ? 'Get Help Booking' : 'See Piano Intro Times';
+        submitButton.textContent = isExistingFamily() ? 'Get Help Booking' : 'See Free Piano Intro Times';
       }
 
       function validate(){

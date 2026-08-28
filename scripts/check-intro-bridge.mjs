@@ -19,6 +19,7 @@ import {
 } from '../netlify/functions/_shared/intro-bridge.js';
 import {
   chooseReconciliationMatch,
+  extractOpusEvidence,
   extractStripeEvidence
 } from '../netlify/functions/_shared/intro-reconciliation.js';
 import { testables as submitTestables } from '../netlify/functions/intro-bridge-submit.js';
@@ -163,6 +164,9 @@ assert.equal(notification.service_slug, 'music-discovery');
 assert.equal(notification.instrument, 'Music Discovery');
 
 for (const service of INTRO_SERVICES) {
+  assert.equal(service.priceCents, 0);
+  assert.equal(service.paymentRequired, false);
+  assert.deepEqual(service.acceptedPaidPriceCents, [4200]);
   const evidence = extractStripeEvidence({
     id: `evt_${service.slug}`,
     type: 'payment_intent.succeeded',
@@ -170,8 +174,8 @@ for (const service of INTRO_SERVICES) {
     data: { object: {
       id: `pi_${service.slug}`,
       object: 'payment_intent',
-      amount: service.priceCents,
-      amount_received: service.priceCents,
+      amount: 4200,
+      amount_received: 4200,
       currency: service.currency,
       customer: `cus_${service.slug}`,
       description: `${service.opusServiceName} - Single Visit - Intro`,
@@ -186,6 +190,23 @@ for (const service of INTRO_SERVICES) {
   assert.equal(evidence.serviceSlug, service.slug);
   assert.equal(evidence.supportedIntro, true);
   assert.equal(evidence.verifiedPaidIntro, true);
+
+  const freeEvidence = extractOpusEvidence({
+    trigger: 'subscription_create_trigger',
+    subscription: {
+      id: `sub_free_${service.slug}`,
+      client_id: `client_free_${service.slug}`,
+      status: 'active',
+      amount_total: 0,
+      currency: 'USD',
+      service: { id: service.opusServiceId, name: service.opusServiceName },
+      booking: { id: `booking_free_${service.slug}` }
+    }
+  });
+  assert.equal(freeEvidence.serviceSlug, service.slug);
+  assert.equal(freeEvidence.verifiedPaidIntro, false);
+  assert.equal(freeEvidence.verifiedBookedFree, true);
+  assert.equal(freeEvidence.paymentStatus, 'not_required');
 }
 
 const serviceConflict = chooseReconciliationMatch({
@@ -219,10 +240,22 @@ const page = readFileSync(new URL('../src/pages/book-intro/index.astro', import.
 assert.match(page, /name="service_slug"/);
 assert.match(page, /\/api\/intro-bridge-submit/);
 assert.match(page, /No ongoing commitment\. You’re just booking the intro lesson\./);
+assert.match(page, /Fall in Love With Music Special/);
+assert.match(page, /A free 30-minute private intro lesson\./);
+assert.doesNotMatch(page, /\$42|enter payment/);
 assert.doesNotMatch(page, /dataLayer\.push|purchase|generate_lead/);
 const thankYou = readFileSync(new URL('../src/pages/book-intro/thank-you.astro', import.meta.url), 'utf8');
 assert.match(thankYou, /without creating a duplicate account/);
 assert.match(thankYou, /location\.bookingUrl/);
+assert.match(thankYou, /Your intro lesson is free/);
+assert.doesNotMatch(thankYou, /\$42|enter payment/);
+const pianoPage = readFileSync(new URL('../src/pages/book-piano-intro/index.astro', import.meta.url), 'utf8');
+assert.match(pianoPage, /Fall in Love With Music Special/);
+assert.match(pianoPage, /A free 30-minute private piano intro lesson\./);
+assert.doesNotMatch(pianoPage, /\$42|enter payment/);
+const pianoThankYou = readFileSync(new URL('../src/pages/book-piano-intro/thank-you.astro', import.meta.url), 'utf8');
+assert.match(pianoThankYou, /Your intro lesson is free/);
+assert.doesNotMatch(pianoThankYou, /\$42|enter payment/);
 const submitFunction = readFileSync(new URL('../netlify/functions/intro-bridge-submit.js', import.meta.url), 'utf8');
 assert.match(submitFunction, /ENABLE_INTRO_BRIDGE/);
 assert.doesNotMatch(submitFunction, /ENABLE_PIANO_PREREGISTRATION/);

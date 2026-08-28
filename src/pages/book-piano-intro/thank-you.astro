@@ -16,10 +16,10 @@ const bookingLocations = PIANO_BOOKING_LOCATIONS;
       <span class="section-label" id="confirmationLabel">Almost There</span>
       <h1 id="confirmationHeading">Great. Let’s find a time.</h1>
       <p class="lead" id="confirmationLead">We’ve saved your information. Choose an available piano intro time to finish booking.</p>
-      <p class="detail-copy" id="detailCopy">Your intro lesson is $42. You’ll enter payment when you choose a time.</p>
+      <p class="detail-copy" id="detailCopy">Your intro lesson is free. Choose a time to finish booking.</p>
 
       <a class="btn-a choose-time" id="chooseTimeLink" href="/book-piano-intro/" aria-disabled="true" hidden>
-        See Piano Intro Times
+        See Free Piano Intro Times
       </a>
 
       <div class="support-actions">
@@ -73,7 +73,7 @@ const bookingLocations = PIANO_BOOKING_LOCATIONS;
         var shortName = location.name.replace('CSM ', '');
         lead.textContent = 'We’ve saved your information. Choose an available piano intro time at ' + location.name + ' to finish booking.';
         link.href = location.bookingUrl;
-        link.textContent = 'See ' + shortName + ' Piano Times';
+        link.textContent = 'See Free ' + shortName + ' Piano Times';
         link.setAttribute('aria-disabled','false');
         link.hidden = false;
       } else {

@@ -30,6 +30,7 @@ const EVENT_TYPES = new Set([
   'invoice_update'
 ]);
 const STRIPE_EVENT_TYPES = new Set(['customer.updated', 'payment_intent.succeeded']);
+const MATCHED_STATUSES = new Set(['matched_paid', 'matched_booked_free']);
 
 let pool;
 
@@ -232,16 +233,25 @@ export function extractOpusEvidence(payload, headers = {}) {
   const phoneRaw = valueFor(pairs, ['parent1_primary_phone', 'parent1_phone', 'parent_phone', 'account_manager_phone', 'primary_phone', 'mobile_phone', 'phone']);
   const amountCents = findAmountCents(pairs);
   const currency = clean(valueFor(pairs, ['currency', 'currency_code']) || INTRO_CURRENCY, 10).toLowerCase();
-  const paidAt = safeDate(valueFor(pairs, ['paid_at', 'payment_completed_at', 'completed_at', 'created_at', 'createdAt']));
+  const paidAt = safeDate(valueFor(pairs, ['paid_at', 'payment_completed_at', 'completed_at']));
+  const eventAt = safeDate(valueFor(pairs, ['created_at', 'createdAt', 'updated_at', 'updatedAt']));
   const bookingStartAt = safeDate(valueFor(pairs, ['booking_start_at', 'appointment_start_at', 'start_at', 'startAt', 'scheduled_at']));
   const paymentStatus = explicitPaidSignal(pairs) ? 'paid' : 'unverified';
   const bookingStatus = bookedSignal(pairs, eventType, subscriptionId, bookingId) ? 'booked' : 'unverified';
   const matchedService = resolveIntroService(pairs, serviceId, serviceName);
   const supportedIntro = Boolean(matchedService);
   const pianoIntro = matchedService?.slug === 'piano';
-  const expectedAmount = amountCents === null || amountCents === matchedService?.priceCents;
+  const freeIntro = matchedService?.paymentRequired === false;
+  const acceptedPaidPriceCents = new Set(matchedService?.acceptedPaidPriceCents || []);
+  const expectedPaidAmount = amountCents === null || acceptedPaidPriceCents.has(amountCents);
+  const expectedFreeAmount = amountCents === null || amountCents === 0;
   const expectedCurrency = !currency || currency === matchedService?.currency;
-  const verifiedPaidIntro = EVENT_TYPES.has(eventType) && supportedIntro && paymentStatus === 'paid' && bookingStatus === 'booked' && expectedAmount && expectedCurrency;
+  const recognizedEvent = EVENT_TYPES.has(eventType);
+  const bookableOpusEvent = eventType.startsWith('subscription_') || eventType.startsWith('booking_');
+  const verifiedPaidIntro = recognizedEvent && supportedIntro && paymentStatus === 'paid' && bookingStatus === 'booked' && expectedPaidAmount && expectedCurrency;
+  const verifiedBookedFree = recognizedEvent && bookableOpusEvent && supportedIntro && freeIntro &&
+    bookingStatus === 'booked' && expectedFreeAmount && expectedCurrency &&
+    (paymentStatus !== 'paid' || amountCents === 0);
 
   return {
     eventType,
@@ -262,21 +272,27 @@ export function extractOpusEvidence(payload, headers = {}) {
     instrument: matchedService?.instrument || '',
     locationName,
     bookingStartAt,
+    eventAt,
     paidAt,
     amountCents,
     currency,
     bookingStatus,
-    paymentStatus,
+    paymentStatus: verifiedBookedFree ? 'not_required' : paymentStatus,
     supportedIntro,
     pianoIntro,
     verifiedPaidIntro,
+    verifiedBookedFree,
+    verifiedIntroCompletion: verifiedPaidIntro || verifiedBookedFree,
     verificationChecks: {
-      recognized_event_type: EVENT_TYPES.has(eventType),
+      recognized_event_type: recognizedEvent,
       supported_intro: supportedIntro,
       piano_intro: pianoIntro,
+      free_intro: freeIntro,
       explicit_paid: paymentStatus === 'paid',
       booked: bookingStatus === 'booked',
-      expected_amount: expectedAmount,
+      bookable_opus_event: bookableOpusEvent,
+      expected_paid_amount: expectedPaidAmount,
+      expected_free_amount: expectedFreeAmount,
       expected_currency: expectedCurrency
     }
   };
@@ -304,7 +320,8 @@ export function extractStripeEvidence(event) {
   const matchedService = introServiceFromText(serviceName);
   const supportedIntro = Boolean(matchedService);
   const pianoIntro = matchedService?.slug === 'piano';
-  const expectedAmount = Number(amountCents) === matchedService?.priceCents;
+  const acceptedPaidPriceCents = new Set(matchedService?.acceptedPaidPriceCents || []);
+  const expectedAmount = acceptedPaidPriceCents.has(Number(amountCents));
   const expectedCurrency = currency === matchedService?.currency;
   const businessIsCsm = clean(object.metadata?.business, 120).toLowerCase() === 'cincinnatischoolofmusic';
   const verifiedPaidIntro = eventType === 'payment_intent.succeeded' &&
@@ -344,6 +361,8 @@ export function extractStripeEvidence(event) {
     supportedIntro,
     pianoIntro,
     verifiedPaidIntro,
+    verifiedBookedFree: false,
+    verifiedIntroCompletion: verifiedPaidIntro,
     verificationChecks: {
       recognized_event_type: STRIPE_EVENT_TYPES.has(eventType),
       csm_business_metadata: businessIsCsm,
@@ -547,7 +566,8 @@ export function createPostgresReconciliationRepository() {
          WHERE id <> $3
            AND matched_csm_lead_id IS NULL
            AND reconciliation_status IN ('received', 'manual_review', 'verified_no_match')
-           AND evidence->>'verifiedPaidIntro' = 'true'
+           AND (evidence->>'verifiedPaidIntro' = 'true'
+             OR evidence->>'verifiedBookedFree' = 'true')
            AND (($1 <> '' AND evidence->>'stripeCustomerId' = $1)
              OR ($2 <> '' AND opus_client_id = $2))
          ORDER BY received_at ASC
@@ -561,7 +581,8 @@ export function createPostgresReconciliationRepository() {
       const email = emailNorm
         ? await db.query(
           `SELECT * FROM piano_preregistrations
-           WHERE parent_email_norm = $1 AND reconciliation_status <> 'matched_paid'
+           WHERE parent_email_norm = $1
+             AND reconciliation_status NOT IN ('matched_paid', 'matched_booked_free')
            ORDER BY submitted_at DESC`,
           [emailNorm]
         )
@@ -569,7 +590,8 @@ export function createPostgresReconciliationRepository() {
       const phone = phoneNorm
         ? await db.query(
           `SELECT * FROM piano_preregistrations
-           WHERE parent_phone_norm = $1 AND reconciliation_status <> 'matched_paid'
+           WHERE parent_phone_norm = $1
+             AND reconciliation_status NOT IN ('matched_paid', 'matched_booked_free')
            ORDER BY submitted_at DESC`,
           [phoneNorm]
         )
@@ -581,7 +603,7 @@ export function createPostgresReconciliationRepository() {
       if (!evidence.opusSubscriptionId && !evidence.opusBookingId) return null;
       const found = await db.query(
         `SELECT * FROM piano_preregistrations
-         WHERE reconciliation_status = 'matched_paid'
+         WHERE reconciliation_status IN ('matched_paid', 'matched_booked_free')
            AND (($1 <> '' AND matched_opus_subscription_id = $1)
              OR ($2 <> '' AND matched_opus_booking_id = $2))
          LIMIT 1`,
@@ -600,7 +622,7 @@ export function createPostgresReconciliationRepository() {
              office_follow_up_required = true,
              updated_at = now()
          WHERE csm_lead_id = ANY($1::text[])
-           AND reconciliation_status <> 'matched_paid'
+           AND reconciliation_status NOT IN ('matched_paid', 'matched_booked_free')
          RETURNING csm_lead_id`,
         [leadIds, reason]
       );
@@ -608,6 +630,13 @@ export function createPostgresReconciliationRepository() {
     },
 
     async markMatched(leadId, eventId, evidence, method) {
+      const matchedStatus = evidence.verifiedBookedFree ? 'matched_booked_free' : 'matched_paid';
+      const paymentStatus = evidence.verifiedBookedFree ? 'not_required' : 'paid';
+      const matchedReason = evidence.verifiedBookedFree
+        ? 'verified_free_opus_intro_booking'
+        : evidence.serviceSlug === 'piano'
+          ? 'verified_paid_opus_piano_intro'
+          : 'verified_paid_opus_intro';
       const client = await db.connect();
       try {
         await client.query('BEGIN');
@@ -618,13 +647,13 @@ export function createPostgresReconciliationRepository() {
         const lead = locked.rows[0];
         if (!lead) throw new Error('The matched CSM lead no longer exists.');
         if (lead.existing_family) throw new Error('Existing-family leads require office review.');
-        if (lead.reconciliation_status === 'matched_paid') {
+        if (MATCHED_STATUSES.has(lead.reconciliation_status)) {
           await client.query('COMMIT');
           return lead;
         }
         const updated = await client.query(
           `UPDATE piano_preregistrations
-           SET reconciliation_status = 'matched_paid',
+           SET reconciliation_status = $16,
                reconciliation_match_method = $2,
                reconciliation_reason = $15,
                reconciliation_manual_review_required = false,
@@ -637,9 +666,9 @@ export function createPostgresReconciliationRepository() {
                opus_service_name = $8,
                opus_location_name = $9,
                opus_booking_status = 'booked',
-               opus_payment_status = 'paid',
+               opus_payment_status = $17,
                opus_booking_start_at = $10,
-               opus_paid_at = COALESCE($11, now()),
+               opus_paid_at = CASE WHEN $17 = 'paid' THEN COALESCE($11, now()) ELSE NULL END,
                opus_amount_cents = $12,
                opus_currency = $13,
                reconciliation_evidence = $14::jsonb,
@@ -658,10 +687,12 @@ export function createPostgresReconciliationRepository() {
             evidence.locationName || null,
             evidence.bookingStartAt,
             evidence.paidAt,
-            evidence.amountCents,
+            evidence.amountCents ?? (evidence.verifiedBookedFree ? 0 : null),
             evidence.currency || null,
             JSON.stringify(evidence),
-            evidence.serviceSlug === 'piano' ? 'verified_paid_opus_piano_intro' : 'verified_paid_opus_intro'
+            matchedReason,
+            matchedStatus,
+            paymentStatus
           ]
         );
         await client.query('COMMIT');
@@ -757,11 +788,11 @@ export function createIntroReconciler({ repository, now = () => new Date() }) {
       return mergeIdentity(withStripeIdentity, opusIdentity);
     };
 
-    const processVerifiedPaidEvent = async (targetEventId, paidEvidence) => {
-      const alreadyMatched = await repository.alreadyMatched(paidEvidence);
+    const processVerifiedCompletionEvent = async (targetEventId, completionEvidence) => {
+      const alreadyMatched = await repository.alreadyMatched(completionEvidence);
       if (alreadyMatched) {
         await repository.updateEvent(targetEventId, {
-          evidence: paidEvidence,
+          evidence: completionEvidence,
           status: 'already_reconciled',
           reason: 'opus_booking_or_subscription_already_attached',
           matchMethod: alreadyMatched.reconciliation_match_method,
@@ -775,21 +806,24 @@ export function createIntroReconciler({ repository, now = () => new Date() }) {
         };
       }
 
-      const candidates = await repository.candidates(paidEvidence.parentEmailNorm, paidEvidence.parentPhoneNorm);
+      const candidates = await repository.candidates(completionEvidence.parentEmailNorm, completionEvidence.parentPhoneNorm);
       const decision = chooseReconciliationMatch({
-        evidence: paidEvidence,
+        evidence: completionEvidence,
         ...candidates,
-        eventAt: paidEvidence.paidAt || now().toISOString()
+        eventAt: completionEvidence.paidAt || completionEvidence.eventAt || now().toISOString()
       });
 
       if (decision.action === 'match') {
-        const lead = await repository.markMatched(decision.lead.csm_lead_id, targetEventId, paidEvidence, decision.method);
-        const matchedReason = paidEvidence.serviceSlug === 'piano'
-          ? 'verified_paid_opus_piano_intro'
-          : 'verified_paid_opus_intro';
+        const lead = await repository.markMatched(decision.lead.csm_lead_id, targetEventId, completionEvidence, decision.method);
+        const matchedStatus = completionEvidence.verifiedBookedFree ? 'matched_booked_free' : 'matched_paid';
+        const matchedReason = completionEvidence.verifiedBookedFree
+          ? 'verified_free_opus_intro_booking'
+          : completionEvidence.serviceSlug === 'piano'
+            ? 'verified_paid_opus_piano_intro'
+            : 'verified_paid_opus_intro';
         await repository.updateEvent(targetEventId, {
-          evidence: paidEvidence,
-          status: 'matched_paid',
+          evidence: completionEvidence,
+          status: matchedStatus,
           reason: matchedReason,
           matchMethod: decision.method,
           leadId: lead.csm_lead_id
@@ -797,7 +831,7 @@ export function createIntroReconciler({ repository, now = () => new Date() }) {
         return {
           ok: true,
           event_id: targetEventId,
-          reconciliation_status: 'matched_paid',
+          reconciliation_status: matchedStatus,
           match_method: decision.method,
           matched_csm_lead_id: lead.csm_lead_id
         };
@@ -806,7 +840,7 @@ export function createIntroReconciler({ repository, now = () => new Date() }) {
       if (decision.action === 'manual_review') {
         await repository.markManual(decision.candidateLeadIds || [], decision.reason);
         await repository.updateEvent(targetEventId, {
-          evidence: paidEvidence,
+          evidence: completionEvidence,
           status: 'manual_review',
           reason: decision.reason
         });
@@ -820,7 +854,7 @@ export function createIntroReconciler({ repository, now = () => new Date() }) {
       }
 
       await repository.updateEvent(targetEventId, {
-        evidence: paidEvidence,
+        evidence: completionEvidence,
         status: 'verified_no_match',
         reason: decision.reason
       });
@@ -835,8 +869,9 @@ export function createIntroReconciler({ repository, now = () => new Date() }) {
     try {
       const storedEvidence = created.created ? initialEvidence : (created.record.evidence || initialEvidence);
       const evidence = await hydrateIdentity(storedEvidence, eventId);
+      const verifiedCompletion = Boolean(evidence.verifiedPaidIntro || evidence.verifiedBookedFree);
 
-      if (!created.created && (!evidence.verifiedPaidIntro || ['matched_paid', 'already_reconciled'].includes(created.record.reconciliation_status))) {
+      if (!created.created && (!verifiedCompletion || MATCHED_STATUSES.has(created.record.reconciliation_status) || created.record.reconciliation_status === 'already_reconciled')) {
         return {
           ok: true,
           duplicate: true,
@@ -846,12 +881,12 @@ export function createIntroReconciler({ repository, now = () => new Date() }) {
         };
       }
 
-      if (!evidence.verifiedPaidIntro) {
+      if (!verifiedCompletion) {
         const identityObserved = Boolean(evidence.parentEmailNorm || evidence.parentPhoneNorm);
         const status = identityObserved ? 'identity_observed' : 'ignored_unverified';
         const reason = identityObserved
-          ? 'identity_saved_waiting_for_verified_paid_intro'
-          : 'event_did_not_prove_paid_intro';
+          ? 'identity_saved_waiting_for_verified_intro_completion'
+          : 'event_did_not_prove_intro_completion';
         await repository.updateEvent(eventId, { evidence, status, reason });
         const recovered = [];
         if (identityObserved && repository.reprocessablePaidEvents) {
@@ -861,20 +896,21 @@ export function createIntroReconciler({ repository, now = () => new Date() }) {
               mergeIdentity(pending.evidence || {}, [evidence]),
               pending.id
             );
-            recovered.push(await processVerifiedPaidEvent(pending.id, pendingEvidence));
+            recovered.push(await processVerifiedCompletionEvent(pending.id, pendingEvidence));
           }
         }
-        const recoveredMatch = recovered.find((item) => item.reconciliation_status === 'matched_paid');
+        const recoveredMatch = recovered.find((item) => MATCHED_STATUSES.has(item.reconciliation_status));
         return {
           ok: true,
           event_id: eventId,
           reconciliation_status: status,
           reason,
+          recovered_completion_events: recovered.length,
           recovered_paid_events: recovered.length,
           recovered_matched_csm_lead_id: recoveredMatch?.matched_csm_lead_id || null
         };
       }
-      const result = await processVerifiedPaidEvent(eventId, evidence);
+      const result = await processVerifiedCompletionEvent(eventId, evidence);
       return created.created ? result : { ...result, duplicate: true, reprocessed: true };
     } catch (error) {
       await repository.updateEvent(eventId, {
