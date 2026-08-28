@@ -77,7 +77,7 @@ assert.match(note, /Instrument: Piano/);
 assert.match(note, /Preferred location: CSM Mason/);
 assert.match(note, /Preferred time window: Weekday afternoons/);
 assert.match(note, /CSM lead ID: CSM-PRE-20260810-TEST0001/);
-assert.match(note, /normal Opus booking\/payment flow/);
+assert.match(note, /normal Opus booking flow/);
 assert.match(note, /did not pre-create an Opus parent or student/);
 
 class MemoryRepository {
@@ -210,10 +210,10 @@ assert.match(notification.csm_context, /did not pre-create an Opus parent or stu
 const pageSource = readFileSync(new URL('../src/pages/book-piano-intro/index.astro', import.meta.url), 'utf8');
 assert.doesNotMatch(pageSource, /dataLayer\.push/);
 assert.doesNotMatch(pageSource, /google_ads_booking|purchase|generate_lead/i);
-assert.match(pageSource, /Start With a Piano Intro Lesson/);
-assert.match(pageSource, /A 30-minute private piano lesson for \$42\./);
+assert.match(pageSource, /Start With a Free Piano Intro Lesson/);
+assert.match(pageSource, /Your 30-minute private piano Intro Lesson is free\./);
 assert.match(pageSource, /See Piano Intro Times/);
-assert.match(pageSource, /No ongoing commitment\. You’re just booking the intro lesson\./);
+assert.match(pageSource, /No ongoing commitment\. You’re just booking the Intro Lesson\./);
 assert.match(pageSource, /<span class="visually-hidden">General availability<\/span>/);
 assert.doesNotMatch(pageSource, /Pre-Registration<\/span>|Save &amp; Continue to Times|Choose an Opus time|does not pre-create/);
 
@@ -224,6 +224,7 @@ assert.match(thankYouSource, /without creating a duplicate account/);
 assert.match(thankYouSource, /See ' \+ shortName \+ ' Piano Times/);
 assert.match(thankYouSource, /else if\(location\)/);
 assert.match(thankYouSource, /\.choose-time\[hidden\]\{display:none\}/);
+assert.match(thankYouSource, /Your Free Intro Lesson has no lesson charge\./);
 assert.doesNotMatch(thankYouSource, /Pre-Registration Saved|Choose a Time in Opus|office follow-up required|keeping you out/);
 
 const submitSource = readFileSync(new URL('../netlify/functions/piano-preregistration-submit.js', import.meta.url), 'utf8');

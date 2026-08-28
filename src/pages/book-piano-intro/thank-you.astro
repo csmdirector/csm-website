@@ -1,8 +1,10 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { PIANO_BOOKING_LOCATIONS } from '../../../shared/piano-booking-links.js';
+import { NEW_STUDENT_OFFER } from '../../../shared/new-student-offer.js';
 
 const bookingLocations = PIANO_BOOKING_LOCATIONS;
+const welcomeRateSummary = `${NEW_STUDENT_OFFER.welcomeRateDescription} ${NEW_STUDENT_OFFER.registrationDescription}`;
 ---
 <Base
   title="Choose Your Piano Intro Time | Cincinnati School of Music"
@@ -16,7 +18,8 @@ const bookingLocations = PIANO_BOOKING_LOCATIONS;
       <span class="section-label" id="confirmationLabel">Almost There</span>
       <h1 id="confirmationHeading">Great. Let’s find a time.</h1>
       <p class="lead" id="confirmationLead">We’ve saved your information. Choose an available piano intro time to finish booking.</p>
-      <p class="detail-copy" id="detailCopy">Your intro lesson is $42. You’ll enter payment when you choose a time.</p>
+      <p class="detail-copy" id="detailCopy">Your Free Intro Lesson has no lesson charge. No Intro Lesson payment is due when you choose a time.</p>
+      <p class="offer-copy" id="offerCopy">{welcomeRateSummary}</p>
 
       <a class="btn-a choose-time" id="chooseTimeLink" href="/book-piano-intro/" aria-disabled="true" hidden>
         See Piano Intro Times
@@ -39,6 +42,7 @@ const bookingLocations = PIANO_BOOKING_LOCATIONS;
     .confirmation-card h1{max-width:610px;margin:8px 0 18px}
     .lead{max-width:640px;margin:0;font-size:1rem;line-height:1.75;color:var(--mid)}
     .detail-copy{max-width:640px;margin:14px 0 0;font-size:.82rem;line-height:1.65;color:#777570}
+    .offer-copy{max-width:640px;margin:14px 0 0;font-size:.82rem;line-height:1.65;color:#777570}
     .choose-time{border:0;cursor:pointer;width:100%;text-align:center;margin-top:32px}
     .choose-time[hidden]{display:none}
     .choose-time[aria-disabled="true"]{opacity:.5;pointer-events:none}
@@ -62,13 +66,15 @@ const bookingLocations = PIANO_BOOKING_LOCATIONS;
       var heading = document.getElementById('confirmationHeading');
       var lead = document.getElementById('confirmationLead');
       var detail = document.getElementById('detailCopy');
+      var offer = document.getElementById('offerCopy');
       var existingFamily = params.get('existing_family') === '1';
 
       if(existingFamily){
         label.textContent = 'Request Received';
         heading.textContent = 'We’ll help you from here.';
-        lead.textContent = 'Since you already have a CSM account, our office will help arrange the intro lesson without creating a duplicate account.';
+        lead.textContent = 'Since you already have a CSM account, our office will help arrange the Intro Lesson without creating a duplicate account.';
         detail.textContent = 'We’ve received your information and will follow up with you.';
+        offer.hidden = true;
       } else if(location){
         var shortName = location.name.replace('CSM ', '');
         lead.textContent = 'We’ve saved your information. Choose an available piano intro time at ' + location.name + ' to finish booking.';
@@ -81,6 +87,7 @@ const bookingLocations = PIANO_BOOKING_LOCATIONS;
         heading.textContent = 'Let’s choose your location again.';
         lead.textContent = 'Choose your preferred CSM location so we can show the right piano intro times.';
         detail.textContent = '';
+        offer.hidden = true;
         link.href = '/book-piano-intro/';
         link.textContent = 'Choose a Location';
         link.setAttribute('aria-disabled','false');

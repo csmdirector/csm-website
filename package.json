@@ -5,14 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
-    "build": "node scripts/check-admin-hiring-consistency.mjs && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/generate-sitemap.mjs && node scripts/preserve-static-site.mjs",
+    "build": "node scripts/check-admin-hiring-consistency.mjs && node scripts/check-new-student-offer.mjs && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/generate-sitemap.mjs && node scripts/preserve-static-site.mjs && node scripts/check-new-student-offer.mjs --dist",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "check:preserved": "node scripts/check-preserved-output.mjs",
     "check:lead-pipeline": "node scripts/check-lead-pipeline.mjs",
     "check:piano-preregistration": "node scripts/check-piano-preregistration.mjs",
     "check:piano-reconciliation": "node scripts/check-piano-intro-reconciliation.mjs",
     "check:piano-csm-payment": "node scripts/check-piano-csm-payment-experiment.mjs",
-    "check:admin-hiring": "node scripts/check-admin-hiring-consistency.mjs"
+    "check:admin-hiring": "node scripts/check-admin-hiring-consistency.mjs",
+    "check:new-student-offer": "node scripts/check-new-student-offer.mjs && node scripts/check-new-student-offer.mjs --dist"
   },
   "dependencies": {
     "@netlify/database": "^1.1.0",
