@@ -118,8 +118,10 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
               ))}
             </div>
           </fieldset>
-          <button class="text-button back-alone" type="button" data-back="2">Back</button>
-          <p class="selection-hint">Your selection will take you to the next question.</p>
+          <div class="step-actions">
+            <button class="text-button" type="button" data-back="2">Back</button>
+            <button class="btn-a next-button" id="locationNext" type="button" disabled>Continue</button>
+          </div>
         </div>
 
         <div class="step-panel" data-step="4" hidden>
@@ -186,7 +188,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
         <div class="step-panel" data-step="5" hidden>
           <div class="saved-banner">
             <span aria-hidden="true">✓</span>
-            <p><strong>Your information is saved.</strong> <span id="savedLeadReference"></span></p>
+            <p><strong>Thanks—we’ve got your information.</strong></p>
           </div>
 
           <div id="newFamilyDecision">
@@ -291,7 +293,6 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
     .next-button{border:0;cursor:pointer;min-width:210px;font-family:inherit;font-size:.74rem}
     .next-button:disabled,.decision-button:disabled{opacity:.6;cursor:wait}
     .text-button{border:0;background:transparent;color:var(--slate);padding:10px 0;font:inherit;font-size:.72rem;font-weight:600;letter-spacing:.075em;text-transform:uppercase;cursor:pointer;text-decoration:underline;text-decoration-color:#c8c3bd;text-underline-offset:4px}
-    .back-alone{display:block;margin-top:26px}
     .form-error{min-height:24px;color:var(--accent-dk);font-size:.8rem;margin:19px 0 0}
     .submit-help{text-align:right;font-size:.76rem;line-height:1.55;margin:10px 0 0;color:#66635f}
     .saved-banner{display:flex;align-items:center;gap:13px;padding:14px 16px;margin-bottom:31px;background:#f3f7f4;border:1px solid #d7e5db;color:#31533a}
@@ -331,6 +332,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
       var errorBox = document.getElementById('formError');
       var decisionError = document.getElementById('decisionError');
       var saveButton = document.getElementById('saveButton');
+      var locationNext = document.getElementById('locationNext');
       var onlineButton = document.getElementById('onlineBookingButton');
       var officeButton = document.getElementById('officeHelpButton');
       var age = document.getElementById('studentAge');
@@ -505,12 +507,13 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
       if(presetService) presetService.checked = true;
       if(presetLocation) presetLocation.checked = true;
       if(presetService) syncServiceCopy();
+      locationNext.disabled = !selectedLocation();
 
       serviceChoices.forEach(function(choice){
         choice.addEventListener('change', function(){ syncServiceCopy(); scheduleStep(2); });
       });
       locationChoices.forEach(function(choice){
-        choice.addEventListener('change', function(){ scheduleStep(4); });
+        choice.addEventListener('change', function(){ locationNext.disabled = !selectedLocation(); });
       });
       form.querySelectorAll('[data-back]').forEach(function(button){
         button.addEventListener('click', function(){ showStep(button.dataset.back); });
@@ -524,7 +527,11 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
       });
       document.getElementById('ageNext').addEventListener('click', function(){
         if(!validateAge()) return;
-        showStep(presetLocation && presetLocation.checked ? 4 : 3);
+        showStep(3);
+      });
+      locationNext.addEventListener('click', function(){
+        if(!selectedLocation()) return;
+        showStep(4);
       });
 
       onlineButton.addEventListener('click', async function(){
@@ -561,7 +568,6 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
           var result = await response.json().catch(function(){ return {}; });
           if(!response.ok || !result.ok || !result.stored) throw new Error(result.error || 'We couldn’t save your information.');
           savedResult = result;
-          document.getElementById('savedLeadReference').textContent = 'Reference ' + result.lead_id + '.';
           showStep(5);
           if(result.existing_family) requestOfficeHelp(true);
         } catch(error){
