@@ -61,6 +61,31 @@ await assertSameFile('_redirects');
 await assertSameFile('robots.txt');
 await assertSameFile('sitemap.xml');
 
+const resourceOutputRoot = path.join(dist, 'parent-resources');
+const resourceHtmlFiles = (await listFiles(resourceOutputRoot))
+  .filter((file) => file.endsWith('index.html'));
+
+for (const file of resourceHtmlFiles) {
+  const route = file === 'index.html'
+    ? '/parent-resources/'
+    : `/parent-resources/${path.dirname(file)}/`;
+  const expectedCanonical = `https://cincinnatischoolofmusic.com${route}`;
+  const html = await readFile(path.join(resourceOutputRoot, file), 'utf8');
+
+  if (!html.includes(`<link rel="canonical" href="${expectedCanonical}">`)) {
+    throw new Error(`${route} does not declare its direct, trailing-slash URL as canonical.`);
+  }
+}
+
+const sitemap = await readFile(path.join(dist, 'sitemap.xml'), 'utf8');
+const redirectingResourceUrls = [...sitemap.matchAll(/<loc>(https:\/\/cincinnatischoolofmusic\.com\/parent-resources[^<]*)<\/loc>/g)]
+  .map((match) => match[1])
+  .filter((url) => !url.endsWith('/'));
+
+if (redirectingResourceUrls.length > 0) {
+  throw new Error(`Resource sitemap URLs must resolve directly instead of redirecting: ${redirectingResourceUrls.join(', ')}`);
+}
+
 const imageFiles = await listFiles(path.join(root, 'images'), 'images');
 for (const file of imageFiles) {
   await assertSameFile(file);
