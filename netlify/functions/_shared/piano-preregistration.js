@@ -13,6 +13,10 @@ export const PIANO_PREREGISTRATION_FORM = 'piano-preregistration';
 export const INTRO_BRIDGE_FORM = 'intro-bridge';
 export const DUPLICATE_WINDOW_MINUTES = 30;
 export const READY_BUYER_HANDOFF_MODE = 'vanilla_opus_checkout';
+export const HANDOFF_CHOICES = Object.freeze({
+  ONLINE_BOOKING: 'online_booking',
+  OFFICE_HELP: 'office_help'
+});
 
 const ATTRIBUTION_KEYS = [
   'utm_source',
@@ -271,6 +275,7 @@ function publicResult(record, extra = {}) {
     office_follow_up_required: Boolean(record.office_follow_up_required),
     duplicate_detected: Boolean(record.duplicate_of_lead_id),
     existing_family: Boolean(record.existing_family),
+    handoff_choice: record.handoff_choice || '',
     ...extra
   };
 }
@@ -407,11 +412,61 @@ export function createPostgresPreregistrationRepository() {
         [leadId, result.status, JSON.stringify(payload), result.error || null, result.status !== 'sent']
       );
       return updated.rows[0];
+    },
+
+    async recordHandoffChoice(leadId, clientSubmissionId, choice) {
+      if (!Object.values(HANDOFF_CHOICES).includes(choice)) {
+        throw new Error('Invalid handoff choice.');
+      }
+      const existing = await db.query(
+        `SELECT *
+         FROM piano_preregistrations
+         WHERE csm_lead_id = $1 AND client_submission_id = $2`,
+        [leadId, clientSubmissionId]
+      );
+      const current = existing.rows[0];
+      if (!current) return { record: null, changed: false, replay: false };
+      if (current.existing_family && choice === HANDOFF_CHOICES.ONLINE_BOOKING) {
+        return { record: current, changed: false, replay: true, blockedExistingFamily: true };
+      }
+      if (current.handoff_choice === choice) {
+        return { record: current, changed: false, replay: true };
+      }
+
+      const officeHelp = choice === HANDOFF_CHOICES.OFFICE_HELP;
+      const updated = await db.query(
+        `UPDATE piano_preregistrations
+         SET handoff_choice = $3,
+             handoff_choice_selected_at = now(),
+             office_follow_up_required = office_follow_up_required OR $4,
+             reconciliation_status = CASE
+               WHEN $4 AND existing_family THEN 'existing_family_office'
+               WHEN $4 THEN 'office_help_requested'
+               ELSE reconciliation_status
+             END,
+             reconciliation_reason = CASE
+               WHEN $4 AND existing_family THEN 'existing_family_launch_path'
+               WHEN $4 THEN 'parent_requested_office_help'
+               ELSE reconciliation_reason
+             END,
+             updated_at = now()
+         WHERE csm_lead_id = $1 AND client_submission_id = $2
+         RETURNING *`,
+        [leadId, clientSubmissionId, choice, officeHelp]
+      );
+      return { record: updated.rows[0], changed: true, replay: false };
     }
   };
 }
 
 export function buildOfficeNotification(record) {
+  const handoffChoice = record.handoff_choice === HANDOFF_CHOICES.OFFICE_HELP
+    ? 'Have our team find the best fit'
+    : record.handoff_choice === HANDOFF_CHOICES.ONLINE_BOOKING
+      ? 'Book online now'
+      : record.existing_family
+        ? 'Existing family — office help'
+        : 'Parent choice pending';
   return {
     'form-name': record.service_slug && record.service_slug !== 'piano' ? INTRO_BRIDGE_FORM : PIANO_PREREGISTRATION_FORM,
     client_submission_id: record.client_submission_id,
@@ -437,6 +492,7 @@ export function buildOfficeNotification(record) {
     conversion_eligible: record.conversion_eligible === false ? 'No' : 'Yes',
     conversion_exclusion_reason: record.conversion_exclusion_reason || '',
     office_follow_up_required: record.office_follow_up_required ? 'Yes' : 'No',
+    parent_next_step: handoffChoice,
     attribution_summary: record.attribution_summary,
     csm_context: record.student_note
   };
