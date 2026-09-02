@@ -4,7 +4,8 @@ import pg from 'pg';
 import {
   introBookingUrl,
   introLocation,
-  introService
+  introService,
+  introServiceAvailableAtLocation
 } from '../../../shared/intro-bridge-config.js';
 
 const { Pool } = pg;
@@ -220,6 +221,9 @@ export function validateSubmission(fields) {
       ? String(fields.service.ageMin)
       : `${fields.service.ageMin} and ${fields.service.ageMax}`;
     return { ok: false, status: 422, error: `${fields.service.displayName} is available for students between ages ${range}.` };
+  }
+  if (!introServiceAvailableAtLocation(fields.service, fields.preferredLocation)) {
+    return { ok: false, status: 422, error: `${fields.service.displayName} is not currently available at ${fields.preferredLocation.name}.` };
   }
   if (!TIME_WINDOWS.has(fields.preferredTimeWindow)) {
     return { ok: false, status: 422, error: 'Preferred time window is invalid.' };

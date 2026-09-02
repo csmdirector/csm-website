@@ -130,6 +130,60 @@ export const INTRO_SERVICES = Object.freeze([
     acceptedPaidPriceCents: [4200],
     currency: 'usd',
     durationMinutes: 30
+  },
+  {
+    slug: 'clarinet',
+    instrument: 'Clarinet',
+    displayName: 'Clarinet',
+    introName: 'Clarinet Intro Lesson',
+    opusServiceId: '576565c5-5304-459d-a486-bb18393afed5',
+    opusServiceName: 'Clarinet Private Intro Lesson - 30 min',
+    opusPublicSlug: 'book-your-wind-intro',
+    locationSpecificPublicPages: false,
+    allowedLocationSlugs: ['mason', 'montgomery', 'anderson', 'maineville'],
+    ageMin: 5,
+    ageMax: 99,
+    priceCents: 0,
+    paymentRequired: false,
+    acceptedPaidPriceCents: [4200],
+    currency: 'usd',
+    durationMinutes: 30
+  },
+  {
+    slug: 'flute',
+    instrument: 'Flute',
+    displayName: 'Flute',
+    introName: 'Flute Intro Lesson',
+    opusServiceId: '0373d0da-d35b-4625-bacc-fb541bc848c9',
+    opusServiceName: 'Flute Private Intro Lesson - 30 mins',
+    opusPublicSlug: 'book-your-wind-intro',
+    locationSpecificPublicPages: false,
+    allowedLocationSlugs: ['mason', 'montgomery', 'anderson', 'maineville'],
+    ageMin: 7,
+    ageMax: 99,
+    priceCents: 0,
+    paymentRequired: false,
+    acceptedPaidPriceCents: [4200],
+    currency: 'usd',
+    durationMinutes: 30
+  },
+  {
+    slug: 'saxophone',
+    instrument: 'Saxophone',
+    displayName: 'Saxophone',
+    introName: 'Saxophone Intro Lesson',
+    opusServiceId: '59a7f2ba-c183-4c7a-8ce1-4216a32082b0',
+    opusServiceName: 'Saxophone Private Intro Lesson - 30 min',
+    opusPublicSlug: 'book-your-wind-intro',
+    locationSpecificPublicPages: false,
+    allowedLocationSlugs: ['mason', 'montgomery', 'anderson', 'maineville'],
+    ageMin: 5,
+    ageMax: 99,
+    priceCents: 0,
+    paymentRequired: false,
+    acceptedPaidPriceCents: [4200],
+    currency: 'usd',
+    durationMinutes: 30
   }
 ]);
 
@@ -138,7 +192,8 @@ const SERVICE_ALIASES = Object.freeze({
   'early-childhood': 'music-discovery',
   drum: 'drums',
   percussion: 'drums',
-  strings: 'violin'
+  strings: 'violin',
+  sax: 'saxophone'
 });
 
 export function introLocation(value) {
@@ -170,10 +225,23 @@ export function introServiceFromText(value) {
   }) || null;
 }
 
+export function introServiceLocations(serviceValue) {
+  const service = typeof serviceValue === 'object' ? serviceValue : introService(serviceValue);
+  if (!service) return [];
+  const allowed = Array.isArray(service.allowedLocationSlugs) ? new Set(service.allowedLocationSlugs) : null;
+  return allowed ? INTRO_LOCATIONS.filter((location) => allowed.has(location.slug)) : [...INTRO_LOCATIONS];
+}
+
+export function introServiceAvailableAtLocation(serviceValue, locationValue) {
+  const service = typeof serviceValue === 'object' ? serviceValue : introService(serviceValue);
+  const location = typeof locationValue === 'object' ? locationValue : introLocation(locationValue);
+  return Boolean(service && location && introServiceLocations(service).some((item) => item.slug === location.slug));
+}
+
 export function introBookingUrl(serviceValue, locationValue) {
   const service = typeof serviceValue === 'object' ? serviceValue : introService(serviceValue);
   const location = typeof locationValue === 'object' ? locationValue : introLocation(locationValue);
-  if (!service || !location) return '';
+  if (!introServiceAvailableAtLocation(service, location)) return '';
   if (service.locationSpecificPublicPages) {
     return `${OPUS_ORIGIN}/w/${service.opusPublicSlug}-${location.slug}`;
   }

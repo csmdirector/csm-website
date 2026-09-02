@@ -11,7 +11,8 @@ const services = INTRO_SERVICES.map((service) => ({
   name: service.displayName,
   introName: service.introName,
   ageMin: service.ageMin,
-  ageMax: service.ageMax
+  ageMax: service.ageMax,
+  allowedLocationSlugs: service.allowedLocationSlugs || INTRO_LOCATIONS.map((location) => location.slug)
 }));
 const locations = INTRO_LOCATIONS.map((location) => ({ slug: location.slug, name: location.name }));
 const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
@@ -21,7 +22,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
 ---
 <Base
   title="Book a Free Intro Lesson | Cincinnati School of Music"
-  description="Piano, voice, guitar, violin, drums, and Music Discovery at five Cincinnati locations. Your first 30-minute lesson is free, with no ongoing commitment."
+  description="Piano, voice, guitar, violin, drums, woodwinds, and Music Discovery at Cincinnati School of Music. Your first 30-minute lesson is free, with no ongoing commitment."
   canonicalPath="/book-intro/"
   noindex={true}
 >
@@ -106,7 +107,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
 
         <div class="step-panel" data-step="3" hidden>
           <div class="step-heading" tabindex="-1">
-            <span class="step-kicker">Five Cincinnati locations</span>
+            <span class="step-kicker" id="locationKicker">Five Cincinnati locations</span>
             <h2 id="locationHeading">Where would you like to take lessons?</h2>
             <p>Not sure? Pick the closest one. You can switch later if another schedule works better.</p>
           </div>
@@ -114,7 +115,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
             <legend class="visually-hidden">Choose a CSM location</legend>
             <div class="location-grid">
               {locations.map((location) => (
-                <label class="choice-card location-card">
+                <label class="choice-card location-card" data-location-slug={location.slug}>
                   <input type="radio" name="preferred_location" value={location.slug} required />
                   <span>{location.name.replace('CSM ', '')}</span>
                 </label>
@@ -284,6 +285,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
     .service-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     .location-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
     .choice-card{position:relative;display:block;cursor:pointer}
+    .location-card[hidden]{display:none}
     .choice-card input{position:absolute;opacity:0;pointer-events:none}
     .choice-card span{display:flex;align-items:center;gap:10px;min-height:58px;border:1px solid #ddd9d5;background:var(--offwhite);padding:14px 15px;font-size:.79rem;color:var(--mid);line-height:1.4;transition:border-color .16s,background .16s,color .16s,box-shadow .16s,transform .16s}
     .choice-card:hover span{border-color:#bbb5ae;transform:translateY(-1px)}
@@ -338,6 +340,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
       var decisionError = document.getElementById('decisionError');
       var saveButton = document.getElementById('saveButton');
       var locationNext = document.getElementById('locationNext');
+      var locationKicker = document.getElementById('locationKicker');
       var onlineButton = document.getElementById('onlineBookingButton');
       var officeButton = document.getElementById('officeHelpButton');
       var age = document.getElementById('studentAge');
@@ -437,8 +440,18 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
         if(!service) return;
         document.getElementById('heroHeading').textContent = 'Book Your Free ' + service.introName;
         document.getElementById('locationHeading').textContent = 'Where would you like to take ' + service.name.toLowerCase() + ' lessons?';
+        locationKicker.textContent = service.allowedLocationSlugs.length === 4
+          ? 'Four Cincinnati locations'
+          : service.allowedLocationSlugs.length + ' Cincinnati locations';
         age.min = String(service.ageMin);
         age.max = String(service.ageMax);
+        locationChoices.forEach(function(choice){
+          var available = service.allowedLocationSlugs.includes(choice.value);
+          choice.disabled = !available;
+          choice.closest('.location-card').hidden = !available;
+          if(!available && choice.checked) choice.checked = false;
+        });
+        locationNext.disabled = !selectedLocation();
         if(service.ageMin > 2 || service.ageMax < 99){
           ageHelp.textContent = service.ageMax >= 99
             ? service.name + ' starts at age ' + service.ageMin + '.'

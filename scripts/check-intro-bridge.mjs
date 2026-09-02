@@ -6,7 +6,9 @@ import {
   introBookingUrl,
   introBridgePath,
   introLocation,
-  introService
+  introService,
+  introServiceAvailableAtLocation,
+  introServiceLocations
 } from '../shared/intro-bridge-config.js';
 import {
   INTRO_BRIDGE_FORM,
@@ -24,7 +26,7 @@ import {
 } from '../netlify/functions/_shared/intro-reconciliation.js';
 import { testables as submitTestables } from '../netlify/functions/intro-bridge-submit.js';
 
-assert.equal(INTRO_SERVICES.length, 6);
+assert.equal(INTRO_SERVICES.length, 9);
 assert.equal(INTRO_LOCATIONS.length, 5);
 assert.deepEqual(Object.fromEntries(INTRO_SERVICES.map((item) => [item.slug, item.opusServiceId])), {
   piano: '567f7305-b997-46cd-b24b-60b129879ef8',
@@ -32,7 +34,10 @@ assert.deepEqual(Object.fromEntries(INTRO_SERVICES.map((item) => [item.slug, ite
   guitar: 'e09f1dcd-3231-4502-970b-6314ca1cc898',
   voice: '95e7a5e8-1c0d-40a7-969a-d95e2add26ea',
   violin: '36269f6c-9092-4c9a-a6f9-d2f8688f4c85',
-  drums: '3252333e-2590-4a98-937d-cd71b8d3934b'
+  drums: '3252333e-2590-4a98-937d-cd71b8d3934b',
+  clarinet: '576565c5-5304-459d-a486-bb18393afed5',
+  flute: '0373d0da-d35b-4625-bacc-fb541bc848c9',
+  saxophone: '59a7f2ba-c183-4c7a-8ce1-4216a32082b0'
 });
 assert.deepEqual(Object.fromEntries(INTRO_LOCATIONS.map((item) => [item.slug, item.opusLocationId])), {
   mason: '369181cc-4cd8-40a5-95c5-89eca189d55d',
@@ -43,6 +48,7 @@ assert.deepEqual(Object.fromEntries(INTRO_LOCATIONS.map((item) => [item.slug, it
 });
 assert.equal(introService('mdl').slug, 'music-discovery');
 assert.equal(introService('drum').slug, 'drums');
+assert.equal(introService('sax').slug, 'saxophone');
 assert.equal(introLocation('CSM Mason').slug, 'mason');
 assert.equal(introBridgePath({ service: 'voice', location: 'anderson' }), '/book-intro/?service=voice&location=anderson');
 assert.equal(
@@ -58,6 +64,16 @@ assert.equal(guitarMason.pathname, '/selfbook');
 assert.equal(guitarMason.searchParams.get('serviceId'), introService('guitar').opusServiceId);
 assert.equal(guitarMason.searchParams.get('locationId'), introLocation('mason').opusLocationId);
 assert.equal(guitarMason.searchParams.get('planName'), 'Single Visit - Intro');
+const clarinetMason = new URL(introBookingUrl('clarinet', 'mason'));
+assert.equal(clarinetMason.pathname, '/selfbook');
+assert.equal(clarinetMason.searchParams.get('serviceId'), introService('clarinet').opusServiceId);
+assert.equal(clarinetMason.searchParams.get('locationId'), introLocation('mason').opusLocationId);
+assert.equal(introBookingUrl('flute', 'middletown'), '');
+assert.equal(introServiceAvailableAtLocation('saxophone', 'anderson'), true);
+assert.equal(introServiceAvailableAtLocation('saxophone', 'middletown'), false);
+assert.deepEqual(introServiceLocations('clarinet').map((location) => location.slug), [
+  'mason', 'montgomery', 'anderson', 'maineville'
+]);
 
 assert.deepEqual(submitTestables.resolveConversionEligibility({ enabledValue: '', deployContext: 'deploy-preview' }), {
   conversionEligible: false,
@@ -96,6 +112,15 @@ const normalized = normalizeSubmission(base);
 assert.equal(validateSubmission(normalized).ok, true);
 assert.equal(normalized.service.slug, 'music-discovery');
 assert.equal(validateSubmission(normalizeSubmission({ ...base, student_age: '7' })).ok, false);
+const unavailableWindLocation = validateSubmission(normalizeSubmission({
+  ...base,
+  student_age: '12',
+  service_slug: 'flute',
+  preferred_location: 'middletown'
+}));
+assert.equal(unavailableWindLocation.ok, false);
+assert.equal(unavailableWindLocation.status, 422);
+assert.match(unavailableWindLocation.error, /Flute is not currently available at CSM Middletown/);
 assert.notEqual(
   dedupeFingerprint(normalized),
   dedupeFingerprint(normalizeSubmission({ ...base, service_slug: 'piano' }))
@@ -243,6 +268,10 @@ assert.match(page, /\/api\/intro-bridge-choice/);
 assert.match(page, /data-step="1"/);
 assert.match(page, /data-step="5"/);
 assert.match(page, /id="locationNext"/);
+assert.match(page, /\.location-card\[hidden\]\{display:none\}/);
+assert.match(page, /id="locationKicker"/);
+assert.match(page, /service\.allowedLocationSlugs\.includes\(choice\.value\)/);
+assert.match(page, /choice\.closest\('\.location-card'\)\.hidden = !available/);
 assert.match(page, /Let Us Find the Right Fit/);
 assert.match(page, /Free · 30 minutes · No ongoing commitment/);
 assert.match(page, /Teaching Cincinnati families since 2012 · Five locations/);
@@ -271,6 +300,9 @@ assert.match(requestInfoPage, /href="\/book-intro\/"[^>]*>Get Started<\/a>/);
 assert.doesNotMatch(`${firstLessonGuide}\n${pricingGuide}\n${requestInfoPage}`, /opus1\.io\/(?:w\/book-your-intro-lesson|lead)/);
 assert.match(windsPage, /Start with a free Intro Lesson/);
 assert.doesNotMatch(windsPage, /\$42 Intro Lesson/);
+assert.doesNotMatch(windsPage, /opus1\.io\/w\/book-your-wind-intro/);
+assert.match(windsPage, /href="\/book-intro\/"[^>]*>Book Intro<\/a>/);
+assert.match(windsPage, /Mason, Montgomery, Anderson, and Maineville/);
 const pianoPage = readFileSync(new URL('../src/pages/book-piano-intro/index.astro', import.meta.url), 'utf8');
 assert.match(pianoPage, /Fall in Love With Music Special/);
 assert.match(pianoPage, /A free 30-minute private piano intro lesson\./);
