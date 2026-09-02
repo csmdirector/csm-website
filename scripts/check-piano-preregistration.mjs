@@ -37,8 +37,7 @@ assert.deepEqual(bookingUrls, {
   montgomery: 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-montgomery',
   mason: 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-mason',
   anderson: 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-anderson',
-  maineville: 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-maineville',
-  middletown: 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-middletown'
+  maineville: 'https://cincinnatischoolofmusic.opus1.io/w/book-your-piano-intro-maineville'
 });
 
 const baseRaw = {

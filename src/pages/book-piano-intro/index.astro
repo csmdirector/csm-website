@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { PIANO_BOOKING_LOCATIONS } from '../../../shared/piano-booking-links.js';
 
-const locationOrder = ['mason', 'montgomery', 'anderson', 'maineville', 'middletown'];
+const locationOrder = ['mason', 'montgomery', 'anderson', 'maineville'];
 const locationOptions = locationOrder
   .map((slug) => PIANO_BOOKING_LOCATIONS.find((location) => location.slug === slug))
   .filter(Boolean)

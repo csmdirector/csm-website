@@ -168,10 +168,6 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
                 <span>CSM Maineville</span>
               </label>
               <label class="choice-card">
-                <input type="radio" name="preferred_location" value="CSM Middletown" />
-                <span>CSM Middletown</span>
-              </label>
-              <label class="choice-card">
                 <input type="radio" name="preferred_location" value="Flexible or not sure" />
                 <span>Flexible or not sure</span>
               </label>
@@ -387,15 +383,13 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         'CSM Montgomery': '/book-piano-intro/?location=montgomery',
         'CSM Mason': '/book-piano-intro/?location=mason',
         'CSM Anderson': '/book-piano-intro/?location=anderson',
-        'CSM Maineville': '/book-piano-intro/?location=maineville',
-        'CSM Middletown': '/book-piano-intro/?location=middletown'
+        'CSM Maineville': '/book-piano-intro/?location=maineville'
       };
       var MUSIC_DISCOVERY_LOCATION_URLS = {
         'CSM Montgomery': '/book-intro/?service=music-discovery&location=montgomery',
         'CSM Mason': '/book-intro/?service=music-discovery&location=mason',
         'CSM Anderson': '/book-intro/?service=music-discovery&location=anderson',
-        'CSM Maineville': '/book-intro/?service=music-discovery&location=maineville',
-        'CSM Middletown': '/book-intro/?service=music-discovery&location=middletown'
+        'CSM Maineville': '/book-intro/?service=music-discovery&location=maineville'
       };
 
       var steps = Array.prototype.slice.call(form.querySelectorAll('.intake-step'));

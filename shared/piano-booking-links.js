@@ -1,6 +1,6 @@
 import { INTRO_LOCATIONS, introBookingUrl, introLocation } from './intro-bridge-config.js';
 
-const PIANO_LOCATION_ORDER = ['montgomery', 'mason', 'anderson', 'maineville', 'middletown'];
+const PIANO_LOCATION_ORDER = ['montgomery', 'mason', 'anderson', 'maineville'];
 
 export const PIANO_BOOKING_LOCATIONS = Object.freeze(PIANO_LOCATION_ORDER.map((slug) => {
   const location = INTRO_LOCATIONS.find((item) => item.slug === slug);

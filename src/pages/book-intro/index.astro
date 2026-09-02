@@ -28,7 +28,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
 >
   <section class="booking-hero">
     <div class="booking-hero-inner">
-      <span class="section-label">Teaching Cincinnati families since 2012 · Five locations</span>
+      <span class="section-label">Teaching Cincinnati families since 2012 · Four locations</span>
       <h1 id="heroHeading">Book Your Free Intro Lesson</h1>
       <p class="intro-copy">
         Answer a few quick questions and we’ll show you the next step.
@@ -107,7 +107,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
 
         <div class="step-panel" data-step="3" hidden>
           <div class="step-heading" tabindex="-1">
-            <span class="step-kicker" id="locationKicker">Five Cincinnati locations</span>
+            <span class="step-kicker" id="locationKicker">Four Cincinnati locations</span>
             <h2 id="locationHeading">Where would you like to take lessons?</h2>
             <p>Not sure? Pick the closest one. You can switch later if another schedule works better.</p>
           </div>
@@ -440,9 +440,9 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
         if(!service) return;
         document.getElementById('heroHeading').textContent = 'Book Your Free ' + service.introName;
         document.getElementById('locationHeading').textContent = 'Where would you like to take ' + service.name.toLowerCase() + ' lessons?';
-        locationKicker.textContent = service.allowedLocationSlugs.length === 4
-          ? 'Four Cincinnati locations'
-          : service.allowedLocationSlugs.length + ' Cincinnati locations';
+        var locationCountWords = { 1: 'One', 2: 'Two', 3: 'Three', 4: 'Four' };
+        locationKicker.textContent = (locationCountWords[service.allowedLocationSlugs.length] || service.allowedLocationSlugs.length)
+          + ' Cincinnati ' + (service.allowedLocationSlugs.length === 1 ? 'location' : 'locations');
         age.min = String(service.ageMin);
         age.max = String(service.ageMax);
         locationChoices.forEach(function(choice){

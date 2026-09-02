@@ -26,30 +26,36 @@ import {
 } from '../netlify/functions/_shared/intro-reconciliation.js';
 import { testables as submitTestables } from '../netlify/functions/intro-bridge-submit.js';
 
-assert.equal(INTRO_SERVICES.length, 9);
-assert.equal(INTRO_LOCATIONS.length, 5);
+assert.equal(INTRO_SERVICES.length, 15);
+assert.equal(INTRO_LOCATIONS.length, 4);
 assert.deepEqual(Object.fromEntries(INTRO_SERVICES.map((item) => [item.slug, item.opusServiceId])), {
   piano: '567f7305-b997-46cd-b24b-60b129879ef8',
   'music-discovery': '7e24490c-de02-490f-a33b-18860c5e6c2c',
   guitar: 'e09f1dcd-3231-4502-970b-6314ca1cc898',
   voice: '95e7a5e8-1c0d-40a7-969a-d95e2add26ea',
+  ukulele: '0f5248a4-7b95-47c6-896f-b5310857340b',
+  bass: 'df04924e-6644-4bbd-99cc-9c158c266230',
+  mandolin: 'f010e9af-26a4-447f-a3ae-ae108883c252',
   violin: '36269f6c-9092-4c9a-a6f9-d2f8688f4c85',
+  viola: '7cbb7419-04e6-4227-93f2-7406f2436215',
+  cello: 'be98f683-6e59-437c-a650-c6dbeda48e01',
   drums: '3252333e-2590-4a98-937d-cd71b8d3934b',
   clarinet: '576565c5-5304-459d-a486-bb18393afed5',
   flute: '0373d0da-d35b-4625-bacc-fb541bc848c9',
-  saxophone: '59a7f2ba-c183-4c7a-8ce1-4216a32082b0'
+  saxophone: '59a7f2ba-c183-4c7a-8ce1-4216a32082b0',
+  trumpet: '6663b2c6-f6fb-44b6-bb7f-07ad418b39cf'
 });
 assert.deepEqual(Object.fromEntries(INTRO_LOCATIONS.map((item) => [item.slug, item.opusLocationId])), {
   mason: '369181cc-4cd8-40a5-95c5-89eca189d55d',
   montgomery: '7d3034f0-01a9-4dbd-84a7-1dc9f5a601e4',
   anderson: '39fde686-237a-4a20-9039-e49976da2d8c',
-  maineville: '45ec0927-58ad-40ee-9e07-f711b5306cb0',
-  middletown: 'ae5eb81a-8b10-4286-a46e-987779ffbea7'
+  maineville: '45ec0927-58ad-40ee-9e07-f711b5306cb0'
 });
 assert.equal(introService('mdl').slug, 'music-discovery');
 assert.equal(introService('drum').slug, 'drums');
 assert.equal(introService('sax').slug, 'saxophone');
 assert.equal(introLocation('CSM Mason').slug, 'mason');
+assert.equal(introLocation('CSM Middletown'), null);
 assert.equal(introBridgePath({ service: 'voice', location: 'anderson' }), '/book-intro/?service=voice&location=anderson');
 assert.equal(
   introBookingUrl('piano', 'mason'),
@@ -71,6 +77,12 @@ assert.equal(clarinetMason.searchParams.get('locationId'), introLocation('mason'
 assert.equal(introBookingUrl('flute', 'middletown'), '');
 assert.equal(introServiceAvailableAtLocation('saxophone', 'anderson'), true);
 assert.equal(introServiceAvailableAtLocation('saxophone', 'middletown'), false);
+assert.equal(introServiceAvailableAtLocation('ukulele', 'anderson'), true);
+assert.equal(introServiceAvailableAtLocation('ukulele', 'maineville'), false);
+assert.equal(introServiceAvailableAtLocation('cello', 'mason'), true);
+assert.equal(introServiceAvailableAtLocation('cello', 'anderson'), false);
+assert.equal(introServiceAvailableAtLocation('viola', 'maineville'), true);
+assert.equal(introServiceAvailableAtLocation('trumpet', 'montgomery'), false);
 assert.deepEqual(introServiceLocations('clarinet').map((location) => location.slug), [
   'mason', 'montgomery', 'anderson', 'maineville'
 ]);
@@ -115,12 +127,12 @@ assert.equal(validateSubmission(normalizeSubmission({ ...base, student_age: '7' 
 const unavailableWindLocation = validateSubmission(normalizeSubmission({
   ...base,
   student_age: '12',
-  service_slug: 'flute',
-  preferred_location: 'middletown'
+  service_slug: 'cello',
+  preferred_location: 'anderson'
 }));
 assert.equal(unavailableWindLocation.ok, false);
 assert.equal(unavailableWindLocation.status, 422);
-assert.match(unavailableWindLocation.error, /Flute is not currently available at CSM Middletown/);
+assert.match(unavailableWindLocation.error, /Cello is not currently available at CSM Anderson/);
 assert.notEqual(
   dedupeFingerprint(normalized),
   dedupeFingerprint(normalizeSubmission({ ...base, service_slug: 'piano' }))
@@ -274,7 +286,7 @@ assert.match(page, /service\.allowedLocationSlugs\.includes\(choice\.value\)/);
 assert.match(page, /choice\.closest\('\.location-card'\)\.hidden = !available/);
 assert.match(page, /Let Us Find the Right Fit/);
 assert.match(page, /Free · 30 minutes · No ongoing commitment/);
-assert.match(page, /Teaching Cincinnati families since 2012 · Five locations/);
+assert.match(page, /Teaching Cincinnati families since 2012 · Four locations/);
 assert.match(page, /Perfect\. We have everything we need/);
 assert.match(page, /Our team will reach out to set up the intro/);
 assert.match(page, /<option value="Flexible \/ not sure">Not sure yet<\/option>/);
@@ -303,6 +315,9 @@ assert.doesNotMatch(windsPage, /\$42 Intro Lesson/);
 assert.doesNotMatch(windsPage, /opus1\.io\/w\/book-your-wind-intro/);
 assert.match(windsPage, /href="\/book-intro\/"[^>]*>Book Intro<\/a>/);
 assert.match(windsPage, /Mason, Montgomery, Anderson, and Maineville/);
+const stringsPage = readFileSync(new URL('../violin-lessons.html', import.meta.url), 'utf8');
+assert.doesNotMatch(stringsPage, /book-intro\/\?service=violin/);
+assert.match(stringsPage, /href="\/book-intro\/"[^>]*>Book Intro<\/a>/);
 const pianoPage = readFileSync(new URL('../src/pages/book-piano-intro/index.astro', import.meta.url), 'utf8');
 assert.match(pianoPage, /Fall in Love With Music Special/);
 assert.match(pianoPage, /A free 30-minute private piano intro lesson\./);
@@ -327,13 +342,14 @@ for (const file of [
   'early-childhood-music-discovery-lessons.html',
   'guitar-lessons.html',
   'voice-lessons.html',
-  'violin-lessons.html',
   'drum-lessons.html'
 ]) {
   const source = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
   assert.doesNotMatch(source, /opus1\.io\/w\/book-your-(music-discovery|guitar|voice|violin|drum)-intro/);
   assert.match(source, /\/book-intro\/\?service=/);
 }
+const lessonFitPage = readFileSync(new URL('../src/pages/lesson-fit/index.astro', import.meta.url), 'utf8');
+assert.doesNotMatch(lessonFitPage, /CSM Middletown|location=middletown/);
 const migration = readFileSync(new URL('../netlify/database/migrations/20260825143000_generalize_intro_bridge.sql', import.meta.url), 'utf8');
 assert.match(migration, /service_slug text NOT NULL DEFAULT 'piano'/);
 assert.match(migration, /piano_preregistrations_service_reconciliation_idx/);
