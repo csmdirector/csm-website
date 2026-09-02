@@ -21,18 +21,18 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
 ---
 <Base
   title="Book a Free Intro Lesson | Cincinnati School of Music"
-  description="Choose an instrument, location, and free 30-minute Intro Lesson at Cincinnati School of Music."
+  description="Piano, voice, guitar, violin, drums, and Music Discovery at five Cincinnati locations. Your first 30-minute lesson is free, with no ongoing commitment."
   canonicalPath="/book-intro/"
   noindex={true}
 >
   <section class="booking-hero">
     <div class="booking-hero-inner">
-      <span class="section-label">Fall in Love With Music Special</span>
-      <h1 id="heroHeading">Find Your Free Intro Lesson</h1>
+      <span class="section-label">Teaching Cincinnati families since 2012 · Five locations</span>
+      <h1 id="heroHeading">Book Your Free Intro Lesson</h1>
       <p class="intro-copy">
-        Choose what you’d like to try, tell us about the student, and we’ll show you the right next step.
+        Answer a few quick questions and we’ll show you the next step.
       </p>
-      <p class="intro-reassurance">Free 30-minute intro · No ongoing commitment</p>
+      <p class="intro-reassurance">Free · 30 minutes · No ongoing commitment</p>
     </div>
   </section>
 
@@ -56,7 +56,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
             <li class="is-current"><span>1</span><small>Lesson</small></li>
             <li><span>2</span><small>Age</small></li>
             <li><span>3</span><small>Location</small></li>
-            <li><span>4</span><small>Details</small></li>
+            <li><span>4</span><small>Info</small></li>
             <li><span>5</span><small>Next step</small></li>
           </ol>
         </div>
@@ -64,8 +64,8 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
         <div class="step-panel is-active" data-step="1">
           <div class="step-heading" tabindex="-1">
             <span class="step-kicker">Let’s get started</span>
-            <h2>What would you like to try?</h2>
-            <p>Choose one and we’ll tailor the rest.</p>
+            <h2>What would you like to learn?</h2>
+            <p>Pick one. You can go back and change it.</p>
           </div>
           <fieldset>
             <legend class="visually-hidden">Choose an instrument or program</legend>
@@ -73,19 +73,22 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
               {services.map((service) => (
                 <label class="choice-card service-card">
                   <input type="radio" name="service_slug" value={service.slug} required />
-                  <span>{service.name}</span>
+                  <span>
+                    {service.name}
+                    {service.slug === 'music-discovery' && <small>First lessons for ages 3 to 5</small>}
+                  </span>
                 </label>
               ))}
             </div>
           </fieldset>
-          <p class="selection-hint">Your selection will take you to the next question.</p>
+          <p class="selection-hint">Choosing one takes you to the next step.</p>
         </div>
 
         <div class="step-panel" data-step="2" hidden>
           <div class="step-heading" tabindex="-1">
             <span class="step-kicker">About the student</span>
             <h2>How old is the student?</h2>
-            <p>Age helps us show the right lesson options.</p>
+            <p>We ask because a few of our programs are built for specific ages.</p>
           </div>
           <fieldset>
             <legend class="visually-hidden">Student age</legend>
@@ -103,9 +106,9 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
 
         <div class="step-panel" data-step="3" hidden>
           <div class="step-heading" tabindex="-1">
-            <span class="step-kicker">Your preferred school</span>
+            <span class="step-kicker">Five Cincinnati locations</span>
             <h2 id="locationHeading">Where would you like to take lessons?</h2>
-            <p>You can change locations later if another schedule works better.</p>
+            <p>Not sure? Pick the closest one. You can switch later if another schedule works better.</p>
           </div>
           <fieldset>
             <legend class="visually-hidden">Choose a CSM location</legend>
@@ -127,14 +130,14 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
         <div class="step-panel" data-step="4" hidden>
           <div class="step-heading" tabindex="-1">
             <span class="step-kicker">Almost there</span>
-            <h2>Who should we help?</h2>
-            <p>We’ll save these details before showing your booking options, so our team can help if you need us.</p>
+            <h2>How can we reach you?</h2>
+            <p>This is how we’ll reach you about the intro lesson.</p>
           </div>
           <fieldset class="details-fields">
             <legend class="visually-hidden">Parent and student contact details</legend>
             <div class="field-grid name-grid">
               <label class="field-label">
-                Parent or guardian name
+                Your name
                 <input type="text" name="parent_name" autocomplete="name" maxlength="160" required />
               </label>
               <label class="field-label">
@@ -153,14 +156,14 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
               </label>
             </div>
             <label class="field-label availability-field">
-              When are you usually available?
+              What times usually work?
               <select name="preferred_time_window" required>
                 <option value="">Choose what usually works</option>
                 <option>Weekday mornings</option>
                 <option>Weekday afternoons</option>
                 <option>Weekday evenings</option>
                 <option>Saturday</option>
-                <option>Flexible / not sure</option>
+                <option value="Flexible / not sure">Not sure yet</option>
               </select>
             </label>
             <div class="family-question">
@@ -180,35 +183,35 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
           <div class="form-error" id="formError" role="alert" aria-live="polite"></div>
           <div class="step-actions">
             <button class="text-button" type="button" data-back="3">Back</button>
-            <button class="btn-a next-button" id="saveButton" type="submit">Save & Continue</button>
+            <button class="btn-a next-button" id="saveButton" type="submit">Continue</button>
           </div>
-          <p class="submit-help">Your intro is free. Nothing is reserved or charged on this page.</p>
+          <p class="submit-help">The intro lesson is free. Nothing is charged or reserved here.</p>
         </div>
 
         <div class="step-panel" data-step="5" hidden>
           <div class="saved-banner">
             <span aria-hidden="true">✓</span>
-            <p><strong>Thanks—we’ve got your information.</strong></p>
+            <p><strong id="savedBannerCopy">Perfect. We have everything we need.</strong></p>
           </div>
 
           <div id="newFamilyDecision">
             <div class="step-heading" tabindex="-1">
-              <span class="step-kicker">Choose what works for you</span>
-              <h2>How would you like to get started?</h2>
-              <p>Book online now, or let our team help match the student with the best available teacher and time.</p>
+              <span class="step-kicker">Two ways to finish</span>
+              <h2>How would you like to book?</h2>
+              <p>Either one works. Pick whichever is easier.</p>
             </div>
             <div class="decision-grid">
               <article class="decision-card decision-primary">
-                <span class="decision-label">Fastest</span>
+                <span class="decision-label">Book it yourself</span>
                 <h3>See Available Times</h3>
-                <p>View live intro openings at your selected CSM location and reserve one now.</p>
-                <button class="btn-a decision-button" id="onlineBookingButton" type="button">Book My Free Intro</button>
+                <p id="onlineBookingCopy">See real openings at your selected CSM location and pick your time.</p>
+                <button class="btn-a decision-button" id="onlineBookingButton" type="button">See Available Times</button>
               </article>
               <article class="decision-card">
-                <span class="decision-label">Personal help</span>
-                <h3>Have Our Team Find a Fit</h3>
-                <p>We’ll review your preferences and follow up to help find the right teacher and time.</p>
-                <button class="btn-b decision-button" id="officeHelpButton" type="button">Have CSM Help Me</button>
+                <span class="decision-label">Rather have help?</span>
+                <h3>Let Us Find the Right Fit</h3>
+                <p>We’ll look at the times you gave us and reach out with the best teacher and time we have.</p>
+                <button class="btn-b decision-button" id="officeHelpButton" type="button">Have Us Find a Time</button>
               </article>
             </div>
           </div>
@@ -216,10 +219,10 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
           <div class="completion-message" id="officeHelpSuccess" hidden tabindex="-1">
             <span class="section-label">You’re all set</span>
             <h2>We’ll help you from here.</h2>
-            <p id="officeHelpCopy">Our team has your information and will follow up to help find the best lesson fit.</p>
+            <p id="officeHelpCopy">We have everything we need. Our team will reach out to set up the intro.</p>
             <div class="support-actions">
               <a href="tel:5135609175">Call (513) 560-9175</a>
-              <a href="sms:5135609175">Text CSM</a>
+              <a href="sms:5135609175">Text us</a>
             </div>
           </div>
 
@@ -227,9 +230,9 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
         </div>
 
         <div class="help-line">
-          <span>Would you rather talk with us?</span>
+          <span>Rather talk it through?</span>
           <a href="tel:5135609175">Call (513) 560-9175</a>
-          <a href="sms:5135609175">Text CSM</a>
+          <a href="sms:5135609175">Text us</a>
         </div>
       </form>
     </div>
@@ -289,6 +292,8 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
     .choice-card input:checked + span::before{border-color:var(--accent);background:var(--accent)}
     .choice-card input:focus-visible + span{outline:3px solid rgba(247,79,87,.2);outline-offset:2px}
     .service-card span,.location-card span{justify-content:center;min-height:74px;padding:19px 13px}
+    .service-card span{flex-wrap:wrap;text-align:center}
+    .service-card small{flex-basis:100%;margin-left:24px;color:#77736e;font-size:.68rem;font-weight:400;line-height:1.35}
     .step-actions{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:32px}
     .next-button{border:0;cursor:pointer;min-width:210px;font-family:inherit;font-size:.74rem}
     .next-button:disabled,.decision-button:disabled{opacity:.6;cursor:wait}
@@ -345,7 +350,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
       var currentStep = 1;
       var savedResult = null;
       var transitionTimer = null;
-      var stepLabels = ['Choose a lesson','Student age','Preferred location','Your details','Choose what’s next'];
+      var stepLabels = ['Choose a lesson','Student age','Location','Your info','Next step'];
 
       function selectedService(){
         var selected = form.querySelector('input[name="service_slug"]:checked');
@@ -376,6 +381,21 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
         var selected = form.querySelector('input[name="existing_family"]:checked');
         return selected && selected.value === 'yes';
       }
+      function studentDisplayName(){
+        var input = form.elements.namedItem('student_name');
+        var name = input && typeof input.value === 'string' ? input.value.trim().replace(/\s+/g, ' ') : '';
+        return name && name.length <= 60 ? name : '';
+      }
+      function syncStepFiveCopy(){
+        var studentName = studentDisplayName();
+        var location = selectedLocation();
+        document.getElementById('savedBannerCopy').textContent = studentName
+          ? 'Perfect. We have everything we need for ' + studentName + '.'
+          : 'Perfect. We have everything we need.';
+        document.getElementById('onlineBookingCopy').textContent = location
+          ? 'See real openings at ' + location.name + ' and pick your time.'
+          : 'See real openings at your selected CSM location and pick your time.';
+      }
       function decorateBookingUrl(url){
         if(window.CSMAttribution && typeof window.CSMAttribution.decorateUrl === 'function') return window.CSMAttribution.decorateUrl(url);
         return url;
@@ -393,6 +413,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
         });
         progressEyebrow.textContent = 'Step ' + currentStep + ' of 5';
         progressStatus.textContent = stepLabels[currentStep - 1];
+        if(currentStep === 5) syncStepFiveCopy();
         if(!options || options.focus !== false){
           var activeHeading = form.querySelector('.step-panel[data-step="' + currentStep + '"] .step-heading');
           if(activeHeading) activeHeading.focus({ preventScroll: true });
@@ -414,16 +435,16 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
       function syncServiceCopy(){
         var service = selectedService();
         if(!service) return;
-        document.getElementById('heroHeading').textContent = 'Find Your Free ' + service.introName;
+        document.getElementById('heroHeading').textContent = 'Book Your Free ' + service.introName;
         document.getElementById('locationHeading').textContent = 'Where would you like to take ' + service.name.toLowerCase() + ' lessons?';
         age.min = String(service.ageMin);
         age.max = String(service.ageMax);
         if(service.ageMin > 2 || service.ageMax < 99){
           ageHelp.textContent = service.ageMax >= 99
-            ? service.name + ' lessons are available for ages ' + service.ageMin + ' and up.'
+            ? service.name + ' starts at age ' + service.ageMin + '.'
             : service.ageMin === service.ageMax
-              ? service.name + ' is designed for age ' + service.ageMin + '.'
-              : service.name + ' is designed for ages ' + service.ageMin + '–' + service.ageMax + '.';
+              ? service.name + ' is built for ' + service.ageMin + '-year-olds.'
+              : service.name + ' is built for ages ' + service.ageMin + ' to ' + service.ageMax + '.';
           ageHelp.hidden = false;
         } else ageHelp.hidden = true;
       }
@@ -453,7 +474,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
         return validateAge();
       }
       async function recordChoice(choice){
-        if(!savedResult) throw new Error('Your information has not been saved yet.');
+        if(!savedResult) throw new Error('That last step didn’t go through.');
         var controller = new AbortController();
         var timeout = window.setTimeout(function(){ controller.abort(); }, 5000);
         try {
@@ -468,7 +489,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
             signal: controller.signal
           });
           var result = await response.json().catch(function(){ return {}; });
-          if(!response.ok || !result.ok) throw new Error(result.error || 'We could not record your choice.');
+          if(!response.ok || !result.ok) throw new Error('That last step didn’t go through.');
           return result;
         } finally {
           window.clearTimeout(timeout);
@@ -477,25 +498,28 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
       function showOfficeSuccess(existingFamily){
         document.getElementById('newFamilyDecision').hidden = true;
         var completion = document.getElementById('officeHelpSuccess');
+        var studentName = studentDisplayName();
         document.getElementById('officeHelpCopy').textContent = existingFamily
-          ? 'Since you already have a CSM account, our office will help arrange the intro without creating a duplicate account. We’ll follow up with you.'
-          : 'Our team has your information and will follow up to help find the best teacher and time.';
+          ? 'You’re already with us, so we’ll set this up on our end and keep it lined up with your current schedule. Our office will be in touch.'
+          : studentName
+            ? 'We have everything we need for ' + studentName + '. Our team will reach out to set up the intro.'
+            : 'We have everything we need. Our team will reach out to set up the intro.';
         completion.hidden = false;
         completion.focus();
       }
       async function requestOfficeHelp(existingFamily){
         decisionError.textContent = '';
         officeButton.disabled = true;
-        officeButton.textContent = 'Sending to our team…';
+        officeButton.textContent = 'Sending this over…';
         try {
           await recordChoice('office_help');
           showOfficeSuccess(existingFamily);
         } catch(error){
           decisionError.textContent = error.name === 'AbortError'
-            ? 'Your information is saved, but this request took too long. Please call or text CSM at (513) 560-9175.'
-            : (error.message || 'Your information is saved. Please call or text CSM at (513) 560-9175.');
+            ? 'That took longer than it should have. We still have your details. Call or text (513) 560-9175 and we’ll take it from here.'
+            : 'Something went wrong on our end. We still have your details. Call or text (513) 560-9175 and we’ll get the intro scheduled.';
           officeButton.disabled = false;
-          officeButton.textContent = 'Have CSM Help Me';
+          officeButton.textContent = 'Have Us Find a Time';
         }
       }
 
@@ -555,7 +579,7 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
         if(savedResult){ showStep(5); return; }
         if(!validateDetails()) return;
         saveButton.disabled = true;
-        saveButton.textContent = 'Saving your information…';
+        saveButton.textContent = 'Just a moment…';
         submittedAtField.value = new Date().toISOString();
         attributionField.value = JSON.stringify(attribution());
         try {
@@ -566,14 +590,14 @@ const bookingRoutes = Object.fromEntries(INTRO_SERVICES.map((service) => [
             body: JSON.stringify(payload)
           });
           var result = await response.json().catch(function(){ return {}; });
-          if(!response.ok || !result.ok || !result.stored) throw new Error(result.error || 'We couldn’t save your information.');
+          if(!response.ok || !result.ok || !result.stored) throw new Error('That didn’t go through.');
           savedResult = result;
           showStep(5);
           if(result.existing_family) requestOfficeHelp(true);
         } catch(error){
-          errorBox.textContent = error.message || 'We couldn’t save your information. Please call or text CSM at (513) 560-9175.';
+          errorBox.textContent = 'Something went wrong on our end. Call or text us at (513) 560-9175 and we’ll get the intro on the calendar.';
           saveButton.disabled = false;
-          saveButton.textContent = 'Save & Continue';
+          saveButton.textContent = 'Continue';
         }
       });
 

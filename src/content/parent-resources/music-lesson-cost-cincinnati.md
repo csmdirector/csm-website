@@ -30,7 +30,7 @@ seoTitle: How Much Do Music Lessons Cost in Cincinnati? (2026 Guide)
 seoDescription: A practical 2026 guide to music lesson costs in Cincinnati. What prices usually include, why rates differ, and what to ask before you enroll.
 canonicalPath: /parent-resources/music-lesson-cost-cincinnati
 ctaLabel: Book an Intro Lesson
-ctaHref: https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson
+ctaHref: /book-intro/
 ---
 
 If you've been comparing music lessons in Cincinnati, you may have noticed that pricing is not always easy to find. Some studios publish tuition clearly, some explain it during enrollment, and some independent teachers set rates individually. Families should be able to understand the cost before they enroll. This guide explains typical 2026 music lesson prices in Greater Cincinnati, why prices vary, and what Cincinnati School of Music charges.
@@ -104,4 +104,4 @@ Ask whether policies and billing are the same for every teacher, who coordinates
 
 ---
 
-Prices in this guide reflect Greater Cincinnati lesson rates as of 2026 and the different ways music lessons are commonly offered. If you'd like to see what a professionally operated school feels like before deciding anything, we'd love to meet you. [Schedule an intro lesson](https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson) at any of our [five locations](/locations).
+Prices in this guide reflect Greater Cincinnati lesson rates as of 2026 and the different ways music lessons are commonly offered. If you'd like to see what a professionally operated school feels like before deciding anything, we'd love to meet you. [Schedule an intro lesson](/book-intro/) at any of our [five locations](/locations).

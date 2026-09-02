@@ -13,7 +13,7 @@ const routes = Object.fromEntries(INTRO_SERVICES.map((service) => [service.slug,
 ---
 <Base
   title="Choose Your Intro Time | Cincinnati School of Music"
-  description="Choose an available Cincinnati School of Music Intro Lesson time and finish booking."
+  description="Pick an available time and finish booking your free 30-minute intro lesson."
   canonicalPath="/book-intro/thank-you/"
   noindex={true}
 >
@@ -22,14 +22,14 @@ const routes = Object.fromEntries(INTRO_SERVICES.map((service) => [service.slug,
       <div class="confirmation-mark" aria-hidden="true">✓</div>
       <span class="section-label" id="confirmationLabel">Almost There</span>
       <h1 id="confirmationHeading">Great. Let’s find a time.</h1>
-      <p class="lead" id="confirmationLead">We’ve saved your information. Choose an available intro time to finish booking.</p>
-      <p class="detail-copy" id="detailCopy">Your intro lesson is free. Choose a time to finish booking.</p>
-      <a class="btn-a choose-time" id="chooseTimeLink" href="/book-intro/" aria-disabled="true" hidden>See Intro Times</a>
+      <p class="lead" id="confirmationLead">Pick a time that works and you’re done.</p>
+      <p class="detail-copy" id="detailCopy">Your intro lesson is free, 30 minutes, and there’s no ongoing commitment.</p>
+      <a class="btn-a choose-time" id="chooseTimeLink" href="/book-intro/" aria-disabled="true" hidden>See Available Times</a>
       <div class="support-actions">
         <span>Need a hand?</span>
         <a href="tel:5135609175">Call (513) 560-9175</a>
-        <a href="sms:5135609175">Text CSM</a>
-        <a href="mailto:info@cincinnatischoolofmusic.com">Email CSM</a>
+        <a href="sms:5135609175">Text us</a>
+        <a href="mailto:info@cincinnatischoolofmusic.com">Email us</a>
       </div>
     </div>
   </section>
@@ -60,20 +60,20 @@ const routes = Object.fromEntries(INTRO_SERVICES.map((service) => [service.slug,
       var lead = document.getElementById('confirmationLead');
       var detail = document.getElementById('detailCopy');
       if(params.get('existing_family') === '1'){
-        label.textContent = 'Request Received';
+        label.textContent = 'You’re all set';
         heading.textContent = 'We’ll help you from here.';
-        lead.textContent = 'Since you already have a CSM account, our office will help arrange the intro lesson without creating a duplicate account.';
-        detail.textContent = 'We’ve received your information and will follow up with you.';
+        lead.textContent = 'You’re already with us, so we’ll set this up on our end and keep it lined up with your current schedule.';
+        detail.textContent = 'We have what we need. Our office will be in touch.';
       } else if(service && location){
-        lead.textContent = 'We’ve saved your information. Choose an available ' + service.name.toLowerCase() + ' intro time at ' + location.name + ' to finish booking.';
+        lead.textContent = 'Pick an available ' + service.name.toLowerCase() + ' time at ' + location.name + ' and you’re done.';
         link.href = location.bookingUrl;
-        link.textContent = 'See Free ' + location.name.replace('CSM ', '') + ' ' + service.name + ' Times';
+        link.textContent = 'See Free ' + service.name + ' Times';
         link.setAttribute('aria-disabled','false');
         link.hidden = false;
       } else {
-        label.textContent = 'One More Step';
-        heading.textContent = 'Let’s choose your lesson again.';
-        lead.textContent = 'Choose the lesson and location you want so we can show the right intro times.';
+        label.textContent = 'Let’s back up';
+        heading.textContent = 'Let’s pick that again.';
+        lead.textContent = 'Tell us the lesson and location and we’ll show the right times.';
         detail.textContent = '';
         link.href = '/book-intro/';
         link.textContent = 'Choose a Lesson';

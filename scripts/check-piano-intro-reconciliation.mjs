@@ -87,6 +87,26 @@ assert.equal(paidEvidence.paymentStatus, 'paid');
 assert.equal(paidEvidence.verifiedPaidIntro, true);
 assert.equal(eventDedupeKey(paidEvidence, paidIntroPayload), eventDedupeKey(paidEvidence, paidIntroPayload));
 
+const prospectUpdatePayload = {
+  id: 'opus-student-lifecycle-1',
+  first_name: 'Fake',
+  last_name: 'Lifecycle Student',
+  status: 'Prospect (new)'
+};
+const bookedUpdatePayload = { ...prospectUpdatePayload, status: 'Intro Booked' };
+const prospectUpdateEvidence = extractOpusEvidence(prospectUpdatePayload, { 'x-opus-trigger': 'client_update_trigger' });
+const bookedUpdateEvidence = extractOpusEvidence(bookedUpdatePayload, { 'x-opus-trigger': 'client_update_trigger' });
+assert.equal(
+  eventDedupeKey(prospectUpdateEvidence, prospectUpdatePayload),
+  eventDedupeKey(prospectUpdateEvidence, prospectUpdatePayload),
+  'an identical client_update redelivery must dedupe'
+);
+assert.notEqual(
+  eventDedupeKey(prospectUpdateEvidence, prospectUpdatePayload),
+  eventDedupeKey(bookedUpdateEvidence, bookedUpdatePayload),
+  'distinct lifecycle updates for one Opus client must not dedupe each other'
+);
+
 const freeEvidence = extractOpusEvidence(freeIntroPayload);
 assert.equal(freeEvidence.eventType, 'subscription_create');
 assert.equal(freeEvidence.serviceSlug, 'music-discovery');

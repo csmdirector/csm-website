@@ -380,9 +380,14 @@ export function extractStripeEvidence(event) {
 }
 
 export function eventDedupeKey(evidence, payload) {
-  const stable = evidence.externalId
-    ? `${evidence.eventType}|${evidence.externalId}`
-    : `${evidence.eventType}|${JSON.stringify(payload || {})}`;
+  const eventType = clean(evidence.eventType, 120);
+  const updateEvent = eventType.endsWith('_update');
+  // Create events represent one durable object and can use that object's ID.
+  // Update triggers reuse the same object ID for every lifecycle transition, so
+  // include the payload to dedupe redelivery without suppressing later states.
+  const stable = evidence.externalId && !updateEvent
+    ? `${eventType}|${evidence.externalId}`
+    : `${eventType}|${evidence.externalId || ''}|${JSON.stringify(payload || {})}`;
   return crypto.createHash('sha256').update(stable).digest('hex');
 }
 

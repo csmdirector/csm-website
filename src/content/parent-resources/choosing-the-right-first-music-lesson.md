@@ -26,7 +26,7 @@ seoTitle: How to Choose the Right First Music Lesson | CSM
 seoDescription: Not sure where your child should start with music lessons? Cincinnati School of Music explains how parents can think about age, instrument choice, teacher fit, and the first lesson.
 canonicalPath: /parent-resources/choosing-the-right-first-music-lesson
 ctaLabel: Book Intro
-ctaHref: https://cincinnatischoolofmusic.opus1.io/w/book-your-intro-lesson
+ctaHref: /book-intro/
 ---
 
 Choosing a first music lesson does not need to feel like a permanent decision. For most families, the first step is not finding the perfect instrument forever. It is finding a good starting point with a teacher who can help the student feel comfortable, capable, and ready to come back.
