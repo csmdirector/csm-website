@@ -41,7 +41,7 @@ Based on publicly listed rates and local pricing we reviewed, many weekly 30-min
 
 At Cincinnati School of Music, a weekly 30-minute private lesson is **$42**.
 
-CSM is not the least expensive option in town, and we do not try to be. Our price reflects a professionally operated school model: carefully hired teachers, scheduling and billing assistance, consistent and fair policies, performance opportunities, parent support, and five locations across Greater Cincinnati. This page explains what that price includes, and when a lower-priced option may be the better fit for your family.
+CSM is not the least expensive option in town, and we do not try to be. Our price reflects a professionally operated school model: carefully hired teachers, scheduling and billing assistance, consistent and fair policies, performance opportunities, parent support, and four locations across Greater Cincinnati. This page explains what that price includes, and when a lower-priced option may be the better fit for your family.
 
 ## Why Music Lesson Prices Vary
 
@@ -67,7 +67,7 @@ At CSM, teachers are hired selectively and backed by the school itself. Every te
 - **One phone number.** When something comes up, whether it's a billing question, a schedule conflict, or a teacher-fit concern, our office team answers and fixes it. Our office staff answers phones and emails every day of the week.
 - **Continuity.** If a teacher moves, changes schedules, or simply isn't the right fit, we help your family transition without starting over from zero, with notes from the previous teacher and, when possible, shadowing by the new one.
 - **Every instrument under one roof.** [Piano](/piano-lessons), [voice](/voice-lessons), [guitar](/guitar-lessons), [strings](/violin-lessons), [drums](/drum-lessons), [woodwinds](/flute-clarinet-lessons) and more at each location, so siblings can learn different instruments in one place. Ask about simultaneous lesson times for siblings; we arrange them whenever availability allows, and it happens often.
-- **[Five locations across Greater Cincinnati](/locations),** each with easy parking, so lessons fit your week instead of the other way around.
+- **[Four locations across Greater Cincinnati](/locations),** each with easy parking, so lessons fit your week instead of the other way around.
 
 We've been doing this since 2012, with 60+ teachers and 1,000+ active students across Greater Cincinnati. Enrollment is month-to-month, with a one-time $50 registration fee per student at enrollment. You can see our full lesson pricing on our [FAQ page](/lessons).
 
@@ -104,4 +104,4 @@ Ask whether policies and billing are the same for every teacher, who coordinates
 
 ---
 
-Prices in this guide reflect Greater Cincinnati lesson rates as of 2026 and the different ways music lessons are commonly offered. If you'd like to see what a professionally operated school feels like before deciding anything, we'd love to meet you. [Schedule an intro lesson](/book-intro/) at any of our [five locations](/locations).
+Prices in this guide reflect Greater Cincinnati lesson rates as of 2026 and the different ways music lessons are commonly offered. If you'd like to see what a professionally operated school feels like before deciding anything, we'd love to meet you. [Schedule an intro lesson](/book-intro/) at any of our [four locations](/locations).

@@ -68,7 +68,7 @@ None.
 
 Pass 1: The initial browser-rendered implementation was compared with both supplied print references at desktop and mobile viewports. No P0/P1/P2 issues were found, so no visual correction loop was required.
 
-Pass 2: The user's follow-up screenshot identified a P2 responsive-layout issue: Middletown wrapped onto a second line at the shown width. The flexible wrapping row was replaced with a five-column grid with tighter, centered chip typography. Post-fix evidence in `/tmp/csm-bts-locations-inline-479.png` shows all five locations aligned on one row with no horizontal overflow; a separate 320px check confirms the narrow-phone fallback remains contained and readable.
+Pass 2: The user's follow-up screenshot identified a P2 responsive-layout issue: the final location wrapped onto a second line at the shown width. The flexible wrapping row was replaced with a four-column grid with tighter, centered chip typography. Post-fix evidence in `/tmp/csm-bts-locations-inline-479.png` shows all four locations aligned on one row with no horizontal overflow; a separate 320px check confirms the narrow-phone fallback remains contained and readable.
 
 ## Follow-up polish
 

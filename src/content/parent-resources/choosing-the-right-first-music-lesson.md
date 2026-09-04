@@ -59,6 +59,6 @@ That is why a first lesson should feel like a beginning, not a test.
 
 ## When in doubt, ask for help matching
 
-If you are choosing between instruments, locations, or lesson styles, it is reasonable to ask for guidance. CSM works with families across five Greater Cincinnati locations and can help narrow the options based on age, goals, schedule, and personality.
+If you are choosing between instruments, locations, or lesson styles, it is reasonable to ask for guidance. CSM works with families across four Greater Cincinnati locations and can help narrow the options based on age, goals, schedule, and personality.
 
 The right first lesson is not the one that solves every future question. It is the one that gives your student a clear, encouraging place to begin.
