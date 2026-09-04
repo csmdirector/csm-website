@@ -350,11 +350,9 @@ export function introBookingUrl(serviceValue, locationValue) {
   }
   const params = new URLSearchParams({
     serviceId: service.opusServiceId,
-    locationId: location.opusLocationId,
-    selfRequest: 'True',
-    planName: 'Single Visit - Intro'
+    locationId: location.opusLocationId
   });
-  return `${OPUS_ORIGIN}/selfbook?${params.toString()}`;
+  return `${OPUS_ORIGIN}/w/${service.opusPublicSlug}?${params.toString()}`;
 }
 
 export const INTRO_BRIDGE_PUBLIC_PATH = '/book-intro/';

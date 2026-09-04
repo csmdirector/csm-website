@@ -66,14 +66,17 @@ assert.equal(
   'https://cincinnatischoolofmusic.opus1.io/w/book-your-music-discovery-intro-montgomery'
 );
 const guitarMason = new URL(introBookingUrl('guitar', 'mason'));
-assert.equal(guitarMason.pathname, '/selfbook');
+assert.equal(guitarMason.pathname, '/w/book-your-guitar-intro');
 assert.equal(guitarMason.searchParams.get('serviceId'), introService('guitar').opusServiceId);
 assert.equal(guitarMason.searchParams.get('locationId'), introLocation('mason').opusLocationId);
-assert.equal(guitarMason.searchParams.get('planName'), 'Single Visit - Intro');
 const clarinetMason = new URL(introBookingUrl('clarinet', 'mason'));
-assert.equal(clarinetMason.pathname, '/selfbook');
+assert.equal(clarinetMason.pathname, '/w/book-your-wind-intro');
 assert.equal(clarinetMason.searchParams.get('serviceId'), introService('clarinet').opusServiceId);
 assert.equal(clarinetMason.searchParams.get('locationId'), introLocation('mason').opusLocationId);
+const violinMason = new URL(introBookingUrl('violin', 'mason'));
+assert.equal(violinMason.pathname, '/w/book-your-violin-intro');
+assert.equal(violinMason.searchParams.get('serviceId'), introService('violin').opusServiceId);
+assert.equal(violinMason.searchParams.get('locationId'), introLocation('mason').opusLocationId);
 assert.equal(introBookingUrl('flute', 'middletown'), '');
 assert.equal(introServiceAvailableAtLocation('saxophone', 'anderson'), true);
 assert.equal(introServiceAvailableAtLocation('saxophone', 'middletown'), false);
