@@ -19,7 +19,7 @@
 
 ## Full-view comparison evidence
 
-The wide and tall source ads were opened in the same visual comparison input as the desktop and 320px browser captures. The implementation preserves the source hierarchy and art direction: warm ruled notebook paper, one restrained red margin rule, condensed navy/teal campaign type, navy school-year banner, oversized coral `$142 OFF`, mustard deadline treatment, and real piano-lesson photography. The web layout intentionally separates the offer stack from the hero and stacks the photo below the CTA on mobile, matching the requested page structure and responsive behavior rather than copying the print ad's QR composition.
+The wide and tall source ads were opened in the same visual comparison input as the desktop and 320px browser captures. The implementation preserves the source hierarchy and art direction: warm ruled notebook paper, one restrained red margin rule, condensed navy/teal campaign type, navy school-year banner, oversized coral `$100 OFF`, mustard deadline treatment, and real piano-lesson photography. The web layout intentionally separates the offer stack from the hero and stacks the photo below the CTA on mobile, matching the requested page structure and responsive behavior rather than copying the print ad's QR composition.
 
 ## Focused comparison evidence
 
@@ -35,7 +35,7 @@ The wide and tall source ads were opened in the same visual comparison input as 
 - Spacing and layout rhythm: Desktop uses a balanced split hero; mobile stacks copy, CTA, then photography. Offer rows, trust bands, proof copy, and form spacing remain distinct and do not collide or clip. The five location chips share one equal-width row at the supplied 479px comparison width. Client width and scroll width match at 1440, 479, and 320px.
 - Colors and visual tokens: Navy, teal, coral, mustard, warm paper, pale blue rules, and the restrained coral margin rule closely map to the source direction. Contrast is strong for campaign headings, buttons, body text, and form controls.
 - Image quality and asset fidelity: The implementation uses `/images/promo-piano-lesson.jpg`, the repository's real CSM student/teacher asset, with meaningful alt text and stable intrinsic dimensions. The exact shared navigation/footer logo assets remain untouched. The reference model photo was treated as art-direction context rather than introduced as a new or generated stock image.
-- Copy and content: Campaign name, `$142` total, all three offer components and values, August 31, 2026 deadline, supporting copy, trust facts, form labels, terms, and thank-you copy match the brief. No copy says or implies that the first month is free.
+- Copy and content: Campaign name, `$100` total, the free intro plus both enrollment savings, August 31, 2026 deadline, supporting copy, trust facts, form labels, terms, and thank-you copy match the updated offer. No copy says or implies that the first month is free.
 - Icons: The three user-required inline SVG icons are consistent in size, fill, circular treatment, and alignment.
 - Accessibility and behavior: Labels and semantic controls are present, focus states are visible, tap targets exceed 44px, reduced motion is respected, alt text is meaningful, and there is no horizontal overflow at 320px. Mobile navigation opens/closes and reports `aria-expanded` correctly; the CTA reaches `#claim`.
 

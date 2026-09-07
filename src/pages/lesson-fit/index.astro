@@ -19,8 +19,8 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
       <span class="section-label">Lesson Fit</span>
       <h1>Find the right lesson fit.</h1>
       <p>
-        Start with a $42 Intro Lesson - a one-time private lesson to meet the teacher,
-        try the fit, and see how lessons feel before enrolling.
+        Start with a free 30-minute intro lesson — meet the teacher, try the fit,
+        and see how lessons feel before enrolling.
       </p>
     </div>
   </section>
@@ -196,7 +196,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
             <legend>Your recommended next step</legend>
             <div class="recommendation-box" id="recommendationBox" aria-live="polite">
               <span class="section-label">Intro Lesson</span>
-              <h2 id="recommendationTitle">A $42 Intro Lesson is the best starting point.</h2>
+              <h2 id="recommendationTitle">A free intro lesson is the best starting point.</h2>
               <p id="recommendationBody">
                 Based on your answers, this is a good next step.
               </p>
@@ -652,7 +652,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         var studentContext = readFormValue('student_context');
         var canSelfBook = hasKnownSelfBookingRoute(instrument, location, nextStep);
 
-        var title = 'A $42 Intro Lesson is the best starting point.';
+        var title = 'A free intro lesson is the best starting point.';
         var body = 'Tell us a little about what you are looking for. We will use this information when we reach out.';
         var outcome = 'staff-help';
         var url = appendAttribution(HELP_THANK_YOU_URL);
@@ -661,10 +661,10 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
           outcome = 'self-booking';
           url = getSelfBookingUrl(instrument, location);
           if(instrument === 'Early childhood music'){
-            title = 'Start with a $42 Music Discovery Intro Lesson at ' + location + '.';
+            title = 'Start with a free Music Discovery intro lesson at ' + location + '.';
             body = 'Based on your answers, the next step is a Music Discovery Intro Lesson at ' + location + '.';
           } else {
-            title = 'Start with a $42 Piano Intro Lesson at ' + location + '.';
+            title = 'Start with a free piano intro lesson at ' + location + '.';
             body = 'Based on your answers, the next step is an Intro Lesson for Piano at ' + location + '.';
           }
         } else if(instrument === 'Not sure yet' || location === 'Flexible or not sure'){
