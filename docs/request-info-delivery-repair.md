@@ -1,6 +1,6 @@
 # Request Info delivery repair — September 8, 2026
 
-Prepared against `ef69dfccfb6644ad4add3e2296a22ec1fa6f7e89`, preserving the newly published compact enrollment form. This patch is not deployed.
+Prepared against `ef69dfccfb6644ad4add3e2296a22ec1fa6f7e89`, preserving the newly published compact enrollment form. Check the release pull request for publication and live verification status.
 
 ## Confirmed source defects
 
