@@ -179,7 +179,8 @@ const locations = INTRO_LOCATIONS.map(l => ({ slug: l.slug, name: l.name.replace
         if (choice === 'office_help') {
           copy.textContent = 'Sending your request to the office…';
           try {
-            await recordChoice('office_help');
+            const confirmation = await recordChoice('office_help');
+            if (confirmation.office_email_confirmed !== true) throw new Error('Office delivery not confirmed.');
             document.getElementById('successHeading').textContent = 'We’ll help you from here.';
             copy.textContent = savedExisting ? 'Our office will contact you to arrange the intro with your existing account.' : 'Our office will contact you to find a suitable teacher and time.';
             retry.hidden = true;

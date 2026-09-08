@@ -4,9 +4,6 @@ import Base from '../../layouts/Base.astro';
 const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
   String(import.meta.env.ENABLE_LEAD_PIPELINE || '').trim().toLowerCase()
 );
-const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
-  String(import.meta.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT || '').trim().toLowerCase()
-);
 ---
 <Base
   title="Find the Right Lesson Fit | Cincinnati School of Music"
@@ -47,7 +44,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
           id="intakeForm"
         >
           <input type="hidden" name="form-name" value="lesson-fit-request" />
-          <input type="hidden" name="subject" data-remove-prefix value="New Lesson Fit Help Request" />
+          <input type="hidden" name="subject" data-remove-prefix value="Request Info" />
           <textarea name="contact_summary" id="contactSummary" hidden></textarea>
           <textarea name="lesson_request" id="lessonRequestSummary" hidden></textarea>
           <textarea name="follow_up_notes" id="followUpNotes" hidden></textarea>
@@ -344,7 +341,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
     }
   </style>
 
-  <script define:vars={{ enableLeadPipelineCapture, enableLessonFitDirectSubmit }}>
+  <script define:vars={{ enableLeadPipelineCapture }}>
     (function(){
       var form = document.getElementById('intakeForm');
       if(!form) return;
@@ -353,7 +350,6 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
       var DIRECT_SUBMIT_URL = '/api/lesson-fit-submit';
       var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
       var ENABLE_LEAD_PIPELINE_CAPTURE = Boolean(enableLeadPipelineCapture);
-      var ENABLE_LESSON_FIT_DIRECT_SUBMIT = Boolean(enableLessonFitDirectSubmit);
       var ATTRIBUTION_STORAGE_KEY = 'csmLessonFitAttribution';
       var STATE_STORAGE_KEY = 'csmLessonFitState';
       var HELP_SUBMIT_EVENT_PUSHED_KEY = 'csmLessonFitHelpSubmitEventPushed';
@@ -832,7 +828,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         if(currentStep === steps.length - 1){
           var recommendation = getRecommendation();
           if(recommendation.outcome === 'staff-help'){
-            submitButton.textContent = 'Send Help Request';
+            submitButton.textContent = 'Send Request';
           } else {
             submitButton.textContent = 'Choose a Time';
           }
@@ -880,47 +876,6 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         return true;
       }
 
-      function submitLegacyNetlify(){
-        updateAttributionFields();
-        var formData = new URLSearchParams();
-        formData.set('form-name', 'lesson-fit-request');
-        formData.set('subject', 'New Lesson Fit Help Request');
-        formData.set('email', readFormValue('email'));
-        formData.set('client_submission_id', ensureClientSubmissionId());
-        formData.set('submitted_at', new Date().toISOString());
-        formData.set('lead_pipeline_only', '');
-        formData.set('routing_outcome', readFormValue('routing_outcome'));
-        formData.set('recommended_url', readFormValue('recommended_url'));
-        formData.set('contact_summary', readFormValue('contact_summary'));
-        formData.set('lesson_request', readFormValue('lesson_request'));
-        formData.set('follow_up_notes', readFormValue('follow_up_notes'));
-        formData.set('tracking_summary', readFormValue('tracking_summary'));
-        ATTRIBUTION_KEYS.forEach(function(key){
-          formData.set(key, readFormValue(key));
-        });
-        formData.set('landing_path', readFormValue('landing_path'));
-        formData.set('first_landing_path', readFormValue('first_landing_path'));
-        formData.set('latest_landing_path', readFormValue('latest_landing_path'));
-        formData.set('referrer', readFormValue('referrer'));
-        formData.set('attribution_timestamp', readFormValue('attribution_timestamp'));
-        formData.set('last_paid_click_timestamp', readFormValue('last_paid_click_timestamp'));
-        if(ENABLE_LEAD_PIPELINE_CAPTURE){
-          setLeadEventField('submitted_at', new Date().toISOString());
-          setLeadEventField('lead_pipeline_only', '');
-          formData = new URLSearchParams(new FormData(form));
-        }
-        return fetch(form.action, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: formData.toString()
-        }).then(function(response){
-          if(!response.ok){
-            throw new Error('Lesson Fit form submission failed');
-          }
-          return response;
-        });
-      }
-
       function submitDirect(){
         updateAttributionFields();
         ensureClientSubmissionId();
@@ -928,6 +883,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         setLeadEventField('lead_pipeline_only', '');
         var formData = new URLSearchParams(new FormData(form));
         formData.set('form-name', 'lesson-fit-request');
+        formData.set('subject', 'Request Info');
         formData.set('lead_pipeline_only', '');
         return fetch(DIRECT_SUBMIT_URL, {
           method: 'POST',
@@ -939,29 +895,35 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
             error.status = response.status;
             throw error;
           }
-          return response;
+          return response.json().then(function(result){
+            if(!result || result.ok !== true || !result.email || result.email.sent !== true){
+              throw new Error('Request Info delivery was not confirmed');
+            }
+            return result;
+          });
         });
       }
 
-      function shouldFallbackToLegacySubmit(error){
-        if(!error || typeof error.status === 'undefined') return true;
-        return error.status === 404 ||
-          error.status === 500 ||
-          error.status === 502 ||
-          error.status === 503 ||
-          error.status === 504;
+      function saveRequestBackup(){
+        var formData = new URLSearchParams(new FormData(form));
+        formData.set('form-name', 'lesson-fit-request');
+        formData.set('subject', 'Request Info');
+        formData.set('lead_pipeline_only', '');
+        return fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        });
       }
 
-      function submitToNetlify(){
-        if(!ENABLE_LESSON_FIT_DIRECT_SUBMIT){
-          return submitLegacyNetlify();
-        }
+      function submitRequestInfo(){
         return submitDirect().catch(function(error){
-          if(shouldFallbackToLegacySubmit(error)){
-            if(window.console && window.console.warn) window.console.warn('Lesson Fit direct submit failed operationally; falling back to Netlify form', error);
-            return submitLegacyNetlify();
-          }
-          throw error;
+          // Preserve a recoverable copy without claiming that the office received it.
+          return saveRequestBackup().catch(function(){
+            return null;
+          }).then(function(){
+            throw error;
+          });
         });
       }
 
@@ -972,7 +934,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
         setLeadEventField('lead_pipeline_only', '1');
         var formData = new URLSearchParams(new FormData(form));
         formData.set('lead_pipeline_only', '1');
-        return fetch(ENABLE_LESSON_FIT_DIRECT_SUBMIT ? DIRECT_SUBMIT_URL : form.action, {
+        return fetch(DIRECT_SUBMIT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: formData.toString()
@@ -1021,7 +983,7 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
           return;
         }
         submitButton.textContent = 'Sending Request...';
-        submitToNetlify()
+        submitRequestInfo()
           .then(function(){
             try {
               window.localStorage.removeItem(STATE_STORAGE_KEY);
@@ -1034,8 +996,8 @@ const enableLessonFitDirectSubmit = ['1', 'true', 'yes', 'on'].includes(
           })
           .catch(function(){
             submitButton.disabled = false;
-            submitButton.textContent = 'Send Help Request';
-            formError.textContent = 'Something went wrong. Please try again or contact CSM directly.';
+            submitButton.textContent = 'Send Request';
+            formError.textContent = 'We could not confirm your request reached our office. Your answers are still here. Please try again, or call or text us at (513) 560-9175.';
           });
       });
 

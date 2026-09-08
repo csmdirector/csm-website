@@ -129,10 +129,6 @@ async function settlePipeline(promise) {
 }
 
 export default async function lessonFitSubmit(req, context) {
-  if (!isEnabled('ENABLE_LESSON_FIT_DIRECT_SUBMIT')) {
-    return jsonResponse({ ok: false, disabled: true, error: 'Lesson Fit direct submit is disabled.' }, 404);
-  }
-
   if (req.method !== 'POST') {
     return jsonResponse({ ok: false, error: 'Method not allowed.' }, 405);
   }
@@ -170,10 +166,15 @@ export default async function lessonFitSubmit(req, context) {
   try {
     emailResult = await sendFormEmailSubmission({
       formName: FORM_NAME,
-      data: fields,
+      data: { ...fields, subject: 'Request Info' },
       id,
       createdAt
     });
+    if (valueFor(fields, 'lead_pipeline_only') !== '1' &&
+        (!emailResult?.sent || !Number.isInteger(emailResult.status) ||
+          emailResult.status < 200 || emailResult.status >= 300)) {
+      throw new Error('Office email was not accepted.');
+    }
   } catch (error) {
     console.error('lesson-fit-submit: office email failed', error);
     if (!context || typeof context.waitUntil !== 'function') await pipelinePromise;

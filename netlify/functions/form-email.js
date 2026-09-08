@@ -19,8 +19,8 @@ const ROUTES = {
   },
   'lesson-fit-request': {
     to: INFO_EMAIL,
-    label: 'Lesson Fit Request',
-    subject: 'New Lesson Fit help request',
+    label: 'Request Info',
+    subject: 'Request Info',
     replyTo: ['email'],
     groups: [
       ['Contact', ['parent_name', 'email', 'phone', 'contact_summary']],
@@ -118,6 +118,12 @@ const ROUTES = {
       ['Additional steps', ['resume-sent', 'voicemail-left', 'additional-notes']]
     ]
   }
+};
+
+ROUTES['intro-bridge-office-help'] = {
+  ...ROUTES['intro-bridge'],
+  label: 'Request Info',
+  subject: 'Request Info'
 };
 
 const FORM_FIELD_SIGNATURES = [

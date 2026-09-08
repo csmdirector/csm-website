@@ -1,8 +1,7 @@
 import {
   HANDOFF_CHOICES,
   buildOfficeNotification,
-  createPostgresPreregistrationRepository,
-  isEnabled
+  createPostgresPreregistrationRepository
 } from './_shared/intro-bridge.js';
 import { sendFormEmailSubmission } from './form-email.js';
 import { introBridgeEnabled } from './intro-bridge-submit.js';
@@ -34,7 +33,11 @@ async function parseJson(req) {
   return req.json();
 }
 
-export default async function introBridgeChoice(req) {
+export function createIntroBridgeChoiceHandler({
+  repositoryFactory = createPostgresPreregistrationRepository,
+  sendOfficeEmail = sendFormEmailSubmission
+} = {}) {
+return async function introBridgeChoice(req) {
   const requestUrl = new URL(req.url);
   if (!introBridgeEnabled({
     enabledValue: env('ENABLE_INTRO_BRIDGE'),
@@ -63,7 +66,7 @@ export default async function introBridgeChoice(req) {
   }
 
   try {
-    const repository = createPostgresPreregistrationRepository();
+    const repository = repositoryFactory();
     let selected = await repository.recordHandoffChoice(leadId, clientSubmissionId, choice);
     if (!selected.record) return jsonResponse({ ok: false, error: 'Lead not found.' }, 404);
     if (selected.blockedExistingFamily) {
@@ -74,21 +77,34 @@ export default async function introBridgeChoice(req) {
       }, 409);
     }
 
-    if (choice === HANDOFF_CHOICES.OFFICE_HELP && selected.changed) {
-      const notificationPayload = buildOfficeNotification(selected.record);
-      let notificationResult = { status: 'disabled_preview' };
-      if (isEnabled(env('ENABLE_INTRO_BRIDGE_OFFICE_EMAIL'))) {
-        try {
-          await sendFormEmailSubmission({
-            formName: 'intro-bridge-office-help',
-            data: notificationPayload,
-            id: selected.record.csm_lead_id,
-            createdAt: selected.record.submitted_at
-          });
-          notificationResult = { status: 'sent' };
-        } catch (error) {
-          notificationResult = { status: 'failed', error: clean(error?.message || error, 1000) };
+    const officeHelp = choice === HANDOFF_CHOICES.OFFICE_HELP;
+    // Older records may say "sent" even though the office-help email route was missing.
+    // Only this route's new, explicitly checked acceptance may satisfy a replay.
+    let officeEmailConfirmed = selected.record.office_notification_status === 'sent' &&
+      selected.record.office_notification_payload?.['form-name'] === 'intro-bridge-office-help';
+    if (officeHelp && (!officeEmailConfirmed || selected.changed)) {
+      const notificationPayload = {
+        ...buildOfficeNotification(selected.record),
+        'form-name': 'intro-bridge-office-help',
+        subject: 'Request Info'
+      };
+      let notificationResult;
+      try {
+        const emailResult = await sendOfficeEmail({
+          formName: 'intro-bridge-office-help',
+          data: notificationPayload,
+          id: selected.record.csm_lead_id,
+          createdAt: selected.record.submitted_at
+        });
+        if (!emailResult?.sent || !Number.isInteger(emailResult.status) ||
+            emailResult.status < 200 || emailResult.status >= 300) {
+          throw new Error('Office email was not accepted.');
         }
+        notificationResult = { status: 'sent' };
+        officeEmailConfirmed = true;
+      } catch (error) {
+        notificationResult = { status: 'failed', error: clean(error?.message || error, 1000) };
+        officeEmailConfirmed = false;
       }
       selected = {
         ...selected,
@@ -98,6 +114,15 @@ export default async function introBridgeChoice(req) {
           notificationResult
         )
       };
+      if (!officeEmailConfirmed) {
+        return jsonResponse({
+          ok: false,
+          stored: true,
+          lead_id: selected.record.csm_lead_id,
+          office_email_confirmed: false,
+          error: 'Your details are saved, but the office email was not accepted. Please retry or call or text (513) 560-9175.'
+        }, 502);
+      }
     }
 
     return jsonResponse({
@@ -106,6 +131,7 @@ export default async function introBridgeChoice(req) {
       lead_id: selected.record.csm_lead_id,
       choice: selected.record.handoff_choice || choice,
       booking_url: selected.record.booking_url,
+      office_email_confirmed: officeHelp && officeEmailConfirmed,
       office_follow_up_required: Boolean(selected.record.office_follow_up_required),
       replay: selected.replay
     });
@@ -116,6 +142,9 @@ export default async function introBridgeChoice(req) {
       error: 'We saved your information, but could not record that choice. Please call or text CSM at (513) 560-9175.'
     }, 503);
   }
+};
 }
+
+export default createIntroBridgeChoiceHandler();
 
 export const config = { path: '/api/intro-bridge-choice' };

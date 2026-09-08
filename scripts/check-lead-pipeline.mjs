@@ -250,13 +250,13 @@ const malformed = await parseRequestBody(new Request('https://example.com/api/le
 assert.equal(malformed.parsed.raw_body, '{"bad json"');
 assert.match(malformed.parsed.parse_error, /JSON/);
 
-const disabledDirectSubmit = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {
+const ungatedDirectSubmit = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {
   method: 'POST',
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   body: new URLSearchParams({ 'form-name': 'lesson-fit-request' }).toString()
 }));
-assert.equal(disabledDirectSubmit.status, 404);
-assert.equal((await disabledDirectSubmit.json()).disabled, true);
+assert.equal(ungatedDirectSubmit.status, 422);
+assert.equal((await ungatedDirectSubmit.json()).ok, false);
 
 process.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT = 'true';
 const invalidDirectSubmit = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {
@@ -287,7 +287,7 @@ const emailText = buildText(ROUTES['lesson-fit-request'], 'lesson-fit-request', 
   id: 'email-test',
   createdAt: '2026-07-04T15:01:00Z'
 });
-assert.match(emailText, /Lesson Fit Request/);
+assert.match(emailText, /Request Info/);
 assert.doesNotMatch(emailText, /Routing Outcome/i);
 assert.doesNotMatch(emailText, /Lead Pipeline Only/i);
 assert.equal(shouldSkipOfficeEmail(emailFields), false);
@@ -372,7 +372,7 @@ await formEmailHandler.formSubmitted({
 });
 assert.equal(sentEmails.length, 1);
 
-process.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT = 'true';
+process.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT = 'false';
 process.env.ENABLE_LEAD_PIPELINE = 'true';
 delete process.env.DATABASE_URL;
 delete process.env.POSTGRES_URL;
@@ -406,6 +406,7 @@ assert.equal(directJson.pipeline.ok, false);
 assert.match(directJson.pipeline.error, /DATABASE_URL|POSTGRES_URL/);
 assert.equal(sentEmails.length, 2);
 assert.equal(sentEmails[1].body.to[0], 'info@cincinnatischoolofmusic.com');
+assert.equal(sentEmails[1].body.subject, 'Request Info');
 assert.equal(sentEmails[1].headers['Idempotency-Key'], 'csm-lesson-fit-request-lesson-fit-direct-test-123');
 
 const duplicateDirectResponse = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {
@@ -414,9 +415,8 @@ const duplicateDirectResponse = await lessonFitSubmit(new Request('https://examp
   body: new URLSearchParams({ 'form-name': 'lesson-fit-request', ...directFields }).toString()
 }));
 const duplicateDirectJson = await duplicateDirectResponse.json();
-assert.equal(duplicateDirectResponse.status, 200);
-assert.equal(duplicateDirectJson.ok, true);
-assert.equal(duplicateDirectJson.email.deduped, true);
+assert.equal(duplicateDirectResponse.status, 502);
+assert.equal(duplicateDirectJson.ok, false);
 assert.equal(sentEmails.length, 3);
 assert.equal(sentEmails[2].headers['Idempotency-Key'], 'csm-lesson-fit-request-lesson-fit-direct-test-123');
 
@@ -442,22 +442,59 @@ delete process.env.ENABLE_LEAD_PIPELINE;
 delete process.env.ENABLE_LESSON_FIT_DIRECT_SUBMIT;
 delete process.env.ENABLE_OPUS_INBOUND_FORWARDING;
 
-const lessonFitPage = readFileSync(new URL('../src/pages/lesson-fit/index.astro', import.meta.url), 'utf8');
+const lessonFitPage = readFileSync(new URL('../src/pages/lesson-fit/guide.astro', import.meta.url), 'utf8');
 assert.match(lessonFitPage, /noindex=\{true\}/);
 assert.match(lessonFitPage, /ENABLE_LEAD_PIPELINE_CAPTURE/);
-assert.match(lessonFitPage, /ENABLE_LESSON_FIT_DIRECT_SUBMIT/);
-assert.match(lessonFitPage, /function shouldFallbackToLegacySubmit/);
-assert.match(lessonFitPage, /error\.status === 404/);
-assert.match(lessonFitPage, /error\.status === 500/);
-assert.match(lessonFitPage, /error\.status === 502/);
-assert.match(lessonFitPage, /error\.status === 503/);
-assert.match(lessonFitPage, /error\.status === 504/);
-assert.doesNotMatch(lessonFitPage, /error\.status === 400/);
-assert.doesNotMatch(lessonFitPage, /error\.status === 401/);
-assert.doesNotMatch(lessonFitPage, /error\.status === 403/);
-assert.doesNotMatch(lessonFitPage, /error\.status === 405/);
-assert.doesNotMatch(lessonFitPage, /error\.status === 422/);
-assert.doesNotMatch(lessonFitPage, /error\.status === 429/);
+assert.doesNotMatch(lessonFitPage, /ENABLE_LESSON_FIT_DIRECT_SUBMIT/);
+
+// Exercise the actual browser request code with provider failures. Saving a
+// fallback copy must never convert a delivery failure into a successful request.
+const browserRequestCode = lessonFitPage.slice(
+  lessonFitPage.indexOf('      function submitDirect(){'),
+  lessonFitPage.indexOf('      function submitPipelineOnly(){')
+);
+const browserFields = {
+  ...directFields,
+  utm_source: 'google', utm_campaign: 'voice', gclid: 'test-click-id',
+  landing_path: '/voice-lessons?utm_source=google'
+};
+class TestFormData extends URLSearchParams {
+  constructor() { super(browserFields); }
+}
+function browserRequest(fetchImpl) {
+  return new Function(
+    'fetch', 'form', 'FormData', 'updateAttributionFields',
+    'ensureClientSubmissionId', 'setLeadEventField', 'DIRECT_SUBMIT_URL',
+    browserRequestCode + '\nreturn submitRequestInfo;'
+  )(fetchImpl, { action: '/lesson-fit/thank-you/' }, TestFormData,
+    () => {}, () => browserFields.client_submission_id, () => {}, '/api/lesson-fit-submit');
+}
+for (const failure of ['network', 404, 502, 'invalid-json', 'unconfirmed']) {
+  const requests = [];
+  const request = browserRequest(async (url, options) => {
+    requests.push({ url, fields: new URLSearchParams(options.body) });
+    if (url === '/lesson-fit/thank-you/') return new Response('Saved', { status: 200 });
+    if (failure === 'network') throw new Error('Network unavailable');
+    if (typeof failure === 'number') return new Response('', { status: failure });
+    if (failure === 'invalid-json') return new Response('<html>Not confirmation</html>');
+    return Response.json({ ok: true, email: { skipped: true } });
+  });
+  await assert.rejects(request, undefined, String(failure));
+  assert.equal(requests.length, 2);
+  assert.equal(requests[0].url, '/api/lesson-fit-submit');
+  assert.equal(requests[1].url, '/lesson-fit/thank-you/');
+  for (const attempt of requests) {
+    for (const key of ['parent_name', 'email', 'phone', 'student_age', 'instrument_interest', 'preferred_location', 'gclid', 'utm_source', 'utm_campaign', 'landing_path']) {
+      assert.equal(attempt.fields.get(key), browserFields[key], key);
+    }
+  }
+}
+let successfulRequests = 0;
+await browserRequest(async () => {
+  successfulRequests += 1;
+  return Response.json({ ok: true, email: { sent: true, status: 200 } });
+})();
+assert.equal(successfulRequests, 1);
 
 process.env.ENABLE_LEAD_PIPELINE = 'true';
 assert.equal(isLeadPipelineEnabled(), true);
