@@ -9,6 +9,7 @@ const trackingHeadHtml = (await readFile(path.join(root, 'src/components/Trackin
 const hardcodedGa4Pattern = /\n?<!-- Google Analytics 4 -->\n<script async src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-R3FZGNMFEK"><\/script>\n<script>\n\s*window\.dataLayer = window\.dataLayer \|\| \[\];\n\s*function gtag\(\)\{dataLayer\.push\(arguments\);\}\n\s*gtag\('js', new Date\(\)\);\n\s*gtag\('config', 'G-R3FZGNMFEK'\);\n<\/script>\n<!-- End Google Analytics 4 -->\n?/g;
 const directGtagEventPattern = /\n\s*if\(typeof gtag === 'function'\)\{\n\s*gtag\('event', 'book_intro_click', \{\n\s*link_url: link\.href,\n\s*page_path: location,\n\s*link_text: \(link\.textContent \|\| ''\)\.trim\(\)\.slice\(0, 80\)\n\s*\}\);\n\s*\}/g;
 const trackingBlockPattern = /\n?<!-- CSM-TRACKING-INJECTED v\d+ -->[\s\S]*?<!-- End Book Intro click tracking -->\n?/;
+const legacyPaidIntroPattern = /(?:\$42(?:\.00)?[^.!?]{0,100}intro|intro[^.!?]{0,100}\$42(?:\.00)?)/i;
 
 function sanitizeLegacyHtml(html) {
   return html
@@ -66,4 +67,18 @@ for (const file of imageFiles) {
   await assertSameFile(file);
 }
 
-console.log(`Verified preserved output: ${htmlFiles.length} HTML pages, _redirects, robots.txt, sitemap.xml, and ${imageFiles.length} image files match source.`);
+const publicHtmlFiles = (await listFiles(dist)).filter((file) => file.endsWith('.html'));
+for (const file of publicHtmlFiles) {
+  const html = await readFile(path.join(dist, file), 'utf8');
+  const visibleText = html
+    .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ');
+
+  if (legacyPaidIntroPattern.test(visibleText)) {
+    throw new Error(`${file} still presents an intro lesson as $42.`);
+  }
+}
+
+console.log(`Verified preserved output: ${htmlFiles.length} HTML pages, _redirects, robots.txt, sitemap.xml, and ${imageFiles.length} image files match source; ${publicHtmlFiles.length} public pages contain no legacy $42 intro copy.`);

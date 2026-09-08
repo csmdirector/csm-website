@@ -26,7 +26,6 @@ const routes = [
   '/olde-montgomery',
   '/mason',
   '/anderson',
-  '/middletown',
   '/maineville',
   '/request-info',
   '/locations',

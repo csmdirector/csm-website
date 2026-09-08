@@ -48,6 +48,25 @@ const paidIntroPayload = {
   }
 };
 
+const freeIntroPayload = {
+  trigger: 'subscription_create_trigger',
+  subscription: {
+    id: 'opus-subscription-free-acceptance-1',
+    client_id: 'opus-client-acceptance-1',
+    status: 'active',
+    amount_total: 0,
+    currency: 'USD',
+    created_at: '2026-08-28T20:30:00Z',
+    start_at: '2026-09-08T18:30:00Z',
+    service: {
+      id: '7e24490c-de02-490f-a33b-18860c5e6c2c',
+      name: 'Music Discovery Intro Lesson - 30 min (ages 3-5)'
+    },
+    location: { name: 'CSM Montgomery' },
+    booking: { id: 'opus-booking-free-acceptance-1' }
+  }
+};
+
 const clientEvidence = extractOpusEvidence(clientPayload);
 assert.equal(clientEvidence.eventType, 'client_create');
 assert.equal(clientEvidence.parentEmailNorm, 'pianoreconcile@gmail.com');
@@ -68,6 +87,36 @@ assert.equal(paidEvidence.paymentStatus, 'paid');
 assert.equal(paidEvidence.verifiedPaidIntro, true);
 assert.equal(eventDedupeKey(paidEvidence, paidIntroPayload), eventDedupeKey(paidEvidence, paidIntroPayload));
 
+const prospectUpdatePayload = {
+  id: 'opus-student-lifecycle-1',
+  first_name: 'Fake',
+  last_name: 'Lifecycle Student',
+  status: 'Prospect (new)'
+};
+const bookedUpdatePayload = { ...prospectUpdatePayload, status: 'Intro Booked' };
+const prospectUpdateEvidence = extractOpusEvidence(prospectUpdatePayload, { 'x-opus-trigger': 'client_update_trigger' });
+const bookedUpdateEvidence = extractOpusEvidence(bookedUpdatePayload, { 'x-opus-trigger': 'client_update_trigger' });
+assert.equal(
+  eventDedupeKey(prospectUpdateEvidence, prospectUpdatePayload),
+  eventDedupeKey(prospectUpdateEvidence, prospectUpdatePayload),
+  'an identical client_update redelivery must dedupe'
+);
+assert.notEqual(
+  eventDedupeKey(prospectUpdateEvidence, prospectUpdatePayload),
+  eventDedupeKey(bookedUpdateEvidence, bookedUpdatePayload),
+  'distinct lifecycle updates for one Opus client must not dedupe each other'
+);
+
+const freeEvidence = extractOpusEvidence(freeIntroPayload);
+assert.equal(freeEvidence.eventType, 'subscription_create');
+assert.equal(freeEvidence.serviceSlug, 'music-discovery');
+assert.equal(freeEvidence.amountCents, 0);
+assert.equal(freeEvidence.bookingStatus, 'booked');
+assert.equal(freeEvidence.paymentStatus, 'not_required');
+assert.equal(freeEvidence.verifiedPaidIntro, false);
+assert.equal(freeEvidence.verifiedBookedFree, true);
+assert.equal(freeEvidence.verifiedIntroCompletion, true);
+
 const flatClientEvidence = extractOpusEvidence({
   id: 'flat-opus-client-1',
   first_name: 'Fake',
@@ -85,6 +134,8 @@ const baseLead = {
   parent_email_norm: 'pianoreconcile@gmail.com',
   parent_phone_norm: '+15135550242',
   student_name: 'Fake Reconcile Student',
+  service_slug: 'piano',
+  instrument: 'Piano',
   preferred_location: 'CSM Mason',
   preferred_location_slug: 'mason',
   submitted_at: '2026-08-11T16:00:00Z',
@@ -264,14 +315,14 @@ class MemoryRepository {
       event.id !== beforeEventId &&
       !event.matched_csm_lead_id &&
       ['received', 'manual_review', 'verified_no_match'].includes(event.reconciliation_status) &&
-      event.evidence.verifiedPaidIntro === true &&
+      (event.evidence.verifiedPaidIntro === true || event.evidence.verifiedBookedFree === true) &&
       ((identity.stripeCustomerId && event.evidence.stripeCustomerId === identity.stripeCustomerId) ||
         (identity.opusClientId && event.evidence.opusClientId === identity.opusClientId))
     );
   }
 
   async candidates(emailNorm, phoneNorm) {
-    const available = this.leads.filter((lead) => lead.reconciliation_status !== 'matched_paid');
+    const available = this.leads.filter((lead) => !['matched_paid', 'matched_booked_free'].includes(lead.reconciliation_status));
     return {
       emailCandidates: available.filter((lead) => emailNorm && lead.parent_email_norm === emailNorm),
       phoneCandidates: available.filter((lead) => phoneNorm && lead.parent_phone_norm === phoneNorm)
@@ -279,14 +330,14 @@ class MemoryRepository {
   }
 
   async alreadyMatched(evidence) {
-    return this.leads.find((lead) => lead.reconciliation_status === 'matched_paid' && (
+    return this.leads.find((lead) => ['matched_paid', 'matched_booked_free'].includes(lead.reconciliation_status) && (
       (evidence.opusSubscriptionId && lead.matched_opus_subscription_id === evidence.opusSubscriptionId) ||
       (evidence.opusBookingId && lead.matched_opus_booking_id === evidence.opusBookingId)
     )) || null;
   }
 
   async markManual(leadIds, reason) {
-    this.leads.filter((lead) => leadIds.includes(lead.csm_lead_id)).forEach((lead) => {
+    this.leads.filter((lead) => leadIds.includes(lead.csm_lead_id) && !['matched_paid', 'matched_booked_free'].includes(lead.reconciliation_status)).forEach((lead) => {
       lead.reconciliation_status = lead.existing_family ? 'existing_family_office' : 'manual_review';
       lead.reconciliation_reason = reason;
       lead.reconciliation_manual_review_required = true;
@@ -297,9 +348,13 @@ class MemoryRepository {
 
   async markMatched(leadId, eventId, evidence, method) {
     const lead = this.leads.find((item) => item.csm_lead_id === leadId);
-    lead.reconciliation_status = 'matched_paid';
+    lead.reconciliation_status = evidence.verifiedBookedFree ? 'matched_booked_free' : 'matched_paid';
     lead.reconciliation_match_method = method;
-    lead.reconciliation_reason = 'verified_paid_opus_piano_intro';
+    lead.reconciliation_reason = evidence.verifiedBookedFree
+      ? 'verified_free_opus_intro_booking'
+      : evidence.serviceSlug === 'piano'
+        ? 'verified_paid_opus_piano_intro'
+        : 'verified_paid_opus_intro';
     lead.reconciliation_manual_review_required = false;
     lead.matched_opus_event_id = eventId;
     lead.matched_opus_client_id = evidence.opusClientId;
@@ -307,8 +362,8 @@ class MemoryRepository {
     lead.matched_opus_subscription_id = evidence.opusSubscriptionId;
     lead.matched_opus_booking_id = evidence.opusBookingId;
     lead.opus_booking_status = 'booked';
-    lead.opus_payment_status = 'paid';
-    lead.opus_amount_cents = evidence.amountCents;
+    lead.opus_payment_status = evidence.verifiedBookedFree ? 'not_required' : 'paid';
+    lead.opus_amount_cents = evidence.amountCents ?? (evidence.verifiedBookedFree ? 0 : null);
     lead.opus_currency = evidence.currency;
     lead.reconciliation_evidence = structuredClone(evidence);
     return lead;
@@ -331,6 +386,29 @@ assert.equal(repository.leads[0].opus_payment_status, 'paid');
 assert.equal(repository.leads[0].opus_amount_cents, 4200);
 assert.deepEqual(repository.leads[0].attribution, originalAttribution);
 assert.equal(repository.leads[0].attribution_summary, baseLead.attribution_summary);
+
+const freeLead = {
+  ...baseLead,
+  csm_lead_id: 'CSM-PRE-20260828-FREE0001',
+  service_slug: 'music-discovery',
+  instrument: 'Music Discovery',
+  preferred_location: 'CSM Montgomery',
+  preferred_location_slug: 'montgomery',
+  submitted_at: '2026-08-28T20:16:22Z',
+  conversion_eligible: false
+};
+const freeRepository = new MemoryRepository([freeLead]);
+const freeReconcile = createPianoIntroReconciler({ repository: freeRepository });
+await freeReconcile(clientPayload);
+const freeResult = await freeReconcile(freeIntroPayload);
+assert.equal(freeResult.reconciliation_status, 'matched_booked_free');
+assert.equal(freeResult.match_method, 'email');
+assert.equal(freeResult.matched_csm_lead_id, freeLead.csm_lead_id);
+assert.equal(freeRepository.leads[0].opus_booking_status, 'booked');
+assert.equal(freeRepository.leads[0].opus_payment_status, 'not_required');
+assert.equal(freeRepository.leads[0].opus_amount_cents, 0);
+assert.equal(freeRepository.leads[0].conversion_eligible, false);
+assert.deepEqual(freeRepository.leads[0].attribution, freeLead.attribution);
 
 const stripeLead = {
   ...baseLead,
@@ -409,8 +487,38 @@ const nonPianoEvent = {
   } }
 };
 const nonPianoResult = await nonPianoReconcile(nonPianoEvent, {}, { source: 'stripe' });
-assert.equal(nonPianoResult.reconciliation_status, 'ignored_unverified');
+assert.equal(nonPianoResult.reconciliation_status, 'manual_review');
+assert.equal(nonPianoResult.reason, 'missing_exact_email_and_phone');
 assert.equal(nonPianoRepository.leads[0].reconciliation_status, 'pending');
+
+const guitarLead = {
+  ...baseLead,
+  csm_lead_id: 'CSM-PRE-20260811-GUITAR01',
+  service_slug: 'guitar',
+  instrument: 'Guitar'
+};
+const guitarRepository = new MemoryRepository([guitarLead]);
+const guitarReconcile = createPianoIntroReconciler({ repository: guitarRepository });
+await guitarReconcile({
+  ...clientPayload,
+  client: { ...clientPayload.client, id: 'opus-client-guitar-1' }
+});
+const guitarResult = await guitarReconcile({
+  ...paidIntroPayload,
+  subscription: {
+    ...paidIntroPayload.subscription,
+    id: 'opus-subscription-guitar-1',
+    client_id: 'opus-client-guitar-1',
+    service: {
+      id: 'e09f1dcd-3231-4502-970b-6314ca1cc898',
+      name: 'Guitar Private Intro Lesson - 30 min'
+    },
+    booking: { id: 'opus-booking-guitar-1' }
+  }
+});
+assert.equal(guitarResult.reconciliation_status, 'matched_paid');
+assert.equal(guitarRepository.leads[0].reconciliation_reason, 'verified_paid_opus_intro');
+assert.equal(guitarRepository.leads[0].opus_payment_status, 'paid');
 
 const existingFamilyRepository = new MemoryRepository([{ ...baseLead, csm_lead_id: 'CSM-PRE-20260811-EXISTING', existing_family: true }]);
 const existingFamilyReconcile = createPianoIntroReconciler({ repository: existingFamilyRepository });

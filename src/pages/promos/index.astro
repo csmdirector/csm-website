@@ -4,15 +4,15 @@ import Base from '../../layouts/Base.astro';
 const promo = {
   active: true,
   name: 'July Start Special',
-  savingsAmount: '$142',
+  savingsAmount: '$100',
   deadline: '7/14/26',
-  headline: 'Save $142 when you start music lessons this summer.',
+  headline: 'Save $100 when you start music lessons this summer.',
   supportingMessage:
     'Beat the August rush for lesson times and get help finding the right teacher, location, and starting point.',
   ctaLabel: 'Claim July Start Special',
   offerBullets: [
     { label: 'Free Registration', value: '$50 value' },
-    { label: 'Free Intro Lesson', value: '$42 value' },
+    { label: 'Free Intro Lesson', value: 'Included' },
     { label: '$50 Off First Full Month', value: 'when you enroll' }
   ],
   terms:
@@ -41,7 +41,6 @@ const locations = [
   'Mason',
   'Anderson',
   'Maineville',
-  'Middletown',
   'Not sure / flexible'
 ];
 ---
@@ -179,8 +178,8 @@ const locations = [
       <div>
         <span class="section-label">Cincinnati-Area Lessons</span>
         <p>
-          Cincinnati School of Music offers private music lessons at five Cincinnati-area locations:
-          Montgomery, Mason, Anderson, Maineville, and Middletown. Lessons are available in piano,
+          Cincinnati School of Music offers private music lessons at four Cincinnati-area locations:
+          Montgomery, Mason, Anderson, and Maineville. Lessons are available in piano,
           voice, guitar, drums, violin, viola, cello, ukulele, flute, clarinet, saxophone, trumpet,
           and Music Discovery for young beginners.
         </p>

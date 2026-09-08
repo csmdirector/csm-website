@@ -1,13 +1,23 @@
 import crypto from 'node:crypto';
 import { getConnectionString } from '@netlify/database';
 import pg from 'pg';
-import { pianoBookingLocation } from '../../../shared/piano-booking-links.js';
+import {
+  introBookingUrl,
+  introLocation,
+  introService,
+  introServiceAvailableAtLocation
+} from '../../../shared/intro-bridge-config.js';
 
 const { Pool } = pg;
 
 export const PIANO_PREREGISTRATION_FORM = 'piano-preregistration';
+export const INTRO_BRIDGE_FORM = 'intro-bridge';
 export const DUPLICATE_WINDOW_MINUTES = 30;
 export const READY_BUYER_HANDOFF_MODE = 'vanilla_opus_checkout';
+export const HANDOFF_CHOICES = Object.freeze({
+  ONLINE_BOOKING: 'online_booking',
+  OFFICE_HELP: 'office_help'
+});
 
 const ATTRIBUTION_KEYS = [
   'utm_source',
@@ -136,9 +146,10 @@ function parseBirthdate(value) {
   return birthdate;
 }
 
-export function normalizeSubmission(source) {
+export function normalizeSubmission(source, { defaultServiceSlug = 'piano' } = {}) {
   const raw = source && typeof source === 'object' ? source : {};
-  const location = pianoBookingLocation(raw.preferred_location || raw.preferred_location_slug);
+  const service = introService(raw.service_slug || raw.instrument || defaultServiceSlug);
+  const location = introLocation(raw.preferred_location || raw.preferred_location_slug);
   const existingFamilyRaw = clean(raw.existing_family, 10).toLowerCase();
   const studentBirthdate = parseBirthdate(raw.student_birthdate);
   const studentAge = clean(raw.student_age, 3);
@@ -154,6 +165,7 @@ export function normalizeSubmission(source) {
     studentName: clean(raw.student_name, 160),
     studentBirthdate,
     studentAge,
+    service,
     preferredLocation: location,
     preferredTimeWindow: clean(raw.preferred_time_window, 80),
     existingFamily: existingFamilyRaw === 'yes' || existingFamilyRaw === 'true' || existingFamilyRaw === '1',
@@ -166,7 +178,7 @@ export function normalizeSubmission(source) {
 }
 
 export function validateSubmission(fields) {
-  if (fields.formName && fields.formName !== PIANO_PREREGISTRATION_FORM) {
+  if (fields.formName && ![PIANO_PREREGISTRATION_FORM, INTRO_BRIDGE_FORM].includes(fields.formName)) {
     return { ok: false, status: 400, error: 'Unexpected form.' };
   }
   if (fields.botField) return { ok: true, bot: true };
@@ -176,6 +188,7 @@ export function validateSubmission(fields) {
     ['parent_email', fields.parentEmail],
     ['parent_phone', fields.parentPhone],
     ['student_name', fields.studentName],
+    ['service_slug', fields.service],
     ['preferred_location', fields.preferredLocation],
     ['preferred_time_window', fields.preferredTimeWindow]
   ];
@@ -198,6 +211,20 @@ export function validateSubmission(fields) {
   if (fields.studentAge && (!/^\d{1,2}$/.test(fields.studentAge) || Number(fields.studentAge) < 2 || Number(fields.studentAge) > 99)) {
     return { ok: false, status: 422, error: 'Student age must be between 2 and 99.' };
   }
+  if (fields.studentAge && fields.service && (
+    Number(fields.studentAge) < fields.service.ageMin || Number(fields.studentAge) > fields.service.ageMax
+  )) {
+    if (fields.service.ageMax >= 99) {
+      return { ok: false, status: 422, error: `${fields.service.displayName} is available for students age ${fields.service.ageMin} and up.` };
+    }
+    const range = fields.service.ageMin === fields.service.ageMax
+      ? String(fields.service.ageMin)
+      : `${fields.service.ageMin} and ${fields.service.ageMax}`;
+    return { ok: false, status: 422, error: `${fields.service.displayName} is available for students between ages ${range}.` };
+  }
+  if (!introServiceAvailableAtLocation(fields.service, fields.preferredLocation)) {
+    return { ok: false, status: 422, error: `${fields.service.displayName} is not currently available at ${fields.preferredLocation.name}.` };
+  }
   if (!TIME_WINDOWS.has(fields.preferredTimeWindow)) {
     return { ok: false, status: 422, error: 'Preferred time window is invalid.' };
   }
@@ -213,7 +240,7 @@ export function dedupeFingerprint(fields) {
   return crypto.createHash('sha256').update([
     normalizeEmail(fields.parentEmail),
     normalizePhone(fields.parentPhone),
-    'piano',
+    fields.service.slug,
     fields.preferredLocation.slug
   ].join('|')).digest('hex');
 }
@@ -221,7 +248,7 @@ export function dedupeFingerprint(fields) {
 export function buildStudentNote({ fields, leadId, submittedAt }) {
   const lines = [
     `Source: ${attributionSourceLabel(fields.attribution)}`,
-    'Instrument: Piano',
+    `Instrument: ${fields.service.instrument}`,
     `Preferred location: ${fields.preferredLocation.name}`,
     `Preferred time window: ${fields.preferredTimeWindow}`,
     `CSM pre-registration timestamp: ${submittedAt}`,
@@ -240,6 +267,8 @@ function publicResult(record, extra = {}) {
     stored: true,
     lead_id: record.csm_lead_id,
     booking_url: record.booking_url,
+    service_slug: record.service_slug || 'piano',
+    instrument: record.instrument || 'Piano',
     location: record.preferred_location,
     location_slug: record.preferred_location_slug,
     opus_post_status: record.opus_post_status,
@@ -250,6 +279,7 @@ function publicResult(record, extra = {}) {
     office_follow_up_required: Boolean(record.office_follow_up_required),
     duplicate_detected: Boolean(record.duplicate_of_lead_id),
     existing_family: Boolean(record.existing_family),
+    handoff_choice: record.handoff_choice || '',
     ...extra
   };
 }
@@ -315,7 +345,7 @@ export function createPostgresPreregistrationRepository() {
           `INSERT INTO piano_preregistrations (
              csm_lead_id, client_submission_id,
              parent_name, parent_email, parent_email_norm, parent_phone, parent_phone_norm,
-             student_name, student_birthdate, student_age, instrument,
+             student_name, student_birthdate, student_age, service_slug, instrument,
              preferred_location, preferred_location_slug, preferred_time_window,
              existing_family, booking_url, attribution, attribution_summary, student_note,
              dedupe_fingerprint, duplicate_of_lead_id, opus_payload, opus_post_status,
@@ -324,9 +354,9 @@ export function createPostgresPreregistrationRepository() {
              conversion_exclusion_reason, submitted_at
            ) VALUES (
              $1, $2, $3, $4, $5, $6, $7,
-             $8, $9::date, $10, 'Piano',
-             $11, $12, $13, $14, $15, $16::jsonb, $17, $18,
-             $19, $20, $21::jsonb, $22, $23, $24, $25, $26, $27, $28, $29
+             $8, $9::date, $10, $11, $12,
+             $13, $14, $15, $16, $17, $18::jsonb, $19, $20,
+             $21, $22, $23::jsonb, $24, $25, $26, $27, $28, $29, $30, $31
            ) RETURNING *`,
           [
             input.leadId,
@@ -339,6 +369,8 @@ export function createPostgresPreregistrationRepository() {
             input.studentName,
             input.studentBirthdate || null,
             input.studentAge || null,
+            input.serviceSlug,
+            input.instrument,
             input.preferredLocation,
             input.preferredLocationSlug,
             input.preferredTimeWindow,
@@ -384,13 +416,63 @@ export function createPostgresPreregistrationRepository() {
         [leadId, result.status, JSON.stringify(payload), result.error || null, result.status !== 'sent']
       );
       return updated.rows[0];
+    },
+
+    async recordHandoffChoice(leadId, clientSubmissionId, choice) {
+      if (!Object.values(HANDOFF_CHOICES).includes(choice)) {
+        throw new Error('Invalid handoff choice.');
+      }
+      const existing = await db.query(
+        `SELECT *
+         FROM piano_preregistrations
+         WHERE csm_lead_id = $1 AND client_submission_id = $2`,
+        [leadId, clientSubmissionId]
+      );
+      const current = existing.rows[0];
+      if (!current) return { record: null, changed: false, replay: false };
+      if (current.existing_family && choice === HANDOFF_CHOICES.ONLINE_BOOKING) {
+        return { record: current, changed: false, replay: true, blockedExistingFamily: true };
+      }
+      if (current.handoff_choice === choice) {
+        return { record: current, changed: false, replay: true };
+      }
+
+      const officeHelp = choice === HANDOFF_CHOICES.OFFICE_HELP;
+      const updated = await db.query(
+        `UPDATE piano_preregistrations
+         SET handoff_choice = $3,
+             handoff_choice_selected_at = now(),
+             office_follow_up_required = office_follow_up_required OR $4,
+             reconciliation_status = CASE
+               WHEN $4 AND existing_family THEN 'existing_family_office'
+               WHEN $4 THEN 'office_help_requested'
+               ELSE reconciliation_status
+             END,
+             reconciliation_reason = CASE
+               WHEN $4 AND existing_family THEN 'existing_family_launch_path'
+               WHEN $4 THEN 'parent_requested_office_help'
+               ELSE reconciliation_reason
+             END,
+             updated_at = now()
+         WHERE csm_lead_id = $1 AND client_submission_id = $2
+         RETURNING *`,
+        [leadId, clientSubmissionId, choice, officeHelp]
+      );
+      return { record: updated.rows[0], changed: true, replay: false };
     }
   };
 }
 
 export function buildOfficeNotification(record) {
+  const handoffChoice = record.handoff_choice === HANDOFF_CHOICES.OFFICE_HELP
+    ? 'Have our team find the best fit'
+    : record.handoff_choice === HANDOFF_CHOICES.ONLINE_BOOKING
+      ? 'Book online now'
+      : record.existing_family
+        ? 'Existing family — office help'
+        : 'Parent choice pending';
   return {
-    'form-name': PIANO_PREREGISTRATION_FORM,
+    'form-name': record.service_slug && record.service_slug !== 'piano' ? INTRO_BRIDGE_FORM : PIANO_PREREGISTRATION_FORM,
     client_submission_id: record.client_submission_id,
     csm_lead_id: record.csm_lead_id,
     submitted_at: new Date(record.submitted_at).toISOString(),
@@ -402,7 +484,8 @@ export function buildOfficeNotification(record) {
     student_name: record.student_name,
     student_birthdate: record.student_birthdate ? String(record.student_birthdate).slice(0, 10) : '',
     student_age: record.student_age || '',
-    instrument: 'Piano',
+    service_slug: record.service_slug || 'piano',
+    instrument: record.instrument || 'Piano',
     preferred_location: record.preferred_location,
     preferred_time_window: record.preferred_time_window,
     booking_url: record.booking_url,
@@ -413,12 +496,13 @@ export function buildOfficeNotification(record) {
     conversion_eligible: record.conversion_eligible === false ? 'No' : 'Yes',
     conversion_exclusion_reason: record.conversion_exclusion_reason || '',
     office_follow_up_required: record.office_follow_up_required ? 'Yes' : 'No',
+    parent_next_step: handoffChoice,
     attribution_summary: record.attribution_summary,
     csm_context: record.student_note
   };
 }
 
-export function createPianoPreregistrationBridge({
+export function createIntroBridge({
   repository,
   notifyOffice,
   config = {},
@@ -426,7 +510,7 @@ export function createPianoPreregistrationBridge({
   uuid = () => crypto.randomUUID()
 }) {
   return async function submit(rawFields) {
-    const fields = normalizeSubmission(rawFields);
+    const fields = normalizeSubmission(rawFields, { defaultServiceSlug: config.defaultServiceSlug || 'piano' });
     const validation = validateSubmission(fields);
     if (validation.bot) return { ok: true, skipped: true, reason: 'honeypot' };
     if (!validation.ok) return validation;
@@ -445,11 +529,13 @@ export function createPianoPreregistrationBridge({
       studentName: fields.studentName,
       studentBirthdate: fields.studentBirthdate || '',
       studentAge: fields.studentAge,
+      serviceSlug: fields.service.slug,
+      instrument: fields.service.instrument,
       preferredLocation: fields.preferredLocation.name,
       preferredLocationSlug: fields.preferredLocation.slug,
       preferredTimeWindow: fields.preferredTimeWindow,
       existingFamily: fields.existingFamily,
-      bookingUrl: fields.preferredLocation.bookingUrl,
+      bookingUrl: introBookingUrl(fields.service, fields.preferredLocation),
       attribution: fields.attribution,
       attributionSummary: attributionSummary(fields.attribution),
       studentNote,
@@ -478,6 +564,17 @@ export function createPianoPreregistrationBridge({
     record = await repository.recordOfficeNotification(record.csm_lead_id, notificationPayload, notificationResult);
     return publicResult(record, { replay: false });
   };
+}
+
+export function createPianoPreregistrationBridge(options) {
+  const bridge = createIntroBridge({
+    ...options,
+    config: { ...(options?.config || {}), defaultServiceSlug: 'piano' }
+  });
+  return (rawFields) => bridge({
+    ...(rawFields || {}),
+    service_slug: 'piano'
+  });
 }
 
 export const testables = {

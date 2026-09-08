@@ -28,7 +28,7 @@ We are a real music school serving real families.
 
 Founded in 2012.
 
-Five locations.
+Four locations.
 
 60+ teachers.
 

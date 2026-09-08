@@ -1,0 +1,250 @@
+---
+import Base from '../layouts/Base.astro';
+import { INTRO_LOCATIONS, INTRO_SERVICES } from '../../shared/intro-bridge-config.js';
+const { canonicalPath = '/book-intro/', defaultService = '' } = Astro.props;
+const services = INTRO_SERVICES.map(s => ({ slug: s.slug, name: s.displayName, introName: s.introName, ageMin: s.ageMin, ageMax: s.ageMax, locations: s.allowedLocationSlugs || INTRO_LOCATIONS.map(l => l.slug) }));
+const locations = INTRO_LOCATIONS.map(l => ({ slug: l.slug, name: l.name.replace(/^CSM /, '') }));
+---
+<Base title="Book a Free Intro Lesson | Cincinnati School of Music" description="Choose your lesson and location, enter your details once here, and continue to Opus to choose an intro time. Your first 30-minute lesson is free." canonicalPath={canonicalPath} noindex={true}>
+  <section class="booking-heading">
+    <div class="booking-width">
+      <span class="section-label">Cincinnati School of Music · Four locations</span>
+      <h1 id="introHeading">Book Your Free Intro Lesson</h1>
+      <p>Meet a teacher and try a lesson. No ongoing commitment.</p>
+      <p class="booking-how">Your details here. Available intro times next in Opus.</p>
+    </div>
+  </section>
+  <section class="booking-body">
+    <div class="booking-width">
+      <form id="introBridgeForm" class="booking-card" novalidate data-booking-version="short-path-20260907">
+        <input type="hidden" name="form-name" value="intro-bridge" />
+        <input type="hidden" name="client_submission_id" id="clientSubmissionId" />
+        <input type="hidden" name="submitted_at" id="submittedAt" />
+        <input type="hidden" name="attribution_json" id="attributionJson" />
+        <input type="hidden" name="preferred_time_window" value="Flexible / not sure" />
+        <p class="honeypot" aria-hidden="true"><label>Leave this blank <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+        <fieldset id="bookingFields">
+          <legend class="sr-only">Lesson and contact details</legend>
+          <div class="field-row lesson-row">
+            <label>Instrument or program
+              <select name="service_slug" id="introService" required>
+                <option value="">Choose a lesson</option>
+                {services.map(s => <option value={s.slug}>{s.name}</option>)}
+              </select>
+            </label>
+            <label>Location
+              <select name="preferred_location" id="introLocation" required>
+                <option value="">Choose a location</option>
+                {locations.map(l => <option value={l.slug}>{l.name}</option>)}
+              </select>
+            </label>
+            <label>Student age
+              <input name="student_age" id="studentAge" type="number" min="2" max="99" step="1" inputmode="numeric" required />
+            </label>
+          </div>
+          <p id="serviceHelp" class="field-help" aria-live="polite"></p>
+          <p class="guided-help"><a id="guidedHelp" href="/lesson-fit/guide/">Not sure which lesson to choose? Get help choosing.</a></p>
+          <div class="field-row">
+            <label>Your name<input name="parent_name" autocomplete="name" maxlength="160" required /></label>
+            <label>Student name<input name="student_name" autocomplete="off" maxlength="160" required /></label>
+          </div>
+          <div class="field-row">
+            <label>Email<input name="parent_email" type="email" autocomplete="email" maxlength="254" required /></label>
+            <label>Mobile phone<input name="parent_phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="40" required /></label>
+          </div>
+          <fieldset class="family-question">
+            <legend>Have you taken lessons at CSM before?</legend>
+            <div class="family-options">
+              <label><input type="radio" name="existing_family" value="no" required /> No, we’re new to CSM</label>
+              <label><input type="radio" name="existing_family" value="yes" required /> Yes, we’re a CSM family</label>
+            </div>
+          </fieldset>
+          <p id="existingFamilyHelp" class="field-help" hidden>Our office will arrange this with your existing account. You do not need to register again.</p>
+        </fieldset>
+        <div class="form-error" id="formError" role="alert"></div>
+        <div id="bookingActions" class="booking-actions">
+          <button id="saveButton" class="btn-a" type="submit" name="booking_action" value="online_booking">Continue to Available Times</button>
+          <button id="officeHelpButton" class="office-button" type="submit" name="booking_action" value="office_help">Prefer help? Have us find a time</button>
+        </div>
+        <p id="bookingDisclosure" class="booking-disclosure">Nothing is reserved or charged on this page. You’ll choose and confirm your intro in Opus. An intro opening does not guarantee the same weekly time.</p>
+        <div id="bookingSuccess" class="booking-success" tabindex="-1" hidden>
+          <h2 id="successHeading">Your request is saved.</h2>
+          <p id="successCopy"></p>
+          <a id="continueBooking" class="btn-a" hidden>Continue to Available Times</a>
+          <button id="retryOffice" class="office-button" type="button" hidden>Retry sending to the office</button>
+        </div>
+        <p class="contact-help">Rather talk it through? <a href="tel:5135609175">Call (513) 560-9175</a> <a href="sms:5135609175">Text us</a></p>
+        <noscript><p>Online booking needs JavaScript. Please call or text (513) 560-9175 and our office will help you book.</p></noscript>
+      </form>
+    </div>
+  </section>
+  <style>
+    .booking-width{width:min(100%,780px);margin-inline:auto}.booking-heading{padding:40px 24px 30px;background:var(--charcoal);color:#fff}.booking-heading .section-label{color:var(--slate-lt)}.booking-heading h1{color:#fff;margin:10px 0 12px;font-size:clamp(2rem,5vw,3rem)}.booking-heading p{margin:8px 0;line-height:1.6;color:#eee}.booking-heading .booking-how{font-size:.9rem;color:#d4d4d4}.booking-body{background:var(--offwhite);padding:30px 20px 60px}.booking-card{background:#fff;border:1px solid var(--offwb);padding:30px}.booking-card fieldset{border:0;padding:0;margin:0}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:0 0 20px}.lesson-row{grid-template-columns:1.3fr 1fr .6fr;margin-bottom:6px}.field-row label{display:flex;flex-direction:column;gap:7px;min-width:0;font-size:.9rem;color:var(--charcoal);font-weight:600}.field-row input,.field-row select{box-sizing:border-box;width:100%;min-height:48px;border:1px solid #c9c7c2;border-radius:3px;background:#fff;padding:11px 12px;font:inherit;font-weight:400;font-size:16px;color:#252525}.field-row input:focus,.field-row select:focus{outline:3px solid rgba(247,79,87,.22);border-color:var(--accent);outline-offset:1px}.field-help{font-size:.85rem;line-height:1.5;color:#555;margin:8px 0}.field-help:empty{display:none}.guided-help{font-size:.85rem;margin:10px 0 24px}.guided-help a,.contact-help a{color:var(--slate);text-underline-offset:3px}.booking-card .family-question{margin-top:4px}.family-question legend{font-size:.9rem;font-weight:600;margin-bottom:10px}.family-options{display:flex;flex-wrap:wrap;gap:12px 24px}.family-options label{display:flex;align-items:center;gap:9px;font-size:.88rem;min-height:44px;cursor:pointer}.family-options input{width:18px;height:18px;accent-color:var(--accent)}.booking-actions{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:14px}.booking-actions button,.booking-success .btn-a{min-height:50px;border:0;cursor:pointer;font-family:inherit;text-align:center;display:block;box-sizing:border-box}.office-button{border:0;background:transparent;color:var(--slate);font:inherit;font-size:.9rem;padding:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}.booking-actions button:disabled{opacity:.65;cursor:wait}.form-error{color:#9d2229;font-size:.9rem;line-height:1.5;margin-top:12px}.form-error:empty{display:none}.booking-disclosure{font-size:.79rem;color:#666;line-height:1.6;margin:14px 0}.contact-help{display:flex;flex-wrap:wrap;gap:8px 18px;border-top:1px solid var(--offwb);padding-top:20px;margin:24px 0 0;font-size:.85rem;line-height:1.6}.booking-success{padding:18px 0;outline:0}.booking-success h2{font-size:1.5rem}.booking-success p{line-height:1.6}.honeypot,.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.booking-card [hidden]{display:none!important}@media(max-width:560px){.booking-heading{padding:28px 20px 24px}.booking-body{padding:18px 12px 42px}.booking-card{padding:22px 18px}.field-row{grid-template-columns:1fr;gap:16px;margin-bottom:16px}.lesson-row{grid-template-columns:1fr 1fr}.lesson-row label:first-child{grid-column:1/-1}.family-options{display:grid;gap:4px}.contact-help{flex-direction:column}}
+  </style>
+  <script define:vars={{ services, locations, defaultService }}>
+    (function(){
+      const form = document.getElementById('introBridgeForm');
+      if (!form) return;
+      const serviceInput = document.getElementById('introService');
+      const locationInput = document.getElementById('introLocation');
+      const age = document.getElementById('studentAge');
+      const errorBox = document.getElementById('formError');
+      const primary = document.getElementById('saveButton');
+      const office = document.getElementById('officeHelpButton');
+      const params = new URLSearchParams(location.search);
+      const trackingKeys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid','landing_path','first_landing_path','latest_landing_path','referrer','attribution_timestamp','last_paid_click_timestamp','source_type'];
+      let saved = null;
+      let busy = false;
+      let savedExisting = false;
+      function normalize(value){ return String(value || '').trim().toLowerCase().replace(/[_\s]+/g,'-'); }
+      function resolveService(value){
+        const normalized = normalize(value);
+        const aliases = { 'music-discovery-lessons':'music-discovery', 'early-childhood-music':'music-discovery', 'mdl':'music-discovery', 'drum':'drums', 'singing':'voice' };
+        return services.find(s => s.slug === (aliases[normalized] || normalized)) || null;
+      }
+      function selectedService(){ return resolveService(serviceInput.value); }
+      function existingFamily(){ return form.querySelector('[name="existing_family"]:checked')?.value === 'yes'; }
+      function attribution(){
+        let value = {};
+        try {
+          if (window.CSMAttribution?.getLatest) value = window.CSMAttribution.getLatest() || {};
+          else {
+            const store = JSON.parse(localStorage.getItem('csmAttribution') || '{}');
+            value = Object.assign({},store.latest_touch || store.first_touch || {},{first_landing_path:store.first_touch?.first_landing_path || '',last_paid_click_timestamp:store.last_paid_click_timestamp || ''});
+          }
+        } catch (_) {}
+        const output = {};
+        trackingKeys.forEach(key => { const v = params.get(key) || value[key]; if (v) output[key] = String(v).slice(0,500); });
+        output.landing_path = output.landing_path || location.pathname;
+        output.latest_landing_path = output.latest_landing_path || location.pathname;
+        return output;
+      }
+      function decorate(raw, opusOnly){
+        const url = new URL(raw, location.origin);
+        if (opusOnly && url.origin !== 'https://cincinnatischoolofmusic.opus1.io') throw new Error('Invalid booking destination.');
+        const data = attribution();
+        trackingKeys.forEach(key => { if (data[key] && !url.searchParams.has(key)) url.searchParams.set(key,data[key]); });
+        return url.href;
+      }
+      function syncService(){
+        const service = selectedService();
+        const allowed = service ? service.locations : locations.map(l => l.slug);
+        Array.from(locationInput.options).forEach(option => {
+          const unavailable = !!option.value && !allowed.includes(option.value);
+          option.disabled = unavailable; option.hidden = unavailable;
+        });
+        if (!allowed.includes(locationInput.value)) locationInput.value = '';
+        if (allowed.length === 1) locationInput.value = allowed[0];
+        age.min = String(service?.ageMin || 2); age.max = String(service?.ageMax || 99);
+        age.setCustomValidity('');
+        document.getElementById('introHeading').textContent = service ? 'Book Your Free ' + service.introName : 'Book Your Free Intro Lesson';
+        document.getElementById('serviceHelp').textContent = service && (service.ageMin > 2 || service.ageMax < 99)
+          ? service.name + (service.ageMax < 99 ? ' is for ages ' + service.ageMin + '–' + service.ageMax + '.' : ' is for ages ' + service.ageMin + ' and up.') : '';
+        const help = new URL('/lesson-fit/guide/',location.origin);
+        if (service) help.searchParams.set('service',service.slug);
+        if (locationInput.value) help.searchParams.set('location',locationInput.value);
+        document.getElementById('guidedHelp').href = decorate(help.href,false);
+      }
+      function syncFamily(){
+        const existing = existingFamily();
+        primary.textContent = existing ? 'Have the Office Arrange My Intro' : 'Continue to Available Times';
+        office.hidden = existing;
+        document.getElementById('existingFamilyHelp').hidden = !existing;
+      }
+      function setBusy(value){
+        busy = value; primary.disabled = value; office.disabled = value;
+        if (value) primary.textContent = 'Saving your details…'; else syncFamily();
+      }
+      async function post(path,payload,timeout){
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(),timeout);
+        try {
+          const response = await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.ok) throw new Error('Request not confirmed.');
+          return result;
+        } finally { clearTimeout(timer); }
+      }
+      async function recordChoice(choice){
+        return post('/api/intro-bridge-choice',{lead_id:saved.lead_id,client_submission_id:document.getElementById('clientSubmissionId').value,choice},7000);
+      }
+      async function finish(choice){
+        const success = document.getElementById('bookingSuccess');
+        const copy = document.getElementById('successCopy');
+        const continuation = document.getElementById('continueBooking');
+        const retry = document.getElementById('retryOffice');
+        document.getElementById('bookingActions').hidden = true;
+        document.getElementById('bookingFields').disabled = true;
+        success.hidden = false;
+        if (choice === 'office_help') {
+          copy.textContent = 'Sending your request to the office…';
+          try {
+            const confirmation = await recordChoice('office_help');
+            if (confirmation.office_email_confirmed !== true) throw new Error('Office delivery not confirmed.');
+            document.getElementById('successHeading').textContent = 'We’ll help you from here.';
+            copy.textContent = savedExisting ? 'Our office will contact you to arrange the intro with your existing account.' : 'Our office will contact you to find a suitable teacher and time.';
+            retry.hidden = true;
+          } catch (_) {
+            copy.textContent = 'Your details are saved, but we could not confirm the office-help request. Retry below, or call or text (513) 560-9175.';
+            retry.hidden = false;
+          }
+          success.focus();
+          return;
+        }
+        let destination;
+        try { destination = decorate(saved.booking_url,true); }
+        catch (_) { copy.textContent = 'Your details are saved, but we could not open the booking calendar. Call or text (513) 560-9175.'; success.focus(); return; }
+        continuation.href = destination; continuation.hidden = false;
+        copy.textContent = 'Opening Opus so you can choose and confirm your intro. If it does not open, use the button below.';
+        try { await recordChoice('online_booking'); } catch (_) { /* Saved lead remains available; tracking must not block booking. */ }
+        location.assign(destination);
+      }
+      const id = window.crypto?.randomUUID ? crypto.randomUUID().replace(/-/g,'') : Date.now().toString(36) + Math.random().toString(36).slice(2);
+      document.getElementById('clientSubmissionId').value = 'intro-bridge-' + id;
+      let preset = resolveService(params.get('service') || params.get('instrument') || params.get('instrument_interest')) || resolveService(defaultService);
+      if (!preset) {
+        const campaign = '-' + normalize(params.get('utm_campaign')) + '-';
+        const matches = services.filter(s => campaign.includes('-' + s.slug + '-'));
+        if (matches.length === 1) preset = matches[0];
+        else if (campaign.includes('-mdl-') || campaign.includes('-music-discovery-')) preset = resolveService('music-discovery');
+      }
+      if (preset) serviceInput.value = preset.slug;
+      const requestedLocation = normalize(params.get('location') || params.get('preferred_location')).replace(/^csm-/,'');
+      if (locations.some(l => l.slug === requestedLocation)) locationInput.value = requestedLocation;
+      const requestedAge = params.get('age') || params.get('student_age');
+      if (/^\d{1,2}$/.test(requestedAge || '')) age.value = requestedAge;
+      syncService(); syncFamily();
+      serviceInput.addEventListener('change',syncService);
+      locationInput.addEventListener('change',syncService);
+      form.querySelectorAll('[name="existing_family"]').forEach(el => el.addEventListener('change',syncFamily));
+      age.addEventListener('input',() => age.setCustomValidity(''));
+      document.getElementById('retryOffice').addEventListener('click',async event => { const button = event.currentTarget; button.disabled = true; await finish('office_help'); button.disabled = false; });
+      form.addEventListener('submit',async event => {
+        event.preventDefault();
+        if (busy || saved) return;
+        errorBox.textContent = '';
+        const phone = form.elements.namedItem('parent_phone');
+        const digits = phone.value.replace(/\D/g,'');
+        phone.setCustomValidity(digits.length === 10 || (digits.length === 11 && digits.startsWith('1')) || (phone.value.trim().startsWith('+') && digits.length >= 10) ? '' : 'Please enter a valid phone number.');
+        if (!form.reportValidity()) return;
+        const choice = existingFamily() ? 'office_help' : event.submitter?.value === 'office_help' ? 'office_help' : 'online_booking';
+        setBusy(true);
+        document.getElementById('submittedAt').value = new Date().toISOString();
+        document.getElementById('attributionJson').value = JSON.stringify(attribution());
+        try {
+          const payload = Object.fromEntries(new FormData(form));
+          document.getElementById('bookingFields').disabled = true;
+          const result = await post('/api/intro-bridge-submit',payload,20000);
+          if (!result.stored || !result.lead_id || (choice === 'online_booking' && !result.booking_url && !result.existing_family)) throw new Error('Save not confirmed.');
+          saved = result; savedExisting = !!result.existing_family || existingFamily();
+          await finish(savedExisting ? 'office_help' : choice);
+        } catch (_) {
+          errorBox.textContent = 'We could not confirm that step. Retry, or call or text (513) 560-9175. Nothing is booked yet.';
+          document.getElementById('bookingFields').disabled = false;
+          setBusy(false);
+        }
+      });
+      form.elements.namedItem('parent_phone').addEventListener('input',event => event.target.setCustomValidity(''));
+    })();
+  </script>
+</Base>

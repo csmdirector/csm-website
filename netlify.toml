@@ -6,3 +6,11 @@
   command = "npm run dev"
   targetPort = 4321
   publish = "dist"
+
+[context.deploy-preview.environment]
+  ENABLE_INTRO_BRIDGE = "true"
+  ENABLE_PIANO_INTRO_RECONCILIATION = "true"
+
+[context.branch-deploy.environment]
+  ENABLE_INTRO_BRIDGE = "true"
+  ENABLE_PIANO_INTRO_RECONCILIATION = "true"

@@ -1,0 +1,1009 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
+  String(import.meta.env.ENABLE_LEAD_PIPELINE || '').trim().toLowerCase()
+);
+---
+<Base
+  title="Find the Right Lesson Fit | Cincinnati School of Music"
+  description="A short guided path for families choosing the right music lesson starting point at Cincinnati School of Music."
+  canonicalPath="/lesson-fit/guide/"
+  noindex={true}
+>
+  <section class="intake-hero">
+    <div class="intake-hero-inner">
+      <span class="section-label">Lesson Fit</span>
+      <h1>Find the right lesson fit.</h1>
+      <p>
+        Start with a free 30-minute intro lesson — meet the teacher, try the fit,
+        and see how lessons feel before enrolling.
+      </p>
+    </div>
+  </section>
+
+  <section class="page-shell">
+    <div class="page-inner intake-shell">
+      <div class="intake-card">
+        <div class="progress-wrap" aria-label="Intake progress">
+          <div class="progress-meta">
+            <span id="stepLabel">Step 1 of 5</span>
+            <span id="stepTitle">Instrument</span>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+
+        <form
+          name="lesson-fit-request"
+          method="POST"
+          action="/lesson-fit/thank-you/"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          id="intakeForm"
+        >
+          <input type="hidden" name="form-name" value="lesson-fit-request" />
+          <input type="hidden" name="subject" data-remove-prefix value="Request Info" />
+          <textarea name="contact_summary" id="contactSummary" hidden></textarea>
+          <textarea name="lesson_request" id="lessonRequestSummary" hidden></textarea>
+          <textarea name="follow_up_notes" id="followUpNotes" hidden></textarea>
+          <textarea name="tracking_summary" id="trackingSummary" hidden></textarea>
+          <input type="hidden" name="routing_outcome" id="routingOutcome" value="" />
+          <input type="hidden" name="recommended_url" id="recommendedUrl" value="" />
+          <input type="hidden" name="submitted_at" id="submittedAt" value="" />
+          <input type="hidden" name="client_submission_id" id="clientSubmissionId" value="" />
+          <input type="hidden" name="lead_pipeline_only" id="leadPipelineOnly" value="" />
+          <input type="hidden" name="utm_source" id="utmSource" value="" />
+          <input type="hidden" name="utm_medium" id="utmMedium" value="" />
+          <input type="hidden" name="utm_campaign" id="utmCampaign" value="" />
+          <input type="hidden" name="utm_content" id="utmContent" value="" />
+          <input type="hidden" name="utm_term" id="utmTerm" value="" />
+          <input type="hidden" name="gclid" id="gclid" value="" />
+          <input type="hidden" name="gbraid" id="gbraid" value="" />
+          <input type="hidden" name="wbraid" id="wbraid" value="" />
+          <input type="hidden" name="landing_path" id="landingPath" value="" />
+          <input type="hidden" name="first_landing_path" id="firstLandingPath" value="" />
+          <input type="hidden" name="latest_landing_path" id="latestLandingPath" value="" />
+          <input type="hidden" name="referrer" id="referrer" value="" />
+          <input type="hidden" name="attribution_timestamp" id="attributionTimestamp" value="" />
+          <input type="hidden" name="last_paid_click_timestamp" id="lastPaidClickTimestamp" value="" />
+          <p class="hidden-field">
+            <label>Do not fill this out if you are human: <input name="bot-field" /></label>
+          </p>
+
+          <fieldset class="intake-step is-active" data-step-title="Instrument">
+            <legend>Which instrument are you interested in?</legend>
+            <p class="step-intro">
+              Not sure yet? That's perfectly fine. We can help you explore the options and find a good starting point.
+            </p>
+            <div class="choice-grid">
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Piano" data-required />
+                <span>Piano</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Voice" />
+                <span>Voice</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Guitar" />
+                <span>Guitar</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Drums" />
+                <span>Drums</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Strings" />
+                <span>Strings</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Winds" />
+                <span>Flute, clarinet, or saxophone</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Early childhood music" />
+                <span>Early childhood music</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="instrument_interest" value="Not sure yet" />
+                <span>Not sure yet</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="intake-step" data-step-title="Student">
+            <legend>Are the lessons for yourself or your child?</legend>
+            <p class="step-intro">
+              This helps us keep the Intro Lesson information age-appropriate.
+            </p>
+            <div class="choice-grid">
+              <label class="choice-card">
+                <input type="radio" name="student_age" value="3-5" data-required />
+                <span>Ages 3-5</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="student_age" value="6-8" />
+                <span>Ages 6-8</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="student_age" value="9-12" />
+                <span>Ages 9-12</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="student_age" value="13-17" />
+                <span>Ages 13-17</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="student_age" value="Adult" />
+                <span>Adult student</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="intake-step" data-step-title="Location">
+            <legend>Which CSM location is most convenient?</legend>
+            <p class="step-intro">
+              If you are flexible or not sure, we can help you choose a good starting point.
+            </p>
+            <div class="choice-grid">
+              <label class="choice-card">
+                <input type="radio" name="preferred_location" value="CSM Montgomery" data-required />
+                <span>CSM Montgomery</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_location" value="CSM Mason" />
+                <span>CSM Mason</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_location" value="CSM Anderson" />
+                <span>CSM Anderson</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_location" value="CSM Maineville" />
+                <span>CSM Maineville</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="preferred_location" value="Flexible or not sure" />
+                <span>Flexible or not sure</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="intake-step" data-step-title="Next Step">
+            <legend>Do you want to book now or get help first?</legend>
+            <p class="step-intro">
+              If you want help with teacher fit, learning considerations, schedule concerns,
+              or choosing an instrument, CSM can follow up before you book.
+            </p>
+            <div class="choice-grid">
+              <label class="choice-card">
+                <input type="radio" name="next_step_preference" value="Ready to book" data-required />
+                <span>I'm ready to view Intro Lesson times</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="next_step_preference" value="Need help choosing" />
+                <span>I'd like CSM to help me choose</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="intake-step" data-step-title="Result">
+            <legend>Your recommended next step</legend>
+            <div class="recommendation-box" id="recommendationBox" aria-live="polite">
+              <span class="section-label">Intro Lesson</span>
+              <h2 id="recommendationTitle">A free intro lesson is the best starting point.</h2>
+              <p id="recommendationBody">
+                Based on your answers, this is a good next step.
+              </p>
+              <dl class="recommendation-list" id="recommendationList"></dl>
+            </div>
+
+            <div class="help-details" id="helpDetails">
+              <label class="field-label">
+                What would you like help with?
+                <select name="help_reason">
+                  <option value="">Choose one</option>
+                  <option>Choosing an instrument</option>
+                  <option>Finding a good teacher fit</option>
+                  <option>Learning differences or special considerations</option>
+                  <option>Schedule concerns</option>
+                  <option>Goals or lesson style</option>
+                  <option>Something else</option>
+                </select>
+              </label>
+              <label class="field-label">
+                Anything else we should know?
+                <textarea name="student_context" rows="4" placeholder="Examples: shy beginner, busy sports schedule, learning considerations, wants to sing pop songs"></textarea>
+              </label>
+            </div>
+
+            <div class="help-actions" id="helpActions">
+              <a class="btn-c" href="tel:5135609175">Call CSM</a>
+              <a class="btn-c" href="sms:5135609175">Text CSM</a>
+              <a class="btn-c" href="mailto:info@cincinnatischoolofmusic.com">Email CSM</a>
+            </div>
+
+            <p class="contact-intro is-hidden" id="contactIntro">
+              <strong>Optional contact:</strong> add the best email or mobile number for your household before continuing.
+            </p>
+            <div class="contact-grid" id="contactGrid">
+              <label class="field-label">
+                Your name
+                <input type="text" name="parent_name" autocomplete="name" />
+              </label>
+              <label class="field-label">
+                Email
+                <input type="email" name="email" autocomplete="email" />
+              </label>
+              <label class="field-label">
+                Phone
+                <input type="tel" name="phone" autocomplete="tel" />
+              </label>
+            </div>
+            <p class="handoff-note">
+              <span id="handoffNoteText">After this step, you will continue to available Intro Lesson times.</span>
+            </p>
+          </fieldset>
+
+          <div class="form-error" id="formError" aria-live="polite"></div>
+
+          <div class="intake-actions">
+            <button type="button" class="btn-back" id="backButton">Back</button>
+            <button type="button" class="btn-a" id="nextButton">Next</button>
+            <button type="submit" class="btn-a submit-button" id="submitButton">View Available Intro Times</button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="intake-note" aria-labelledby="intake-note-title">
+        <span class="section-label">What This Does</span>
+        <h2 id="intake-note-title">A clear first step.</h2>
+        <p>
+          The Intro Lesson is a one-time private lesson. It helps the student meet the teacher,
+          try the fit, and see how lessons feel before enrolling.
+        </p>
+        <p>
+          If you know the instrument and location, you can go straight to available
+          Intro Lesson times. If you want help choosing, CSM can follow up first.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <style>
+    .intake-hero{background:var(--charcoal);color:var(--white)}
+    .intake-hero-inner{max-width:1040px;margin:0 auto;padding:86px 48px 74px}
+    .intake-hero .section-label{color:var(--slate-lt)}
+    .intake-hero h1{color:var(--white);max-width:720px}
+    .intake-hero p{color:rgba(255,255,255,.72);max-width:690px}
+    .intake-shell{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:48px;align-items:start}
+    .intake-card{border:1px solid var(--offwb);background:var(--white);padding:34px}
+    .progress-wrap{margin-bottom:30px}
+    .progress-meta{display:flex;justify-content:space-between;gap:18px;margin-bottom:10px;font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
+    .progress-track{height:6px;background:var(--offwb);overflow:hidden}
+    .progress-bar{height:100%;width:14.285%;background:var(--accent);transition:width .2s ease}
+    form{display:block}
+    [hidden]{display:none !important}
+    .hidden-field{display:none}
+    .intake-step{display:none;border:0}
+    .intake-step.is-active{display:block}
+    legend{font-size:clamp(1.45rem,2.2vw,2rem);font-weight:300;line-height:1.25;color:var(--charcoal);margin-bottom:10px}
+    .step-intro{margin-bottom:26px;max-width:660px}
+    .choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .choice-card{display:flex;align-items:center;gap:12px;min-height:58px;border:1px solid var(--offwb);background:var(--offwhite);padding:14px 16px;cursor:pointer;transition:all .18s}
+    .choice-card:hover{border-color:var(--slate);background:var(--white)}
+    .choice-card input{appearance:none;width:16px;height:16px;border:1px solid var(--light);border-radius:50%;background:var(--white);flex:0 0 auto;margin:0}
+    .choice-card input:checked{border:5px solid var(--accent)}
+    .choice-card:has(input:checked){border-color:var(--accent);background:rgba(247,79,87,.06)}
+    .choice-card span{font-size:.9rem;font-weight:400;color:var(--charcoal);line-height:1.35}
+    .field-label{display:block;font-size:.64rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:22px}
+    select,input[type="text"],input[type="email"],input[type="tel"],textarea{display:block;width:100%;margin-top:8px;border:1px solid var(--offwb);background:var(--offwhite);color:var(--charcoal);font:inherit;font-size:.95rem;font-weight:300;letter-spacing:0;text-transform:none;padding:13px 14px;border-radius:0}
+    textarea{resize:vertical;min-height:110px}
+    select:focus,input:focus,textarea:focus{outline:2px solid rgba(60,181,198,.25);border-color:var(--slate);background:var(--white)}
+    .recommendation-box{border:1px solid var(--offwb);background:var(--offwhite);padding:24px;margin-bottom:24px}
+    .recommendation-box h2{font-size:clamp(1.25rem,2vw,1.65rem);margin-bottom:10px}
+    .recommendation-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:22px;padding-top:18px;border-top:1px solid var(--offwb)}
+    .recommendation-item{min-width:0}
+    .recommendation-list dt{font-size:.58rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);margin-bottom:5px}
+    .recommendation-list dd{font-size:1rem;font-weight:400;color:var(--charcoal);line-height:1.35;overflow-wrap:anywhere}
+    .help-details.is-hidden,.contact-grid.is-hidden{display:none}
+    .help-actions{display:none;flex-wrap:wrap;gap:10px;margin:-4px 0 24px}
+    .help-actions.is-visible{display:flex}
+    .contact-intro{font-size:.84rem;margin:-2px 0 18px;max-width:620px}
+    .contact-intro strong{font-weight:500;color:var(--charcoal)}
+    .contact-intro.is-hidden{display:none}
+    .intake-actions + .contact-intro{margin-top:24px}
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+    .contact-grid .field-label:last-child{grid-column:1 / -1}
+    .handoff-note{font-size:.82rem;margin-top:4px}
+    .form-error{min-height:24px;color:var(--accent-dk);font-size:.8rem;font-weight:400;margin:4px 0 18px}
+    .intake-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .intake-actions .btn-a{border:0;cursor:pointer}
+    .btn-back{border:1px solid var(--offwb);background:var(--white);color:var(--mid);font-size:.68rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:14px 30px;cursor:pointer;transition:all .18s}
+    .btn-back:hover{border-color:var(--slate);color:var(--charcoal)}
+    .btn-back[hidden],.submit-button[hidden],#nextButton[hidden]{display:none}
+    .intake-note{border-left:1px solid var(--offwb);padding-left:32px}
+    .intake-note h2{font-size:1.55rem}
+    .intake-note p + p{margin-top:16px}
+    @media(max-width:880px){
+      .intake-hero-inner{padding:64px 24px}
+      .intake-shell{grid-template-columns:1fr;gap:36px}
+      .intake-card{padding:26px 22px}
+      .intake-note{border-left:0;border-top:1px solid var(--offwb);padding-left:0;padding-top:32px}
+      .progress-meta{flex-direction:column;gap:4px}
+      .choice-grid{grid-template-columns:1fr}
+      .contact-grid{grid-template-columns:1fr}
+      .recommendation-list{grid-template-columns:1fr;gap:14px}
+      .recommendation-item{padding-bottom:14px;border-bottom:1px solid var(--offwb)}
+      .recommendation-item:last-child{padding-bottom:0;border-bottom:0}
+    }
+  </style>
+
+  <script define:vars={{ enableLeadPipelineCapture }}>
+    (function(){
+      var form = document.getElementById('intakeForm');
+      if(!form) return;
+
+      var HELP_THANK_YOU_URL = '/lesson-fit/thank-you/?help=1';
+      var DIRECT_SUBMIT_URL = '/api/lesson-fit-submit';
+      var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
+      var ENABLE_LEAD_PIPELINE_CAPTURE = Boolean(enableLeadPipelineCapture);
+      var ATTRIBUTION_STORAGE_KEY = 'csmLessonFitAttribution';
+      var STATE_STORAGE_KEY = 'csmLessonFitState';
+      var HELP_SUBMIT_EVENT_PUSHED_KEY = 'csmLessonFitHelpSubmitEventPushed';
+      var HELP_SUBMIT_PAYLOAD_KEY = 'csmLessonFitHelpSubmitPayload';
+      var LEAD_EVENT_FIELD_IDS = {
+        routing_outcome: 'routingOutcome',
+        recommended_url: 'recommendedUrl',
+        submitted_at: 'submittedAt',
+        client_submission_id: 'clientSubmissionId',
+        lead_pipeline_only: 'leadPipelineOnly',
+        utm_source: 'utmSource',
+        utm_medium: 'utmMedium',
+        utm_campaign: 'utmCampaign',
+        utm_content: 'utmContent',
+        utm_term: 'utmTerm',
+        gclid: 'gclid',
+        gbraid: 'gbraid',
+        wbraid: 'wbraid',
+        landing_path: 'landingPath',
+        first_landing_path: 'firstLandingPath',
+        latest_landing_path: 'latestLandingPath',
+        referrer: 'referrer',
+        attribution_timestamp: 'attributionTimestamp',
+        last_paid_click_timestamp: 'lastPaidClickTimestamp'
+      };
+      var PIANO_LOCATION_URLS = {
+        'CSM Montgomery': '/book-piano-intro/?location=montgomery',
+        'CSM Mason': '/book-piano-intro/?location=mason',
+        'CSM Anderson': '/book-piano-intro/?location=anderson',
+        'CSM Maineville': '/book-piano-intro/?location=maineville'
+      };
+      var MUSIC_DISCOVERY_LOCATION_URLS = {
+        'CSM Montgomery': '/book-intro/?service=music-discovery&location=montgomery',
+        'CSM Mason': '/book-intro/?service=music-discovery&location=mason',
+        'CSM Anderson': '/book-intro/?service=music-discovery&location=anderson',
+        'CSM Maineville': '/book-intro/?service=music-discovery&location=maineville'
+      };
+
+      var steps = Array.prototype.slice.call(form.querySelectorAll('.intake-step'));
+      var backButton = document.getElementById('backButton');
+      var nextButton = document.getElementById('nextButton');
+      var submitButton = document.getElementById('submitButton');
+      var stepLabel = document.getElementById('stepLabel');
+      var stepTitle = document.getElementById('stepTitle');
+      var progressBar = document.getElementById('progressBar');
+      var formError = document.getElementById('formError');
+      var helpDetails = document.getElementById('helpDetails');
+      var helpActions = document.getElementById('helpActions');
+      var contactIntro = document.getElementById('contactIntro');
+      var contactGrid = document.getElementById('contactGrid');
+      var intakeActions = document.querySelector('.intake-actions');
+      var handoffNote = document.querySelector('.handoff-note');
+      var handoffNoteText = document.getElementById('handoffNoteText');
+      var contactSummary = document.getElementById('contactSummary');
+      var lessonRequestSummary = document.getElementById('lessonRequestSummary');
+      var followUpNotes = document.getElementById('followUpNotes');
+      var trackingSummary = document.getElementById('trackingSummary');
+      var recommendationTitle = document.getElementById('recommendationTitle');
+      var recommendationBody = document.getElementById('recommendationBody');
+      var recommendationList = document.getElementById('recommendationList');
+      var currentStep = 0;
+
+      function setLeadEventField(name, value){
+        var field = document.getElementById(LEAD_EVENT_FIELD_IDS[name]);
+        if(field) field.value = value || '';
+      }
+
+      function ensureClientSubmissionId(){
+        var field = document.getElementById('clientSubmissionId');
+        if(!field) return '';
+        if(!field.value){
+          var randomPart = Math.random().toString(36).slice(2, 10);
+          field.value = 'lesson-fit-' + Date.now().toString(36) + '-' + randomPart;
+        }
+        return field.value;
+      }
+
+      function getStoredJson(key){
+        try {
+          return JSON.parse(window.localStorage.getItem(key) || '{}') || {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function setStoredJson(key, value){
+        try {
+          window.localStorage.setItem(key, JSON.stringify(value));
+        } catch (error) {}
+      }
+
+      function normalizeAttribution(value){
+        var attribution = value || {};
+        var flat = {};
+        ATTRIBUTION_KEYS.forEach(function(key){
+          flat[key] = attribution[key] || '';
+        });
+        flat.first_landing_path = attribution.first_landing_path || attribution.landing_path || '';
+        flat.latest_landing_path = attribution.latest_landing_path || attribution.landing_path || flat.first_landing_path || '';
+        flat.landing_path = flat.latest_landing_path;
+        flat.referrer = attribution.referrer || '';
+        flat.timestamp = attribution.timestamp || attribution.attribution_timestamp || '';
+        flat.last_paid_click_timestamp = attribution.last_paid_click_timestamp || '';
+        flat.source_type = attribution.source_type || '';
+        return flat;
+      }
+
+      function getSitewideAttribution(){
+        if(window.CSMAttribution && typeof window.CSMAttribution.getLatest === 'function'){
+          return normalizeAttribution(window.CSMAttribution.getLatest());
+        }
+        var stored = getStoredJson('csmAttribution');
+        var first = stored.first_touch || {};
+        var latest = stored.latest_touch || first || {};
+        var flat = normalizeAttribution(latest);
+        flat.first_landing_path = first.first_landing_path || first.latest_landing_path || flat.first_landing_path || '';
+        flat.latest_landing_path = latest.latest_landing_path || latest.first_landing_path || flat.latest_landing_path || flat.first_landing_path || '';
+        flat.landing_path = flat.latest_landing_path;
+        flat.last_paid_click_timestamp = stored.last_paid_click_timestamp || flat.last_paid_click_timestamp || '';
+        return flat;
+      }
+
+      function captureAttribution(){
+        if(window.CSMAttribution && typeof window.CSMAttribution.capture === 'function'){
+          window.CSMAttribution.capture();
+        }
+        var sitewide = getSitewideAttribution();
+        var params = new URLSearchParams(window.location.search);
+        var stored = getStoredJson(ATTRIBUTION_STORAGE_KEY);
+        ATTRIBUTION_KEYS.forEach(function(key){
+          var value = params.get(key);
+          if(value && value.trim()){
+            stored[key] = value.trim();
+          }
+        });
+        var merged = normalizeAttribution(Object.assign({}, stored, sitewide));
+        ATTRIBUTION_KEYS.forEach(function(key){
+          if(stored[key]){
+            merged[key] = stored[key];
+          }
+        });
+        if(sitewide.first_landing_path){
+          merged.first_landing_path = sitewide.first_landing_path;
+        }
+        if(sitewide.latest_landing_path){
+          merged.latest_landing_path = sitewide.latest_landing_path;
+          merged.landing_path = sitewide.latest_landing_path;
+        }
+        if(sitewide.referrer){
+          merged.referrer = sitewide.referrer;
+        }
+        if(sitewide.timestamp){
+          merged.timestamp = sitewide.timestamp;
+        }
+        if(sitewide.last_paid_click_timestamp){
+          merged.last_paid_click_timestamp = sitewide.last_paid_click_timestamp;
+        }
+        setStoredJson(ATTRIBUTION_STORAGE_KEY, merged);
+        return merged;
+      }
+
+      function getAttribution(){
+        return normalizeAttribution(Object.assign(
+          {},
+          getStoredJson(ATTRIBUTION_STORAGE_KEY),
+          getSitewideAttribution()
+        ));
+      }
+
+      function appendAttribution(url){
+        var attribution = getAttribution();
+        var outbound = window.CSMAttribution && typeof window.CSMAttribution.decorateUrl === 'function'
+          ? new URL(window.CSMAttribution.decorateUrl(url), window.location.origin)
+          : new URL(url, window.location.origin);
+        ATTRIBUTION_KEYS.forEach(function(key){
+          if(attribution[key]){
+            outbound.searchParams.set(key, attribution[key]);
+          }
+        });
+        if(attribution.first_landing_path){
+          outbound.searchParams.set('first_landing_path', attribution.first_landing_path);
+        }
+        if(attribution.latest_landing_path){
+          outbound.searchParams.set('latest_landing_path', attribution.latest_landing_path);
+          outbound.searchParams.set('landing_path', attribution.latest_landing_path);
+        }
+        if(attribution.referrer){
+          outbound.searchParams.set('referrer', attribution.referrer);
+        }
+        if(attribution.timestamp){
+          outbound.searchParams.set('attribution_timestamp', attribution.timestamp);
+        }
+        return outbound.toString();
+      }
+
+      function getTrackingPayload(recommendation){
+        var attribution = getAttribution();
+        var clickId = attribution.gclid || attribution.gbraid || attribution.wbraid || '';
+        return {
+          routing_outcome: recommendation.outcome,
+          recommended_url: recommendation.url,
+          destination_url: recommendation.url,
+          instrument: readFormValue('instrument_interest') || '',
+          location: readFormValue('preferred_location') || '',
+          student_age: readFormValue('student_age') || '',
+          student_age_range: readFormValue('student_age') || '',
+          preferred_location: readFormValue('preferred_location') || '',
+          next_step_preference: readFormValue('next_step_preference') || '',
+          help_reason: readFormValue('help_reason') || '',
+          has_student_context: readFormValue('student_context') ? 'yes' : 'no',
+          utm_source: attribution.utm_source || '',
+          utm_medium: attribution.utm_medium || '',
+          utm_campaign: attribution.utm_campaign || '',
+          utm_content: attribution.utm_content || '',
+          utm_term: attribution.utm_term || '',
+          gclid: attribution.gclid || '',
+          gbraid: attribution.gbraid || '',
+          wbraid: attribution.wbraid || '',
+          click_id: clickId,
+          landing_path: attribution.latest_landing_path || attribution.landing_path || '',
+          first_landing_path: attribution.first_landing_path || '',
+          latest_landing_path: attribution.latest_landing_path || '',
+          referrer: attribution.referrer || '',
+          attribution_timestamp: attribution.timestamp || '',
+          last_paid_click_timestamp: attribution.last_paid_click_timestamp || ''
+        };
+      }
+
+      function pushTrackingEvent(eventName, recommendation, done){
+        var completed = false;
+        var timeout = window.setTimeout(function(){
+          if(completed) return;
+          completed = true;
+          if(done) done(false);
+        }, 1200);
+        var payload = getTrackingPayload(recommendation);
+        payload.event = eventName;
+        payload.event_callback = function(){
+          if(completed) return;
+          completed = true;
+          window.clearTimeout(timeout);
+          if(done) done(true);
+        };
+        payload.event_timeout = 1000;
+        if(window.dataLayer && typeof window.dataLayer.push === 'function'){
+          if(eventName === 'lesson_fit_help_submit'){
+            try {
+              window.sessionStorage.setItem(HELP_SUBMIT_EVENT_PUSHED_KEY, '1');
+            } catch (error) {}
+          }
+          window.dataLayer.push(payload);
+        } else {
+          window.clearTimeout(timeout);
+          if(done) done(false);
+        }
+      }
+
+      function navigateAfterTracking(url, eventName, recommendation){
+        var didNavigate = false;
+        function finish(){
+          if(didNavigate) return;
+          didNavigate = true;
+          window.location.href = url;
+        }
+        pushTrackingEvent(eventName, recommendation, finish);
+      }
+
+      function readFormValue(name){
+        var checked = form.querySelector('[name="' + name + '"]:checked');
+        if(checked) return checked.value;
+        var field = form.elements[name];
+        return field ? String(field.value || '').trim() : '';
+      }
+
+      function hasKnownSelfBookingRoute(instrument, location, nextStep){
+        if(nextStep !== 'Ready to book') return false;
+        return Boolean(getSelfBookingUrl(instrument, location));
+      }
+
+      function getSelfBookingUrl(instrument, location){
+        if(instrument === 'Piano'){
+          return PIANO_LOCATION_URLS[location] || '';
+        }
+        if(instrument === 'Early childhood music'){
+          return MUSIC_DISCOVERY_LOCATION_URLS[location] || '';
+        }
+        return '';
+      }
+
+      function getRecommendation(){
+        var instrument = readFormValue('instrument_interest');
+        var location = readFormValue('preferred_location');
+        var age = readFormValue('student_age');
+        var nextStep = readFormValue('next_step_preference');
+        var helpReason = readFormValue('help_reason');
+        var studentContext = readFormValue('student_context');
+        var canSelfBook = hasKnownSelfBookingRoute(instrument, location, nextStep);
+
+        var title = 'A free intro lesson is the best starting point.';
+        var body = 'Tell us a little about what you are looking for. We will use this information when we reach out.';
+        var outcome = 'staff-help';
+        var url = appendAttribution(HELP_THANK_YOU_URL);
+
+        if(canSelfBook){
+          outcome = 'self-booking';
+          url = getSelfBookingUrl(instrument, location);
+          if(instrument === 'Early childhood music'){
+            title = 'Start with a free Music Discovery intro lesson at ' + location + '.';
+            body = 'Based on your answers, the next step is a Music Discovery Intro Lesson at ' + location + '.';
+          } else {
+            title = 'Start with a free piano intro lesson at ' + location + '.';
+            body = 'Based on your answers, the next step is an Intro Lesson for Piano at ' + location + '.';
+          }
+        } else if(instrument === 'Not sure yet' || location === 'Flexible or not sure'){
+          title = 'CSM can help you choose a starting point.';
+          body = 'Not sure yet? That is perfectly fine. We can help you explore the options and find a good starting point.';
+        } else if(nextStep === 'Need help choosing'){
+          title = 'CSM can help with the next step.';
+        } else if(instrument && location){
+          title = 'CSM can help you find the right Intro Lesson.';
+          body = 'Tell us a little about what you are looking for. We will use this information when we reach out.';
+        }
+
+        return {
+          title: title,
+          body: body,
+          outcome: outcome,
+          url: outcome === 'staff-help' ? url : appendAttribution(url),
+          summary: [
+            outcome ? 'Routing outcome: ' + outcome : '',
+            instrument ? 'Instrument: ' + instrument : '',
+            age ? 'Student age: ' + age : '',
+            location ? 'Location: ' + location : '',
+            nextStep ? 'Next step preference: ' + nextStep : '',
+            helpReason ? 'Help requested with: ' + helpReason : '',
+            studentContext ? 'Student context: ' + studentContext : ''
+          ].filter(Boolean).join(' | ')
+        };
+      }
+
+      function updateAttributionFields(){
+        updateNotificationFields(getRecommendation());
+      }
+
+      function updateNotificationFields(recommendation){
+        var attribution = getAttribution();
+        setLeadEventField('routing_outcome', recommendation.outcome);
+        setLeadEventField('recommended_url', recommendation.url);
+        ATTRIBUTION_KEYS.forEach(function(key){
+          setLeadEventField(key, attribution[key] || '');
+        });
+        setLeadEventField('landing_path', attribution.latest_landing_path || attribution.landing_path || '');
+        setLeadEventField('first_landing_path', attribution.first_landing_path || '');
+        setLeadEventField('latest_landing_path', attribution.latest_landing_path || '');
+        setLeadEventField('referrer', attribution.referrer || '');
+        setLeadEventField('attribution_timestamp', attribution.timestamp || '');
+        setLeadEventField('last_paid_click_timestamp', attribution.last_paid_click_timestamp || '');
+
+        contactSummary.value = [
+          'Name: ' + (readFormValue('parent_name') || 'Not provided'),
+          'Phone: ' + (readFormValue('phone') || 'Not provided')
+        ].join('\n');
+
+        lessonRequestSummary.value = [
+          'Instrument: ' + (readFormValue('instrument_interest') || 'Not selected'),
+          'Student: ' + (readFormValue('student_age') || 'Not selected'),
+          'Location: ' + (readFormValue('preferred_location') || 'Not selected'),
+          'Next step: ' + (readFormValue('next_step_preference') || 'Not selected'),
+          'Routing: ' + (recommendation.outcome === 'staff-help' ? 'Staff follow-up' : 'Self-booking')
+        ].join('\n');
+
+        followUpNotes.value = [
+          'Help with: ' + (readFormValue('help_reason') || 'Not selected'),
+          'Notes: ' + (readFormValue('student_context') || 'None provided')
+        ].join('\n');
+
+        trackingSummary.value = [
+          'Source: ' + [attribution.utm_source, attribution.utm_medium].filter(Boolean).join(' / '),
+          'Campaign: ' + (attribution.utm_campaign || ''),
+          'Content: ' + (attribution.utm_content || ''),
+          'Search term: ' + (attribution.utm_term || ''),
+          'Click ID: ' + (attribution.gclid || attribution.gbraid || attribution.wbraid || ''),
+          'First landing page: ' + (attribution.first_landing_path || ''),
+          'Latest landing page: ' + (attribution.latest_landing_path || attribution.landing_path || ''),
+          'Referrer: ' + (attribution.referrer || '')
+        ].join('\n');
+      }
+
+      function updateRecommendation(){
+        var recommendation = getRecommendation();
+        recommendationTitle.textContent = recommendation.title;
+        recommendationBody.textContent = recommendation.body;
+        helpDetails.classList.toggle('is-hidden', recommendation.outcome !== 'staff-help');
+        helpActions.classList.toggle('is-visible', recommendation.outcome === 'staff-help');
+        var shouldCollectContact = recommendation.outcome === 'staff-help' ||
+          (recommendation.outcome === 'self-booking' && ENABLE_LEAD_PIPELINE_CAPTURE);
+        if(contactIntro){
+          contactIntro.classList.toggle('is-hidden', !shouldCollectContact);
+          contactIntro.innerHTML = recommendation.outcome === 'staff-help'
+            ? '<strong>Contact info:</strong> add your details so CSM can follow up.'
+            : '<strong>Optional contact:</strong> add an email or mobile number so CSM can keep this booking path connected.';
+        }
+        contactGrid.classList.toggle('is-hidden', !shouldCollectContact);
+        if(contactIntro && contactGrid && intakeActions && handoffNote){
+          if(recommendation.outcome === 'self-booking'){
+            intakeActions.insertAdjacentElement('afterend', contactGrid);
+            intakeActions.insertAdjacentElement('afterend', contactIntro);
+          } else {
+            handoffNote.parentNode.insertBefore(contactGrid, handoffNote);
+            handoffNote.parentNode.insertBefore(contactIntro, contactGrid);
+          }
+        }
+        handoffNoteText.textContent = recommendation.outcome === 'staff-help'
+          ? 'We will use this information when we reach out.'
+          : 'This opens the CSM scheduling page for your selected Intro Lesson.';
+
+        var items = [
+          ['Instrument', readFormValue('instrument_interest') || 'Not selected'],
+          ['Student', readFormValue('student_age') || 'Not selected'],
+          ['Location', readFormValue('preferred_location') || 'Not selected']
+        ];
+        if(recommendation.outcome === 'staff-help'){
+          items.push(['Next step', readFormValue('next_step_preference') || 'Not selected']);
+          if(readFormValue('help_reason')){
+            items.push(['Help with', readFormValue('help_reason')]);
+          }
+        }
+        recommendationList.innerHTML = items.map(function(item){
+          return '<div class="recommendation-item"><dt>' + item[0] + '</dt><dd>' + item[1] + '</dd></div>';
+        }).join('');
+        updateNotificationFields(recommendation);
+      }
+
+      function saveState(){
+        var data = {};
+        Array.prototype.slice.call(form.elements).forEach(function(field){
+          if(!field.name || field.name === 'form-name' || field.name === 'bot-field' || field.name === 'subject' || field.name === 'contact_summary' || field.name === 'lesson_request' || field.name === 'follow_up_notes' || field.name === 'tracking_summary') return;
+          if(field.name === 'parent_name' || field.name === 'phone' || field.name === 'email' || field.name === 'student_context') return;
+          if((field.type === 'radio' || field.type === 'checkbox') && !field.checked) return;
+          data[field.name] = field.value;
+        });
+        setStoredJson(STATE_STORAGE_KEY, { step: currentStep, values: data });
+      }
+
+      function restoreState(){
+        var stored = getStoredJson(STATE_STORAGE_KEY);
+        if(stored.values){
+          Object.keys(stored.values).forEach(function(name){
+            var value = stored.values[name];
+            var fields = Array.prototype.slice.call(form.querySelectorAll('[name="' + name + '"]'));
+            fields.forEach(function(field){
+              if(field.type === 'radio' || field.type === 'checkbox'){
+                field.checked = field.value === value;
+              } else {
+                field.value = value;
+              }
+            });
+          });
+        }
+        if(Number.isInteger(stored.step) && stored.step >= 0 && stored.step < steps.length){
+          currentStep = stored.step;
+        }
+      }
+
+      function setStep(index){
+        currentStep = index;
+        steps.forEach(function(step, stepIndex){
+          step.classList.toggle('is-active', stepIndex === currentStep);
+        });
+        stepLabel.textContent = 'Step ' + (currentStep + 1) + ' of ' + steps.length;
+        stepTitle.textContent = steps[currentStep].getAttribute('data-step-title') || '';
+        progressBar.style.width = (((currentStep + 1) / steps.length) * 100) + '%';
+        backButton.hidden = currentStep === 0;
+        nextButton.hidden = currentStep === steps.length - 1;
+        submitButton.hidden = currentStep !== steps.length - 1;
+        if(currentStep === steps.length - 1){
+          var recommendation = getRecommendation();
+          if(recommendation.outcome === 'staff-help'){
+            submitButton.textContent = 'Send Request';
+          } else {
+            submitButton.textContent = 'Choose a Time';
+          }
+        }
+        formError.textContent = '';
+        updateAttributionFields();
+        updateRecommendation();
+        saveState();
+      }
+
+      function validateCurrentStep(){
+        var requiredGroups = Array.prototype.slice.call(steps[currentStep].querySelectorAll('[data-required]'));
+        var invalid = requiredGroups.find(function(field){
+          if(field.type === 'radio'){
+            return !form.querySelector('[name="' + field.name + '"]:checked');
+          }
+          return !String(field.value || '').trim();
+        });
+        if(invalid){
+          formError.textContent = 'Please answer this before moving on.';
+          invalid.focus();
+          return false;
+        }
+        if(currentStep === steps.length - 1 && getRecommendation().outcome === 'staff-help'){
+          var helpReason = form.elements.help_reason;
+          var parentName = form.elements.parent_name;
+          var email = form.elements.email;
+          if(!String(helpReason.value || '').trim()){
+            formError.textContent = 'Please choose what you would like help with.';
+            helpReason.focus();
+            return false;
+          }
+          if(!String(parentName.value || '').trim()){
+            formError.textContent = 'Please add your name so CSM can follow up.';
+            parentName.focus();
+            return false;
+          }
+          if(!String(email.value || '').trim()){
+            formError.textContent = 'Please add your email so CSM can follow up.';
+            email.focus();
+            return false;
+          }
+        }
+        formError.textContent = '';
+        return true;
+      }
+
+      function submitDirect(){
+        updateAttributionFields();
+        ensureClientSubmissionId();
+        setLeadEventField('submitted_at', new Date().toISOString());
+        setLeadEventField('lead_pipeline_only', '');
+        var formData = new URLSearchParams(new FormData(form));
+        formData.set('form-name', 'lesson-fit-request');
+        formData.set('subject', 'Request Info');
+        formData.set('lead_pipeline_only', '');
+        return fetch(DIRECT_SUBMIT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        }).then(function(response){
+          if(!response.ok){
+            var error = new Error('Lesson Fit direct submission failed');
+            error.status = response.status;
+            throw error;
+          }
+          return response.json().then(function(result){
+            if(!result || result.ok !== true || !result.email || result.email.sent !== true){
+              throw new Error('Request Info delivery was not confirmed');
+            }
+            return result;
+          });
+        });
+      }
+
+      function saveRequestBackup(){
+        var formData = new URLSearchParams(new FormData(form));
+        formData.set('form-name', 'lesson-fit-request');
+        formData.set('subject', 'Request Info');
+        formData.set('lead_pipeline_only', '');
+        return fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        });
+      }
+
+      function submitRequestInfo(){
+        return submitDirect().catch(function(error){
+          // Preserve a recoverable copy without claiming that the office received it.
+          return saveRequestBackup().catch(function(){
+            return null;
+          }).then(function(){
+            throw error;
+          });
+        });
+      }
+
+      function submitPipelineOnly(){
+        updateAttributionFields();
+        ensureClientSubmissionId();
+        setLeadEventField('submitted_at', new Date().toISOString());
+        setLeadEventField('lead_pipeline_only', '1');
+        var formData = new URLSearchParams(new FormData(form));
+        formData.set('lead_pipeline_only', '1');
+        return fetch(DIRECT_SUBMIT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        });
+      }
+
+      form.addEventListener('change', function(){
+        updateRecommendation();
+        saveState();
+      });
+
+      form.addEventListener('input', function(){
+        updateRecommendation();
+        saveState();
+      });
+
+      nextButton.addEventListener('click', function(){
+        if(validateCurrentStep() && currentStep < steps.length - 1){
+          setStep(currentStep + 1);
+        }
+      });
+
+      backButton.addEventListener('click', function(){
+        if(currentStep > 0) setStep(currentStep - 1);
+      });
+
+      form.addEventListener('submit', function(event){
+        event.preventDefault();
+        if(!validateCurrentStep()) return;
+        var recommendation = getRecommendation();
+        submitButton.disabled = true;
+        if(recommendation.outcome === 'self-booking'){
+          submitButton.textContent = 'Opening Times...';
+          try {
+            window.localStorage.removeItem(STATE_STORAGE_KEY);
+          } catch (error) {}
+          if(!ENABLE_LEAD_PIPELINE_CAPTURE){
+            navigateAfterTracking(recommendation.url, 'lesson_fit_self_booking_handoff', recommendation);
+            return;
+          }
+          submitPipelineOnly().catch(function(error){
+            if(window.console && window.console.warn) window.console.warn('Lesson Fit pipeline capture failed', error);
+          }).then(function(){
+            navigateAfterTracking(recommendation.url, 'lesson_fit_self_booking_handoff', recommendation);
+          });
+          return;
+        }
+        submitButton.textContent = 'Sending Request...';
+        submitRequestInfo()
+          .then(function(){
+            try {
+              window.localStorage.removeItem(STATE_STORAGE_KEY);
+              window.sessionStorage.removeItem(HELP_SUBMIT_EVENT_PUSHED_KEY);
+              window.sessionStorage.setItem(HELP_SUBMIT_PAYLOAD_KEY, JSON.stringify(getTrackingPayload(recommendation)));
+            } catch (error) {}
+            pushTrackingEvent('lesson_fit_help_submit', recommendation, function(){
+              window.location.href = recommendation.url;
+            });
+          })
+          .catch(function(){
+            submitButton.disabled = false;
+            submitButton.textContent = 'Send Request';
+            formError.textContent = 'We could not confirm your request reached our office. Your answers are still here. Please try again, or call or text us at (513) 560-9175.';
+          });
+      });
+
+      captureAttribution();
+      restoreState();
+      setStep(currentStep);
+    })();
+  </script>
+</Base>
