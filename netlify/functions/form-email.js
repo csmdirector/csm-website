@@ -21,18 +21,20 @@ const ROUTES = {
     to: INFO_EMAIL,
     label: 'Request Info',
     subject: 'Request Info',
-    replyTo: ['email'],
+    replyTo: ['parent_email', 'email'],
     groups: [
-      ['Contact', ['parent_name', 'email', 'phone', 'contact_summary']],
-      ['Lesson request', ['instrument_interest', 'student_age', 'preferred_location', 'next_step_preference', 'lesson_request']],
+      ['Contact', ['parent_name', 'parent_email', 'parent_phone', 'email', 'phone', 'contact_summary']],
+      ['Lesson request', ['student_name', 'instrument', 'instrument_interest', 'student_age', 'preferred_location', 'preferred_time_window', 'next_step_preference', 'lesson_request']],
+      ['Next step', ['parent_next_step', 'opus_profile_summary']],
       ['Follow-up notes', ['help_reason', 'student_context', 'follow_up_notes']],
-      ['Tracking', ['tracking_summary']]
+      ['Context', ['csm_context', 'csm_lead_id']],
+      ['Tracking', ['tracking_summary', 'attribution_summary']]
     ]
   },
   'piano-preregistration': {
     to: INFO_EMAIL,
-    label: 'Piano Pre-Registration',
-    subject: 'New piano pre-registration',
+    label: 'Request Info',
+    subject: 'Request Info',
     replyTo: ['parent_email'],
     groups: [
       ['CSM record', ['csm_lead_id', 'submitted_at', 'existing_family', 'duplicate_of_lead_id']],
@@ -46,15 +48,15 @@ const ROUTES = {
   },
   'intro-bridge': {
     to: INFO_EMAIL,
-    label: 'Intro Booking Request',
-    subject: 'New intro booking request',
+    label: 'Request Info',
+    subject: 'Request Info',
     replyTo: ['parent_email'],
     groups: [
       ['CSM record', ['csm_lead_id', 'submitted_at', 'existing_family', 'duplicate_of_lead_id']],
       ['Parent', ['parent_name', 'parent_email', 'parent_phone']],
       ['Student', ['student_name', 'student_birthdate', 'student_age', 'service_slug', 'instrument']],
-      ['Requested intro', ['preferred_location', 'preferred_time_window', 'booking_url']],
-      ['Booking handoff', ['handoff_mode', 'opus_client_create_attempted', 'opus_post_status', 'office_follow_up_required']],
+      ['Lesson request', ['preferred_location', 'preferred_time_window']],
+      ['Next step', ['parent_next_step', 'opus_profile_summary']],
       ['Attribution', ['attribution_summary']],
       ['CSM context', ['csm_context']]
     ]
@@ -153,7 +155,7 @@ const PIPELINE_CAPTURE_FIELDS = [
   'landing_path',
   'referrer'
 ];
-const SKIP_FIELDS = new Set(['bot-field', 'form-name', 'subject', 'submitted_at', 'ip', 'user_agent', ...PIPELINE_CAPTURE_FIELDS]);
+const SKIP_FIELDS = new Set(['bot-field', 'form-name', 'subject', 'submitted_at', 'ip', 'user_agent', '_request_info_version', ...PIPELINE_CAPTURE_FIELDS]);
 SKIP_FIELDS.add('client_submission_id');
 const FIELD_LABELS = {
   'ack-no-family-contact': 'Office confirmation',
@@ -188,6 +190,8 @@ const FIELD_LABELS = {
   parent_name: 'Parent/guardian name',
   parent_email: 'Parent email',
   parent_phone: 'Parent phone',
+  parent_next_step: 'Customer request',
+  opus_profile_summary: 'Opus account',
   phone: 'Phone',
   preferred_location: 'Preferred location',
   preferred_time_window: 'Preferred time window',
@@ -403,7 +407,7 @@ function buildSections(route, fields) {
 function buildText(route, formName, fields, meta) {
   const lines = [
     route.label,
-    `Form: ${formName}`,
+    `Form: ${route.label === 'Request Info' ? 'Request Info' : formName}`,
     `Routed to: ${route.to}`,
     `Submission ID: ${meta.id || 'Not provided'}`,
     `Submitted at: ${meta.createdAt || valueFor(fields, 'submitted_at') || new Date().toISOString()}`,
@@ -455,7 +459,7 @@ function buildHtml(route, formName, fields, meta) {
                 <td style="padding:26px 32px 24px;background:#1e1e1e;">
                   <div style="font-size:11px;line-height:1.3;letter-spacing:.18em;text-transform:uppercase;color:#f74f57;font-weight:700;margin-bottom:10px;">Cincinnati School of Music</div>
                   <div style="font-size:22px;line-height:1.25;font-weight:700;color:#ffffff;">${escapeHtml(route.label)}</div>
-                  <div style="font-size:12px;line-height:1.5;color:#b8b7b4;margin-top:10px;">Form: ${escapeHtml(formName)} &nbsp;&bull;&nbsp; Routed to ${escapeHtml(route.to)}</div>
+                  <div style="font-size:12px;line-height:1.5;color:#b8b7b4;margin-top:10px;">Form: ${escapeHtml(route.label === 'Request Info' ? 'Request Info' : formName)} &nbsp;&bull;&nbsp; Routed to ${escapeHtml(route.to)}</div>
                 </td>
               </tr>
               <tr>
@@ -675,7 +679,8 @@ async function sendEmail(route, formName, fields, meta) {
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers,
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(8000)
   });
 
   const details = await response.text();
@@ -707,7 +712,10 @@ async function sendFormEmailSubmission({ formName, data, id = '', createdAt = ''
   return sendEmail(route, formName, fields, { id, createdAt });
 }
 
-export default {
+export function createFormEmailHandler({
+  submitGuide = async request => (await import('./lesson-fit-submit.js')).default(request)
+} = {}) {
+return {
   async formSubmitted(event) {
     console.log(`form-email: invoked event keys=[${Object.keys(event || {}).join(', ')}]`);
 
@@ -723,6 +731,19 @@ export default {
       console.warn(
         `form-email: no route for "${formName}"; event keys=[${Object.keys(event || {}).join(', ')}] field keys=[${Object.keys(submission.data || {}).join(', ')}]`
       );
+      return;
+    }
+    if (formName === 'lesson-fit-request' && valueFor(submission.data, 'client_submission_id') &&
+        !shouldSkipOfficeEmail(submission.data) && !valueFor(submission.data, 'bot-field')) {
+      // A backup after a lost HTTP response is the same inquiry, not a new email
+      // or Opus account. Legacy submissions without a shared ID retain their route.
+      const response = await submitGuide(new Request('https://cincinnatischoolofmusic.com/api/lesson-fit-submit', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...submission.data, 'form-name': formName,
+          submitted_at: valueFor(submission.data, 'submitted_at') || submission.createdAt })
+      }));
+      const result = await response.json();
+      if (!response.ok || result.office_email_confirmed !== true) throw new Error('Saved Request Info delivery is unconfirmed.');
       return;
     }
     await sendFormEmailSubmission({
@@ -755,6 +776,9 @@ export default {
     }
   }
 };
+}
+
+export default createFormEmailHandler();
 
 export const testables = {
   ROUTES,

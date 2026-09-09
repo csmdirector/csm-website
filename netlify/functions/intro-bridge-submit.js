@@ -1,12 +1,11 @@
 import {
-  INTRO_BRIDGE_FORM,
   createIntroBridge,
   createPostgresPreregistrationRepository,
   isEnabled,
   normalizeSubmission,
   validateSubmission
 } from './_shared/intro-bridge.js';
-import { sendFormEmailSubmission } from './form-email.js';
+import { deliverRequestInfo } from './_shared/request-info-delivery.js';
 
 function env(name) {
   if (typeof Netlify !== 'undefined' && Netlify.env && typeof Netlify.env.get === 'function') {
@@ -54,7 +53,11 @@ export function introBridgeEnabled({ enabledValue = '', deployContext = 'unknown
   return isEnabled(enabledValue) || isolatedNetlifyPreview || ['deploy-preview', 'branch-deploy', 'dev'].includes(context);
 }
 
-export default async function introBridgeSubmit(req) {
+export function createIntroBridgeSubmitHandler({
+  repositoryFactory = createPostgresPreregistrationRepository,
+  deliver = deliverRequestInfo
+} = {}) {
+return async function introBridgeSubmit(req) {
   const requestUrl = new URL(req.url);
   if (!introBridgeEnabled({
     enabledValue: env('ENABLE_INTRO_BRIDGE'),
@@ -87,22 +90,25 @@ export default async function introBridgeSubmit(req) {
       );
       conversionGateLogged = true;
     }
+    const repository = repositoryFactory();
     const bridge = createIntroBridge({
-      repository: createPostgresPreregistrationRepository(),
+      repository,
       config: {
-        officeEmailEnabled: isEnabled(env('ENABLE_INTRO_BRIDGE_OFFICE_EMAIL')),
+        deferOfficeDelivery: true,
         conversionEligible: conversionGate.conversionEligible,
         conversionExclusionReason: conversionGate.conversionExclusionReason
-      },
-      notifyOffice: async (notificationPayload, record) => sendFormEmailSubmission({
-        formName: INTRO_BRIDGE_FORM,
-        data: notificationPayload,
-        id: record.csm_lead_id,
-        createdAt: record.submitted_at
-      })
+      }
     });
     const result = await bridge(fields);
-    return jsonResponse(result, result.ok ? 200 : result.status || 500);
+    if (!result.ok || !result.stored) return jsonResponse(result, result.status || 500);
+    const choice = result.existing_family || fields.booking_action === 'office_help' ? 'office_help' : 'online_booking';
+    const delivery = await deliver({
+      repository, leadId: result.lead_id,
+      clientSubmissionId: fields.client_submission_id, choice
+    });
+    // A saved lead remains recoverable even if email fails. The browser only
+    // promises office follow-up after office_email_confirmed is true.
+    return jsonResponse({ ...result, ...delivery, ok: true, stored: true }, 200);
   } catch (error) {
     console.error('intro-bridge-submit: failed before confirmation', error);
     return jsonResponse({
@@ -111,7 +117,10 @@ export default async function introBridgeSubmit(req) {
       error: 'We could not safely save this booking request. Please call or text CSM at (513) 560-9175.'
     }, 503);
   }
+};
 }
+
+export default createIntroBridgeSubmitHandler();
 
 export const config = { path: '/api/intro-bridge-submit' };
 

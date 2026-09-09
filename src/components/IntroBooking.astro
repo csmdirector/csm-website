@@ -179,7 +179,8 @@ const locations = INTRO_LOCATIONS.map(l => ({ slug: l.slug, name: l.name.replace
         if (choice === 'office_help') {
           copy.textContent = 'Sending your request to the office…';
           try {
-            const confirmation = await recordChoice('office_help');
+            const confirmation = saved.choice === 'office_help' && saved.office_email_confirmed === true
+              ? saved : await recordChoice('office_help');
             if (confirmation.office_email_confirmed !== true) throw new Error('Office delivery not confirmed.');
             document.getElementById('successHeading').textContent = 'We’ll help you from here.';
             copy.textContent = savedExisting ? 'Our office will contact you to arrange the intro with your existing account.' : 'Our office will contact you to find a suitable teacher and time.';
@@ -196,7 +197,9 @@ const locations = INTRO_LOCATIONS.map(l => ({ slug: l.slug, name: l.name.replace
         catch (_) { copy.textContent = 'Your details are saved, but we could not open the booking calendar. Call or text (513) 560-9175.'; success.focus(); return; }
         continuation.href = destination; continuation.hidden = false;
         copy.textContent = 'Opening Opus so you can choose and confirm your intro. If it does not open, use the button below.';
-        try { await recordChoice('online_booking'); } catch (_) { /* Saved lead remains available; tracking must not block booking. */ }
+        if (saved.choice !== 'online_booking' || saved.office_email_confirmed !== true) {
+          try { await recordChoice('online_booking'); } catch (_) { /* Saved lead remains available; tracking must not block booking. */ }
+        }
         location.assign(destination);
       }
       const id = window.crypto?.randomUUID ? crypto.randomUUID().replace(/-/g,'') : Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -233,6 +236,7 @@ const locations = INTRO_LOCATIONS.map(l => ({ slug: l.slug, name: l.name.replace
         document.getElementById('attributionJson').value = JSON.stringify(attribution());
         try {
           const payload = Object.fromEntries(new FormData(form));
+          payload.booking_action = choice;
           document.getElementById('bookingFields').disabled = true;
           const result = await post('/api/intro-bridge-submit',payload,20000);
           if (!result.stored || !result.lead_id || (choice === 'online_booking' && !result.booking_url && !result.existing_family)) throw new Error('Save not confirmed.');

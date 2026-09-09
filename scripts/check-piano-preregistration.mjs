@@ -209,13 +209,13 @@ assert.match(notification.csm_context, /did not pre-create an Opus parent or stu
 const pageSource = readFileSync(new URL('../src/pages/book-piano-intro/index.astro', import.meta.url), 'utf8');
 assert.doesNotMatch(pageSource, /dataLayer\.push/);
 assert.doesNotMatch(pageSource, /google_ads_booking|purchase|generate_lead/i);
-assert.match(pageSource, /Fall in Love With Music Special/);
-assert.match(pageSource, /Start With a Free Piano Intro Lesson/);
-assert.match(pageSource, /A free 30-minute private piano intro lesson\./);
-assert.match(pageSource, /See Free Piano Intro Times/);
+assert.match(pageSource, /<IntroBooking canonicalPath="\/book-piano-intro\/" defaultService="piano"/);
+const compactSource = readFileSync(new URL('../src/components/IntroBooking.astro', import.meta.url), 'utf8');
+assert.match(compactSource, /Book Your Free Intro Lesson/);
+assert.match(compactSource, /Continue to Available Times/);
 assert.doesNotMatch(pageSource, /\$42|enter payment/);
-assert.match(pageSource, /No ongoing commitment\. You’re just booking the intro lesson\./);
-assert.match(pageSource, /<span class="visually-hidden">General availability<\/span>/);
+assert.match(compactSource, /No ongoing commitment/);
+assert.match(compactSource, /Nothing is reserved or charged on this page/);
 assert.doesNotMatch(pageSource, /Pre-Registration<\/span>|Save &amp; Continue to Times|Choose an Opus time|does not pre-create/);
 
 const thankYouSource = readFileSync(new URL('../src/pages/book-piano-intro/thank-you.astro', import.meta.url), 'utf8');

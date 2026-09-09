@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { captureLessonFitSubmission } from './_shared/lead-pipeline.js';
-import { sendFormEmailSubmission } from './form-email.js';
+import { createPostgresPreregistrationRepository } from './_shared/intro-bridge.js';
+import { deliverRequestInfo, storeGuideRequestInfo } from './_shared/request-info-delivery.js';
 
 const FORM_NAME = 'lesson-fit-request';
 
@@ -128,7 +129,12 @@ async function settlePipeline(promise) {
   }
 }
 
-export default async function lessonFitSubmit(req, context) {
+export function createLessonFitSubmitHandler({
+  repositoryFactory = createPostgresPreregistrationRepository,
+  capture = captureLessonFitSubmission,
+  deliver = deliverRequestInfo
+} = {}) {
+return async function lessonFitSubmit(req, context) {
   if (req.method !== 'POST') {
     return jsonResponse({ ok: false, error: 'Method not allowed.' }, 405);
   }
@@ -145,12 +151,31 @@ export default async function lessonFitSubmit(req, context) {
   if (!validation.ok) return jsonResponse({ ok: false, error: validation.error }, validation.status);
 
   const id = submissionId(fields);
-  const createdAt = valueFor(fields, 'submitted_at') || new Date().toISOString();
-  const pipelinePromise = settlePipeline(captureLessonFitSubmission({
+  const submitted = new Date(valueFor(fields, 'submitted_at'));
+  const createdAt = Number.isNaN(submitted.getTime()) ? new Date().toISOString() : submitted.toISOString();
+  const pipelineOnly = valueFor(fields, 'lead_pipeline_only') === '1';
+  let delivery;
+  if (!pipelineOnly) {
+    try {
+      const repository = repositoryFactory();
+      const record = await storeGuideRequestInfo(fields, repository, id, createdAt);
+      delivery = await deliver({
+        repository, leadId: record.csm_lead_id, clientSubmissionId: record.client_submission_id,
+        choice: 'office_help', formName: FORM_NAME
+      });
+    } catch {
+      return jsonResponse({ ok: false, error: 'Request delivery is not confirmed. Please retry or contact CSM directly.' }, 503);
+    }
+    if (!delivery.office_email_confirmed) return jsonResponse(delivery, delivery.status || 502);
+  }
+  // Analytics keeps its existing flags. The durable Request Info delivery above
+  // owns office email and Opus creation; this copy must never create a second profile.
+  const pipelinePromise = settlePipeline(capture({
     formName: FORM_NAME,
     data: {
       ...fields,
-      'form-name': FORM_NAME
+      'form-name': FORM_NAME,
+      lead_pipeline_only: '1'
     },
     id,
     createdAt,
@@ -162,25 +187,6 @@ export default async function lessonFitSubmit(req, context) {
     context.waitUntil(pipelinePromise);
   }
 
-  let emailResult;
-  try {
-    emailResult = await sendFormEmailSubmission({
-      formName: FORM_NAME,
-      data: { ...fields, subject: 'Request Info' },
-      id,
-      createdAt
-    });
-    if (valueFor(fields, 'lead_pipeline_only') !== '1' &&
-        (!emailResult?.sent || !Number.isInteger(emailResult.status) ||
-          emailResult.status < 200 || emailResult.status >= 300)) {
-      throw new Error('Office email was not accepted.');
-    }
-  } catch (error) {
-    console.error('lesson-fit-submit: office email failed', error);
-    if (!context || typeof context.waitUntil !== 'function') await pipelinePromise;
-    return jsonResponse({ ok: false, error: 'Office email failed. Please contact CSM directly.' }, 502);
-  }
-
   const pipelineResult = context && typeof context.waitUntil === 'function'
     ? { ok: true, queued: true }
     : await pipelinePromise;
@@ -188,10 +194,14 @@ export default async function lessonFitSubmit(req, context) {
   return jsonResponse({
     ok: true,
     submission_id: id,
-    email: emailResult,
+    email: pipelineOnly ? { skipped: true, sent: false, reason: 'pipeline_only' } : { sent: true, status: 200 },
+    ...(delivery ? { lead_id: delivery.lead_id, office_email_confirmed: true, opus: delivery.opus } : {}),
     pipeline: pipelineResult
   });
+};
 }
+
+export default createLessonFitSubmitHandler();
 
 export const config = {
   path: '/api/lesson-fit-submit'

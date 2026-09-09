@@ -1,0 +1,41 @@
+name: Request Info delivery checks
+on:
+  push:
+    branches: [staging]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: csm_test
+          POSTGRES_PASSWORD: local_test_only
+          POSTGRES_DB: csm_intake_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node scripts/check-request-info-delivery.mjs
+      - run: node scripts/check-request-info-database.mjs
+        env:
+          CSM_INTAKE_TEST_DATABASE_URL: postgresql://csm_test:local_test_only@127.0.0.1:5432/csm_intake_test
+      - run: npm run check:lead-pipeline
+      - run: npm run check:intro-bridge
+      - run: npm run check:piano-preregistration
+      - run: npm run build
+      - run: npm run check:preserved
