@@ -5,8 +5,12 @@ import {
   handleLeadEventsRequest
 } from '../netlify/functions/_shared/lead-pipeline.js';
 import { testables } from '../netlify/functions/_shared/lead-pipeline.js';
-import formEmailHandler, { testables as formEmailTestables } from '../netlify/functions/form-email.js';
-import lessonFitSubmit from '../netlify/functions/lesson-fit-submit.js';
+import formEmailHandler, { createFormEmailHandler, testables as formEmailTestables } from '../netlify/functions/form-email.js';
+import { createLessonFitSubmitHandler } from '../netlify/functions/lesson-fit-submit.js';
+import { requestInfoRepository } from './fixtures/request-info-repository.mjs';
+
+const directStore = requestInfoRepository();
+const lessonFitSubmit = createLessonFitSubmitHandler({ repositoryFactory: () => directStore });
 
 const {
   buildEventEnvelope,
@@ -415,10 +419,15 @@ const duplicateDirectResponse = await lessonFitSubmit(new Request('https://examp
   body: new URLSearchParams({ 'form-name': 'lesson-fit-request', ...directFields }).toString()
 }));
 const duplicateDirectJson = await duplicateDirectResponse.json();
-assert.equal(duplicateDirectResponse.status, 502);
-assert.equal(duplicateDirectJson.ok, false);
-assert.equal(sentEmails.length, 3);
-assert.equal(sentEmails[2].headers['Idempotency-Key'], 'csm-lesson-fit-request-lesson-fit-direct-test-123');
+assert.equal(duplicateDirectResponse.status, 200);
+assert.equal(duplicateDirectJson.office_email_confirmed, true);
+assert.equal(sentEmails.length, 2, 'A confirmed saved inquiry must not call the email provider again.');
+
+await createFormEmailHandler({ submitGuide: lessonFitSubmit }).formSubmitted({ payload: {
+  form_name: 'lesson-fit-request', id: 'netlify-backup-local-test',
+  created_at: directFields.submitted_at, data: { ...directFields, 'form-name': 'lesson-fit-request' }
+} });
+assert.equal(sentEmails.length, 2, 'A Netlify backup after a lost response must use the same saved delivery.');
 
 const pipelineOnlyResponse = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {
   method: 'POST',
@@ -434,7 +443,7 @@ const pipelineOnlyJson = await pipelineOnlyResponse.json();
 assert.equal(pipelineOnlyResponse.status, 200);
 assert.equal(pipelineOnlyJson.email.skipped, true);
 assert.equal(pipelineOnlyJson.email.reason, 'pipeline_only');
-assert.equal(sentEmails.length, 3);
+assert.equal(sentEmails.length, 2);
 
 globalThis.fetch = originalFetch;
 delete process.env.RESEND_API_KEY;

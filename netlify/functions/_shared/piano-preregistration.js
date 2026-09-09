@@ -303,9 +303,102 @@ function postgresPool() {
   return pool;
 }
 
-export function createPostgresPreregistrationRepository() {
-  const db = postgresPool();
+export function createPostgresPreregistrationRepository({ database } = {}) {
+  const db = database || postgresPool();
   return {
+    async getLead(leadId, clientSubmissionId) {
+      const found = await db.query(
+        'SELECT * FROM piano_preregistrations WHERE csm_lead_id = $1 AND client_submission_id = $2',
+        [leadId, clientSubmissionId]
+      );
+      return found.rows[0] || null;
+    },
+
+    async claimOfficeNotification(leadId, payload) {
+      const claimed = await db.query(
+        `UPDATE piano_preregistrations
+         SET office_notification_status = 'sending',
+             office_notification_payload = CASE
+               WHEN office_notification_payload->>'_request_info_version' = $3
+                 THEN office_notification_payload
+               ELSE $2::jsonb
+             END,
+             updated_at = now()
+         WHERE csm_lead_id = $1
+           AND NOT (office_notification_status = 'sent' AND (
+             COALESCE(office_notification_payload->>'_request_info_version', '') = $3 OR
+             COALESCE(office_notification_payload->>'form-name', '') = 'intro-bridge-office-help'))
+           AND (office_notification_status <> 'sending' OR updated_at < now() - interval '30 seconds')
+         RETURNING *`,
+        [leadId, JSON.stringify(payload), payload._request_info_version]
+      );
+      return claimed.rows[0] || null;
+    },
+
+    async claimOpusRequestInfo(record, payload) {
+      const client = await db.connect();
+      try {
+        await client.query('BEGIN');
+        // Serialize contact creation across instruments, locations and both forms.
+        await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [`request-info-opus:${record.parent_email_norm}`]);
+        const found = await client.query('SELECT * FROM piano_preregistrations WHERE csm_lead_id = $1 FOR UPDATE', [record.csm_lead_id]);
+        const current = found.rows[0];
+        if (!current || current.existing_family || current.handoff_choice !== HANDOFF_CHOICES.OFFICE_HELP ||
+            current.opus_attempted_at || current.opus_post_status?.startsWith('office_help_')) {
+          await client.query('COMMIT');
+          return { claimed: false, record: current };
+        }
+        const prior = await client.query(
+          `SELECT * FROM piano_preregistrations
+           WHERE csm_lead_id <> $1 AND parent_email_norm = $2
+             AND (matched_opus_client_id IS NOT NULL OR opus_post_status IN (
+               'office_help_created', 'office_help_linked', 'office_help_sending', 'office_help_needs_review'))
+           ORDER BY (matched_opus_client_id IS NOT NULL OR opus_post_status IN ('office_help_created', 'office_help_linked')) DESC,
+                    created_at DESC
+           LIMIT 1`,
+          [record.csm_lead_id, record.parent_email_norm]
+        );
+        const previous = prior.rows[0];
+        if (previous) {
+          const known = Boolean(previous.matched_opus_client_id) || ['office_help_created', 'office_help_linked'].includes(previous.opus_post_status);
+          const linked = await client.query(
+            `UPDATE piano_preregistrations SET opus_post_status = $2, opus_error = $3,
+               opus_payload = $4::jsonb, updated_at = now() WHERE csm_lead_id = $1 RETURNING *`,
+            [record.csm_lead_id, known ? 'office_help_linked' : 'office_help_needs_review',
+              known ? null : 'Another request for this contact has an unconfirmed Opus attempt.',
+              JSON.stringify({ related_csm_lead_id: previous.csm_lead_id })]
+          );
+          await client.query('COMMIT');
+          return { claimed: false, record: linked.rows[0] };
+        }
+        const claimed = await client.query(
+          `UPDATE piano_preregistrations SET opus_post_status = 'office_help_sending',
+             opus_payload = $2::jsonb, opus_attempted_at = now(), opus_error = NULL,
+             updated_at = now() WHERE csm_lead_id = $1 RETURNING *`,
+          [record.csm_lead_id, JSON.stringify(payload)]
+        );
+        // Commit before the external write. A timeout/crash must not erase the attempt.
+        await client.query('COMMIT');
+        return { claimed: true, record: claimed.rows[0] };
+      } catch (error) {
+        await client.query('ROLLBACK').catch(() => {});
+        throw error;
+      } finally {
+        client.release();
+      }
+    },
+
+    async recordOpusRequestInfo(leadId, result) {
+      const updated = await db.query(
+        `UPDATE piano_preregistrations SET opus_post_status = $2, opus_http_status = $3,
+           opus_response_body = $4, opus_error = $5,
+           office_follow_up_required = true, updated_at = now()
+         WHERE csm_lead_id = $1 RETURNING *`,
+        [leadId, result.status, result.httpStatus || null, result.responseBody || null, result.error || null]
+      );
+      return updated.rows[0];
+    },
+
     async createLead(input) {
       const existing = await db.query(
         'SELECT * FROM piano_preregistrations WHERE client_submission_id = $1',
@@ -550,6 +643,10 @@ export function createIntroBridge({
     if (created.replay) return publicResult(created.record, { replay: true });
 
     let record = created.record;
+
+    // The current intake handler records the chosen action and delivers once.
+    // Older callers retain their existing notification behavior below.
+    if (config.deferOfficeDelivery) return publicResult(record, { replay: false });
 
     const notificationPayload = buildOfficeNotification(record);
     let notificationResult = { status: 'disabled_preview' };
