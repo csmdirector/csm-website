@@ -19,8 +19,7 @@ const {
 } = Astro.props;
 
 const site = 'https://cincinnatischoolofmusic.com';
-const normalizedPath = canonicalPath === '/' ? '/' : canonicalPath.replace(/\/$/, '');
-const canonicalUrl = normalizedPath === '/' ? `${site}/` : `${site}${normalizedPath}`;
+const canonicalUrl = new URL(canonicalPath, site).href;
 ---
 <!DOCTYPE html>
 <html lang="en">

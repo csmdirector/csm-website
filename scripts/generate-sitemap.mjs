@@ -33,6 +33,7 @@ const routes = [
   '/parent-resources',
   '/parent-resources/music-lesson-cost-cincinnati',
   '/parent-resources/choosing-the-right-first-music-lesson',
+  '/parent-resources/making-room-for-music-in-a-busy-school-week/',
   '/privacy-policy',
   '/sms-terms',
   '/withdraw'
