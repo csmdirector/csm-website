@@ -93,6 +93,19 @@ h2 em{font-style:italic;font-weight:200}
 .faculty-tag{font-size:.7rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.14);padding:8px 18px}
 .faculty-body{font-size:.92rem;font-weight:300;color:rgba(255,255,255,.55);line-height:1.95;max-width:600px;margin:0 auto}
 
+/* Faculty spotlights use the existing type, colors, and spacing. */
+.spotlights-wrap{background:var(--offwhite);border-bottom:1px solid var(--offwb)}
+.spotlights-inner{max-width:1200px;margin:0 auto;padding:80px 48px}
+.spotlights-intro{max-width:720px;font-size:.92rem;font-weight:300;line-height:1.95;color:var(--mid);margin:20px 0 32px}
+.spotlights-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.spotlight{border-top:2px solid var(--accent);padding-top:24px;scroll-margin-top:100px}
+.spotlight h3{font-size:1.4rem;font-weight:400;margin-bottom:12px}
+.spotlight p{font-size:.92rem;font-weight:300;line-height:1.9;color:var(--mid);margin-bottom:16px}
+.spotlight .spotlight-focus{font-weight:500;color:var(--charcoal)}
+.spotlight a,.spotlights-intro a{color:var(--slate);text-underline-offset:3px}
+#faculty-spotlights{scroll-margin-top:90px}
+@media(max-width:880px){.spotlights-grid{grid-template-columns:1fr}.spotlights-inner{padding:56px 28px}}
+
 /* ── QUOTE ── */
 .quote-wrap{background:var(--offwhite);border-bottom:1px solid var(--offwb);padding:80px 48px;text-align:center}
 .quote-inner{max-width:640px;margin:0 auto}
@@ -562,7 +575,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="intro-inner">
     <span class="eyebrow">Cincinnati School of Music</span>
     <h1>60+ Teachers. <em>One at a Time.</em></h1>
-    <p>Every lesson at CSM is private and one-on-one. With 60+ teachers, we can consider each student's musical goals and how they learn. Our office handles teacher matching for children, teens, and adults, so you don't have to sort through a roster on your own.</p>
+    <p>Every lesson at CSM is private and one-on-one. With 60+ teachers, we can consider each student's musical goals and how they learn. Our office handles teacher matching for children, teens, and adults, so you don't have to sort through a roster on your own. <a href="#faculty-spotlights">Meet a few of our teachers.</a></p>
   </div>
 </section>
 
@@ -670,6 +683,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <p class="faculty-body">Our teachers’ backgrounds include doctoral and master’s degrees, Artist Diplomas, church music leadership, and years of teaching and performing as soloists and band members. That range gives students access to different kinds of musical experience and teaching approaches.</p>
     <p class="faculty-body">Many teachers work successfully with students across a wide range of ages and levels while bringing particular strengths. Some are especially skilled at engaging our youngest Music Discovery students; others excel with adult learners or advanced students. Those strengths often overlap. Our office helps find a teacher whose experience and approach fit the student.</p>
+  </div>
+</section>
+
+<section class="spotlights-wrap" id="faculty-spotlights" aria-labelledby="spotlights-heading">
+  <div class="spotlights-inner">
+    <span class="section-label">Faculty Spotlights</span>
+    <h2 id="spotlights-heading">A Few of the Teachers <em>Behind the Lessons.</em></h2>
+    <p class="spotlights-intro">These teachers offer a glimpse of the experience across CSM. Their strengths span instruments, ages, and levels. You don't need to choose a teacher yourself: our office gets to know your goals and confirms current options, including location and availability.</p>
+    <div class="spotlights-grid">
+      <article class="spotlight" id="jay-k">
+        <h3>Jay K.</h3>
+        <p class="spotlight-focus">Piano · <a href="/mason">Mason</a> and <a href="/anderson">Anderson</a></p>
+        <p>Jay holds a Bachelor of Music in Piano Performance from Lawrence University and brings more than 30 years of piano teaching and piano and organ performance experience. He has taught at CSM since 2017.</p>
+        <p>He teaches children, teens, and adults from beginner through advanced levels. His background also includes choral accompaniment and playing piano and organ for churches. A patient approach supports students as their skills and musical interests develop.</p>
+      </article>
+      <article class="spotlight" id="daniel-n">
+        <h3>Daniel N.</h3>
+        <p class="spotlight-focus">Saxophone, flute, clarinet, bass clarinet, and piano · <a href="/olde-montgomery">Montgomery</a> and <a href="/anderson">Anderson</a></p>
+        <p>Daniel earned a bachelor's degree in Music Education at the University of Cincinnati College-Conservatory of Music and a master's in Jazz Performance with a concentration in composition. He has taught at CSM since 2021.</p>
+        <p>He works with students of different ages and builds lessons around their goals, with specialties in woodwinds and piano. His experience includes teaching college music theory and performing with his own group at BLINK, the Columbus Jazz and Ribs Festival, and Taste of Cincinnati.</p>
+      </article>
+      <article class="spotlight" id="abigail-r">
+        <h3>Abigail R.</h3>
+        <p class="spotlight-focus">Voice, beginner piano, and Music Discovery · <a href="/anderson">Anderson</a></p>
+        <p>Abigail holds a Master of Arts in Musicology from the University of Cincinnati College-Conservatory of Music and a Bachelor of Music in Music Education from the Crane School of Music at SUNY Potsdam. She has taught at CSM since 2022.</p>
+        <p>Her teaching experience includes elementary general music, choirs, college-age voice students, and directing a church children's singing group. She involves students in choosing repertoire and adapts lessons to their needs, bringing that attention to both young explorers and developing singers.</p>
+      </article>
+    </div>
   </div>
 </section>
 
