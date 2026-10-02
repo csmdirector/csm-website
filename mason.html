@@ -407,6 +407,15 @@ nav {
   .loc-tile,.ot,.ps-item,.scale-cell{padding:24px 18px}
 }
 
+
+/* Responsive location details */
+@media(max-width:880px){.info-inner{grid-template-columns:repeat(2,minmax(0,1fr));padding:0 24px}.info-cell,.info-cell:first-child{padding:24px 16px;border-right:0;border-bottom:1px solid var(--offwb)}}
+@media(max-width:560px){.info-inner{grid-template-columns:1fr}.info-cell,.info-cell:first-child{padding:20px 0}.info-cell:last-child{border-bottom:0}}
+/* End responsive location details */
+
+/* Faculty link styles */
+a[href^="/teachers#"],a[href="#faculty-spotlights"]{color:var(--slate);text-underline-offset:3px}
+/* End faculty link styles */
 </style>
 
 <!-- JSON-LD Schema -->
@@ -639,7 +648,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 ═══════════════════════════════════════ -->
 <div class="proof-strip">
   <div class="ps-item">
-    <div class="ps-num">5</div>
+    <div class="ps-num">4</div>
     <div class="ps-lbl">Locations</div>
   </div>
   <div class="ps-item">
@@ -702,6 +711,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <h2>More Room for <em>Mason Families.</em></h2>
       <p class="body-text" style="margin-top:22px">Our Mason location has grown into two nearby suites on Tri Way Drive — a reflection of how many Mason-area families have made weekly music lessons part of their routine. Same school, same teachers, more room for students.</p>
       <p class="body-text" style="margin-top:16px">Mason students are part of the full CSM community. They have access to the same instruments, recital opportunities, office support, and teacher matching that families know across all four locations.</p>
+      <p class="body-text" style="margin-top:16px">Mason piano teacher <a href="/teachers#jay-k">Jay K.</a> brings a piano performance degree from Lawrence University and more than 30 years of teaching experience, from beginners through advanced students. He is one example of the faculty experience our office considers when finding a match for children, teens, and adults.</p>
     </div>
     <div class="intro-img-real">
       <img src="images/mason_annex_hallway.jpg" alt="Interior hallway at CSM Mason location" />
