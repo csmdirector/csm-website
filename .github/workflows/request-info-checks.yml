@@ -36,6 +36,7 @@ jobs:
           CSM_INTAKE_TEST_DATABASE_URL: postgresql://csm_test:local_test_only@127.0.0.1:5432/csm_intake_test
       - run: npm run check:lead-pipeline
       - run: npm run check:intro-bridge
+      - run: node scripts/check-known-intent-service-pages.mjs
       - run: npm run check:piano-preregistration
       - run: npm run build
       - run: npm run check:preserved
