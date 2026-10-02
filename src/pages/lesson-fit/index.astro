@@ -1,4 +1,22 @@
 ---
 import IntroBooking from '../../components/IntroBooking.astro';
 ---
+<script is:inline>
+(function(){
+  var campaign = new URLSearchParams(window.location.search).get('utm_campaign') || '';
+  var key = String(campaign).trim().toLowerCase().replace(/\s+/g,'_').replace(/-/g,'_');
+  var routes = {
+    piano: '/piano-lessons/',
+    voice: '/voice-lessons/',
+    guitar: '/guitar-lessons/',
+    drums: '/drum-lessons/',
+    violin: '/violin-lessons/',
+    music_discovery: '/early-childhood-music-discovery-lessons/'
+  };
+  var destination = routes[key];
+  if(!destination) return;
+  var query = window.location.search || '';
+  window.location.replace(destination + query + window.location.hash);
+})();
+</script>
 <IntroBooking canonicalPath="/lesson-fit/" />
