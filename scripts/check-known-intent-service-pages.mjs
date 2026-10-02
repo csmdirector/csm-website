@@ -30,3 +30,12 @@ assert.match(js, /existing_family/);
 assert.doesNotMatch(js, /Middletown/i);
 
 console.log('Known-intent service-page request forms verified.');
+
+const lessonFitRouter = readFileSync(new URL('../src/pages/lesson-fit/index.astro', import.meta.url), 'utf8');
+assert.ok(lessonFitRouter.includes("piano: '/piano-lessons/'"));
+assert.ok(lessonFitRouter.includes("voice: '/voice-lessons/'"));
+assert.ok(lessonFitRouter.includes("guitar: '/guitar-lessons/'"));
+assert.ok(lessonFitRouter.includes("drums: '/drum-lessons/'"));
+assert.ok(lessonFitRouter.includes("violin: '/violin-lessons/'"));
+assert.ok(lessonFitRouter.includes("music_discovery: '/early-childhood-music-discovery-lessons/'"));
+assert.ok(lessonFitRouter.includes("window.location.replace(destination + query + window.location.hash)"));
