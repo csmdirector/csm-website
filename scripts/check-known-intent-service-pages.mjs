@@ -32,10 +32,10 @@ assert.doesNotMatch(js, /Middletown/i);
 console.log('Known-intent service-page request forms verified.');
 
 const lessonFitRouter = readFileSync(new URL('../src/pages/lesson-fit/index.astro', import.meta.url), 'utf8');
-assert.match(lessonFitRouter, /piano:\s*'\\/piano-lessons\\/'/);
-assert.match(lessonFitRouter, /voice:\s*'\\/voice-lessons\\/'/);
-assert.match(lessonFitRouter, /guitar:\s*'\\/guitar-lessons\\/'/);
-assert.match(lessonFitRouter, /drums:\s*'\\/drum-lessons\\/'/);
-assert.match(lessonFitRouter, /violin:\s*'\\/violin-lessons\\/'/);
-assert.match(lessonFitRouter, /music_discovery:\s*'\\/early-childhood-music-discovery-lessons\\/'/);
-assert.match(lessonFitRouter, /window\.location\.replace\(destination \+ query \+ window\.location\.hash\)/);
+assert.ok(lessonFitRouter.includes("piano: '/piano-lessons/'"));
+assert.ok(lessonFitRouter.includes("voice: '/voice-lessons/'"));
+assert.ok(lessonFitRouter.includes("guitar: '/guitar-lessons/'"));
+assert.ok(lessonFitRouter.includes("drums: '/drum-lessons/'"));
+assert.ok(lessonFitRouter.includes("violin: '/violin-lessons/'"));
+assert.ok(lessonFitRouter.includes("music_discovery: '/early-childhood-music-discovery-lessons/'"));
+assert.ok(lessonFitRouter.includes("window.location.replace(destination + query + window.location.hash)"));
