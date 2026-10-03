@@ -778,7 +778,13 @@ return {
 };
 }
 
-export default createFormEmailHandler();
+// Keep the event method visible to Netlify's deploy-time event discovery.
+// A factory call as the default export hides the formSubmitted subscription.
+export default {
+  async formSubmitted(event) {
+    return createFormEmailHandler().formSubmitted(event);
+  }
+};
 
 export const testables = {
   ROUTES,
