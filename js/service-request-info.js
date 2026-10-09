@@ -182,15 +182,15 @@
       : '<input type="hidden" name="instrument_interest" value="' + escapeHtml(serviceName) + '">';
     return '<form class="service-request-card">' +
       '<p class="service-request-hp" aria-hidden="true"><label>Leave blank<input name="bot-field" tabindex="-1" autocomplete="off"></label></p>' +
-      '<fieldset><div class="service-request-grid"><label>What would you like?<select name="request_intent" required><option value="question">An answer to a question</option><option value="booking_help">Help finding a teacher and time</option></select></label>' +
-      '<input type="hidden" name="contact_preference" value="standard"></div>' +
+      '<fieldset><input type="hidden" name="request_intent" value="booking_help">' +
+      '<input type="hidden" name="contact_preference" value="standard">' +
       '<div class="service-request-grid"><label>Your name<input name="parent_name" autocomplete="name" maxlength="160" required></label><label>Email<input name="email" type="email" autocomplete="email" maxlength="254" required></label></div>' +
       '<div class="service-request-grid"><label class="phone-field">Phone number<input name="phone" type="tel" autocomplete="tel" maxlength="40" required></label>' + instrumentField + '</div>' +
       '<div class="service-request-grid"><label>Preferred location (optional)<select name="preferred_location"><option value="">Not sure / flexible</option><option value="CSM Mason">Mason</option><option value="CSM Montgomery">Montgomery</option><option value="CSM Anderson">Anderson</option><option value="CSM Maineville">Maineville</option></select></label><label>Student age (optional)<input name="student_age" type="number" min="2" max="99" inputmode="numeric"></label></div>' +
       '<div class="service-request-grid"><label>Have you taken lessons at CSM before?<select name="existing_family" required><option value="">Please choose</option><option value="no">No, we’re new to CSM</option><option value="yes">Yes, we’re a CSM family</option></select></label><label>Student name (optional)<input name="student_name" maxlength="160"></label></div>' +
-      '<label class="service-request-message">What would you like to know or arrange?<textarea name="help_reason" rows="4" maxlength="2000" required></textarea></label>' +
+      '<label class="service-request-message">How can we help?<textarea name="help_reason" rows="4" maxlength="2000" required></textarea></label>' +
       '<p class="service-request-note reply-note" aria-live="polite">By submitting, you’re asking CSM to contact you by email, phone, or text about lessons. Message and data rates may apply. Reply STOP to stop texts. Sending this form does not book a lesson.</p></fieldset>' +
-      '<button class="service-request-submit" type="submit">Send My Question</button><div class="service-request-error" role="alert"></div></form>' +
+      '<button class="service-request-submit" type="submit">Request Information</button><div class="service-request-error" role="alert"></div></form>' +
       '<div class="service-request-success" tabindex="-1" hidden><h3>Your request reached our office.</h3><p></p></div>';
   }
 
@@ -205,22 +205,20 @@
     var errorBox = form.querySelector('.service-request-error');
     var submit = form.querySelector('.service-request-submit');
     var preference = form.elements.contact_preference;
-    var intent = form.elements.request_intent;
     var phone = form.elements.phone;
     var params = new URLSearchParams(location.search);
     var submissionId = 'inquiry-' + uniqueId();
     var pendingPayload = null;
     var busy = false;
-    if(params.get('intent') === 'booking_help') intent.value = 'booking_help';
     if(params.get('existing_family') === 'yes') form.elements.existing_family.value = 'yes';
     if(LOCATION_LABELS[params.get('location')]) form.elements.preferred_location.value = LOCATION_LABELS[params.get('location')];
     var names = {'music-discovery':'Music Discovery',drums:'Drums',piano:'Piano',voice:'Voice',guitar:'Guitar',violin:'Violin'};
     if(serviceName === 'Music' && names[params.get('service')]) form.elements.instrument_interest.value = names[params.get('service')];
     function sync(){
       form.querySelector('.reply-note').textContent = 'By submitting, you’re asking CSM to contact you by email, phone, or text about lessons. Message and data rates may apply. Reply STOP to stop texts. Sending this form does not book a lesson.';
-      submit.textContent = intent.value === 'question' ? 'Send My Question' : 'Request Booking Help';
+      submit.textContent = 'Request Information';
     }
-    intent.addEventListener('change',sync);phone.addEventListener('input',function(){phone.setCustomValidity('');});sync();
+    phone.addEventListener('input',function(){phone.setCustomValidity('');});sync();
     form.addEventListener('submit',function(event){
       event.preventDefault(); if(busy) return; errorBox.textContent = '';
       if(!pendingPayload){
@@ -247,7 +245,7 @@
       });}).then(function(result){
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({event:pendingPayload.request_intent === 'booking_help' ? 'lesson_fit_help_submit' : 'csm_question_submit',request_intent:pendingPayload.request_intent,contact_preference:pendingPayload.contact_preference,instrument_interest:pendingPayload.instrument_interest,preferred_location:pendingPayload.preferred_location,csm_lead_id:result.lead_id || ''});
-        if(pendingPayload.request_intent === 'booking_help' && typeof window.fbq === 'function') window.fbq('track','Lead',{content_name:'Booking help requested'});
+        if(pendingPayload.request_intent === 'booking_help' && typeof window.fbq === 'function') window.fbq('track','Lead',{content_name:'Request Information'});
         form.hidden = true;success.hidden = false;
         success.querySelector('p').textContent = 'Our office will follow up by email, phone, or text about your request. No lesson has been booked.';
         success.focus();

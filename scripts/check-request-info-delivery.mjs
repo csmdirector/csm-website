@@ -84,6 +84,7 @@ try {
     assert.match(repo.row.opus_payload.parent1_note,/Address the customer/);
     assert.match(emails.at(-1).body.text,/Follow up by email, phone, or text/);
     assert.match(emails.at(-1).body.text,/Opus confirmed the new contact/);
+    assert.equal(emails.at(-1).body.subject,'Request Info');
     assert.equal((await handler(request(fields))).status,200);
     assert.equal(opusCalls,initial+1);assert.equal(emails.length,count+1);
   }
@@ -95,7 +96,9 @@ try {
   const historical=requestInfoRepository({...failedOpus.row,opus_attempted_at:null,opus_post_status:'not_attempted_vanilla_handoff'});
   await deliver({repository:historical,leadId:historical.row.csm_lead_id,clientSubmissionId:historical.row.client_submission_id,choice:'office_help'});
   assert.equal(historical.row.opus_attempted_at,null,'Do not retroactively create prospects on a confirmed historical replay');
-  assert.doesNotMatch(inquiry,/How should we reply|Choose a reply method/);
+  assert.doesNotMatch(inquiry,/How should we reply|Choose a reply method|What would you like\?|Send My Question|Request Booking Help/);
+  assert.match(inquiry,/How can we help\?/);
+  assert.match(inquiry,/Request Information/);
   assert.match(inquiry,/By submitting, you’re asking CSM to contact you by email, phone, or text/);
   console.log('Passed: genuine inquiries use Opus once, browsing stays isolated, prior explicit preferences honored, provider failures/retries and historical replay protected. No live messages sent.');
 } finally {globalThis.fetch=originalFetch;}

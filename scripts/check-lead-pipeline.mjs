@@ -410,7 +410,7 @@ assert.equal(directJson.pipeline.ok, false);
 assert.match(directJson.pipeline.error, /DATABASE_URL|POSTGRES_URL/);
 assert.equal(sentEmails.length, 2);
 assert.equal(sentEmails[1].body.to[0], 'info@cincinnatischoolofmusic.com');
-assert.equal(sentEmails[1].body.subject, 'Booking help | Office follow-up requested');
+assert.equal(sentEmails[1].body.subject, 'Request Info');
 assert.equal(sentEmails[1].headers['Idempotency-Key'], 'csm-lesson-fit-request-lesson-fit-direct-test-123');
 
 const duplicateDirectResponse = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {

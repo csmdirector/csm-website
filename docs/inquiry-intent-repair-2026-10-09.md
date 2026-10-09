@@ -1,3 +1,7 @@
+## Form simplification
+
+Owner requested one inquiry form without question-versus-booking categorization. The shared form now uses “How can we help?” and “Request Information.” Standard inquiry office emails use “Request Info.” Existing contact disclosure and workflow remain. Historical explicit reply preferences remain respected.
+
 # Owner policy correction — October 9, 2026
 
 This correction supersedes the channel-selection and blanket no-Opus portions of the initial repair below. Joe confirmed CSM’s established workflow: genuine submitted inquiries receive email/call/text follow-up. Browsing pricing or availability must not create an inquiry.
