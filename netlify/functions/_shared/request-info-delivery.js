@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { storeInquiryPolicy, visibleInquiryNote, inquiryInstructions } from './inquiry-policy.js';
+import { storeInquiryPolicy, visibleInquiryNote, inquiryInstructions, readInquiryPolicy } from './inquiry-policy.js';
 import {
   HANDOFF_CHOICES,
   attributionSummary,
@@ -44,7 +44,8 @@ export function buildRequestInfoOpusPayload(record) {
   const adult = /^adult$/i.test(record.student_age || '') || Number(record.student_age) >= 18;
   const samePerson = adult && (!record.student_name || clean(record.student_name).toLowerCase() === clean(record.parent_name).toLowerCase());
   const note = [
-    'Request Info: office help requested. No lesson or payment has been booked.',
+    'Request Info: genuine inquiry submitted. No lesson or payment has been booked.',
+    inquiryInstructions(record).office_action,
     `CSM reference: ${record.csm_lead_id}`,
     `Instrument: ${record.instrument}`,
     `Location: ${record.preferred_location}`,
@@ -103,12 +104,42 @@ function opusResult(record) {
   };
 }
 
+async function ensureOpus(record, repository, configuration, sendOpus) {
+  if (readInquiryPolicy(record).channel !== 'standard' || notificationConfirmed(record)) return record;
+  if (record.handoff_choice !== HANDOFF_CHOICES.OFFICE_HELP || record.existing_family || record.matched_opus_client_id) return record;
+  if (record.opus_attempted_at || record.opus_post_status?.startsWith('office_help_')) return record;
+  try { opusUrl(configuration); } catch {
+    return repository.recordOpusRequestInfo(record.csm_lead_id, {
+      status: 'blocked_config_request_info', error: 'A valid Opus inbound webhook is not configured.'
+    });
+  }
+  const payload = buildRequestInfoOpusPayload(record);
+  const claim = await repository.claimOpusRequestInfo(record, payload);
+  if (!claim.claimed) return claim.record || record;
+  try {
+    const result = await sendOpus(payload, configuration);
+    return await repository.recordOpusRequestInfo(record.csm_lead_id, {
+      status: result.confirmed ? 'office_help_created' : 'office_help_needs_review',
+      httpStatus: result.status,
+      responseBody: result.responseBody,
+      error: result.confirmed ? null : 'Opus did not confirm record creation. Check the saved response before another attempt.'
+    });
+  } catch {
+    // A timeout may occur after Opus creates the record. Keep the durable attempt
+    // and require reconciliation rather than blindly creating another family.
+    return repository.recordOpusRequestInfo(record.csm_lead_id, {
+      status: 'office_help_needs_review', error: 'Opus delivery is unconfirmed; do not automatically repeat client creation.'
+    });
+  }
+}
+
 function profileSummary(record) {
   if (record.existing_family || record.matched_opus_client_id) return 'Existing CSM account. Use the current account.';
   if (record.handoff_choice !== HANDOFF_CHOICES.OFFICE_HELP) return 'The customer will create or access their account through normal Opus booking.';
   if (record.opus_post_status === 'office_help_created') return 'Opus confirmed the new contact record. No lesson is booked.';
   if (record.opus_post_status === 'office_help_linked') return 'This contact already has a recorded Opus account. No additional account was created.';
-  return 'No Opus account was created for this inquiry. Reply using the requested method. Create or link an account when arranging a booking, with the customer’s knowledge.';
+  if (readInquiryPolicy(record).channel !== 'standard') return 'No Opus account was created for this inquiry. Honor the explicitly requested reply method; do not start unrestricted outreach.';
+  return 'Automatic Opus entry needs attention. Check the account and saved delivery status before manually creating a record. The complete inquiry is saved in this email.';
 }
 
 export function notificationConfirmed(record) {
@@ -131,7 +162,7 @@ export function requestInfoNotification(record, formName) {
     'form-name': formName,
     ...inquiryInstructions(record),
     _request_info_version: REQUEST_INFO_VERSION,
-    parent_next_step: officeHelp ? (inquiryInstructions(record).request_intent === 'question' ? 'Please answer my question using my selected reply method.' : 'Please help me find a teacher and time using my selected reply method.') : 'Browsing available times. No office contact requested.',
+    parent_next_step: officeHelp ? (inquiryInstructions(record).request_intent === 'question' ? 'Please answer my question.' : 'Please help me find a teacher and time.') : 'Browsing available times. No office contact requested.',
     opus_profile_summary: profileSummary(record),
     csm_context: inquiryContext(record)
   };
@@ -156,8 +187,9 @@ export async function deliverRequestInfo({
       office_follow_up_required: false, opus_client_create_attempted: false,
       opus: opusResult(record), replay: Boolean(selected.replay) };
   }
-  // Inquiry delivery must never create an Opus prospect: doing so can trigger
-  // account-level texts before the office has honored the chosen reply method.
+  // Only genuine inquiries reach this path. Preserve prior explicit restrictions.
+  try { record = await ensureOpus(record, repository, configuration, sendOpus); }
+  catch { record = { ...record, opus_post_status: 'office_help_needs_review' }; }
   let confirmed = notificationConfirmed(record);
   if (!confirmed) {
     const claim = await repository.claimOfficeNotification(leadId, requestInfoNotification(record, formName));

@@ -1,3 +1,16 @@
+# Owner policy correction — October 9, 2026
+
+This correction supersedes the channel-selection and blanket no-Opus portions of the initial repair below. Joe confirmed CSM’s established workflow: genuine submitted inquiries receive email/call/text follow-up. Browsing pricing or availability must not create an inquiry.
+
+- Removed mandatory reply-method selection from all shared inquiry forms and the guided help form. Restored phone collection and clear disclosure before submission that CSM will follow up by email, phone, or text.
+- Restored the existing durable, idempotent Opus handoff for genuine standard inquiries, including questions and booking help. Office notifications identify the requested help and instruct staff to address it before generic follow-up.
+- Retained no-contact browsing, public pricing, repaired assets, durable office-email retries, and corrected click tracking.
+- Explicit channel choices submitted during the earlier deployment remain honored. Confirmed historical submissions are not retroactively pushed to Opus by retries. Uncertain Opus delivery is flagged for reconciliation, never blindly retried.
+- Analytics remains a read-only mirror for account creation: the durable inquiry delivery is the sole Opus writer, avoiding duplicates and historical queue replay.
+- The separate prospect automation build remains in copy review; this correction does not install or launch it or alter native Opus system messages.
+
+## Initial repair record — superseded where noted above
+
 # Inquiry intent repair — October 9, 2026
 
 ## Problem

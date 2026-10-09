@@ -32,10 +32,10 @@ try {
   const confirmed = await deliver(sameSubmission[0]);
   assert.equal(confirmed.office_email_confirmed, true);
   assert.equal(emails.length, 1, 'Concurrent delivery must send one notification.');
-  assert.equal(opusCount, 0, 'Concurrent inquiry delivery must not create any Opus account.');
+  assert.equal(opusCount, 1, 'Concurrent genuine inquiry delivery must create exactly one Opus account.');
   const differentInquiries = await Promise.all(['piano', 'drums'].map(instrument_interest => save(`local-${instrument_interest}`, { ...fields, instrument_interest, request_intent:'question', contact_preference:'email' })));
   await Promise.all(differentInquiries.map(row => deliver(row)));
-  assert.equal(opusCount, 0, 'Cross-form inquiries must remain separate from account creation.');
+  assert.equal(opusCount, 1, 'Explicit email-only inquiries must not trigger unrestricted account automation.');
   const online = await save('local-browse-only');
   const before = emails.length;
   const browse = await deliver(online, {choice:'online_booking'});

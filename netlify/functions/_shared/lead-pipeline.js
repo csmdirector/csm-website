@@ -434,8 +434,8 @@ function canonicalFromLessonFit(event) {
   const note = buildStudentNote(fields, attribution, eventAt);
   const routingOutcome = valueFor(fields, 'routing_outcome');
   const isPipelineOnly = valueFor(fields, 'lead_pipeline_only') === '1';
-  // Website inquiries are requests for a chosen human reply, not consent to
-  // create a prospect account and start account-level automation.
+  // The durable inquiry delivery owns Opus creation. This analytics mirror must
+  // not create a second account or replay old queued website events.
   const canForwardToOpus = false;
   const opusPayload = compactObject({
     source: 'lesson_fit',
@@ -730,12 +730,12 @@ async function attemptOpusForward(queueId) {
     }
     if (item.payload?.source === 'lesson_fit') {
       await client.query(
-        "UPDATE opus_forward_queue SET status = 'blocked_config', last_error = 'Website inquiry: reply by the requested channel; do not auto-create an Opus prospect.', updated_at = now() WHERE id = $1",
+        "UPDATE opus_forward_queue SET status = 'blocked_config', last_error = 'Website event: use durable inquiry delivery; do not duplicate Opus account creation.', updated_at = now() WHERE id = $1",
         [queueId]
       );
       await client.query('COMMIT');
       inTransaction = false;
-      return { ok: true, skipped: true, reason: 'inquiry_requires_human_reply' };
+      return { ok: true, skipped: true, reason: 'inquiry_delivery_owns_opus' };
     }
     await client.query(
       `UPDATE opus_forward_queue
