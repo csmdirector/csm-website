@@ -175,102 +175,23 @@
     });
   }
 
+
   function formMarkup(serviceName){
-    return '' +
-      '<form class="service-request-card" novalidate>' +
-        '<input type="hidden" name="form-name" value="lesson-fit-request">' +
-        '<input type="hidden" name="instrument_interest" value="' + escapeHtml(serviceName) + '">' +
-        '<p class="service-request-hp" aria-hidden="true"><label>Leave blank<input name="bot-field" tabindex="-1" autocomplete="off"></label></p>' +
-        '<fieldset>' +
-          '<div class="service-request-grid">' +
-            '<label>Your name<input name="parent_name" autocomplete="name" maxlength="160" required></label>' +
-            '<label>Student name<input name="student_name" maxlength="160" required></label>' +
-          '</div>' +
-          '<div class="service-request-grid">' +
-            '<label>Email<input name="email" type="email" autocomplete="email" maxlength="254" required></label>' +
-            '<label>Mobile phone<input name="phone" type="tel" autocomplete="tel" maxlength="40" required></label>' +
-          '</div>' +
-          '<div class="service-request-grid">' +
-            '<label>Student age<input name="student_age" type="number" inputmode="numeric" min="2" max="99" required></label>' +
-            '<label>Preferred location<select name="preferred_location" required>' +
-              '<option value="">Choose a location</option>' +
-              '<option value="CSM Mason">Mason</option>' +
-              '<option value="CSM Montgomery">Montgomery</option>' +
-              '<option value="CSM Anderson">Anderson</option>' +
-              '<option value="CSM Maineville">Maineville</option>' +
-            '</select></label>' +
-          '</div>' +
-          '<fieldset class="service-request-family">' +
-            '<legend>Have you taken lessons at CSM before?</legend>' +
-            '<div class="service-request-options">' +
-              '<label><input type="radio" name="existing_family" value="no" required> No, we’re new to CSM</label>' +
-              '<label><input type="radio" name="existing_family" value="yes" required> Yes, we’re a CSM family</label>' +
-            '</div>' +
-          '</fieldset>' +
-        '</fieldset>' +
-        '<button class="service-request-submit" type="submit">Have CSM Help Me Find a Time</button>' +
-        '<div class="service-request-error" role="alert"></div>' +
-        '<p class="service-request-note">This sends your request to the CSM office. It does not reserve or charge for a lesson.</p>' +
-      '</form>' +
-      '<div class="service-request-success" tabindex="-1" hidden>' +
-        '<h3>We’ll help you from here.</h3>' +
-        '<p>Your request is saved. The CSM office will contact you about a teacher and time.</p>' +
-      '</div>';
-  }
-
-  function buildPayload(form, serviceName, serviceSlug){
-    var data = new FormData(form);
-    var attribution = currentAttribution();
-    var payload = {
-      'form-name': 'lesson-fit-request',
-      client_submission_id: 'known-intent-' + uniqueId(),
-      submitted_at: nowIso(),
-      parent_name: trim(data.get('parent_name'),160),
-      student_name: trim(data.get('student_name'),160),
-      email: trim(data.get('email'),254),
-      phone: trim(data.get('phone'),40),
-      student_age: trim(data.get('student_age'),40),
-      instrument_interest: serviceName,
-      preferred_location: trim(data.get('preferred_location'),100),
-      existing_family: trim(data.get('existing_family'),20),
-      help_reason: 'Please help me find the right ' + serviceName + ' teacher and intro time.',
-      lesson_request: serviceName + ' lessons',
-      routing_outcome: 'known-intent-service-page',
-      student_context: 'Known-intent request from ' + window.location.pathname + ' (' + serviceSlug + ').'
-    };
-    Object.keys(attribution).forEach(function(key){
-      if(attribution[key]) payload[key] = attribution[key];
-    });
-    return payload;
-  }
-
-  function pushLeadEvent(payload, result){
-    try {
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: 'lesson_fit_help_submit',
-        routing_outcome: 'known-intent-service-page',
-        instrument_interest: payload.instrument_interest,
-        preferred_location: payload.preferred_location,
-        csm_lead_id: result && result.lead_id ? result.lead_id : '',
-        utm_source: payload.utm_source || '',
-        utm_medium: payload.utm_medium || '',
-        utm_campaign: payload.utm_campaign || '',
-        utm_content: payload.utm_content || '',
-        utm_term: payload.utm_term || '',
-        gclid: payload.gclid || '',
-        gbraid: payload.gbraid || '',
-        wbraid: payload.wbraid || '',
-        click_id: payload.gclid || payload.gbraid || payload.wbraid || '',
-        landing_path: payload.landing_path || payload.latest_landing_path || window.location.pathname,
-        first_landing_path: payload.first_landing_path || '',
-        latest_landing_path: payload.latest_landing_path || payload.landing_path || window.location.pathname,
-        attribution_timestamp: payload.attribution_timestamp || ''
-      });
-      if(typeof window.fbq === 'function'){
-        window.fbq('track','Lead',{content_name: payload.instrument_interest + ' Request Info',content_category:'Known Intent'});
-      }
-    } catch (_) {}
+    var instrumentField = serviceName === 'Music'
+      ? '<label>Instrument or program (optional)<select name="instrument_interest"><option value="">Not sure yet</option>' + ['Piano','Voice','Guitar','Drums','Violin','Music Discovery','Ukulele','Bass','Mandolin','Viola','Cello','Flute','Clarinet','Saxophone','Trumpet'].map(function(name){return '<option>' + name + '</option>';}).join('') + '</select></label>'
+      : '<input type="hidden" name="instrument_interest" value="' + escapeHtml(serviceName) + '">';
+    return '<form class="service-request-card">' +
+      '<p class="service-request-hp" aria-hidden="true"><label>Leave blank<input name="bot-field" tabindex="-1" autocomplete="off"></label></p>' +
+      '<fieldset><div class="service-request-grid"><label>What would you like?<select name="request_intent" required><option value="question">An answer to a question</option><option value="booking_help">Help finding a teacher and time</option></select></label>' +
+      '<label>How should we reply?<select name="contact_preference" required><option value="">Choose a reply method</option><option value="email">Email only</option><option value="text">Text me</option><option value="phone">Call me</option></select></label></div>' +
+      '<div class="service-request-grid"><label>Your name<input name="parent_name" autocomplete="name" maxlength="160" required></label><label>Email<input name="email" type="email" autocomplete="email" maxlength="254" required></label></div>' +
+      '<div class="service-request-grid"><label class="phone-field" hidden>Phone number<input name="phone" type="tel" autocomplete="tel" maxlength="40" disabled></label>' + instrumentField + '</div>' +
+      '<div class="service-request-grid"><label>Preferred location (optional)<select name="preferred_location"><option value="">Not sure / flexible</option><option value="CSM Mason">Mason</option><option value="CSM Montgomery">Montgomery</option><option value="CSM Anderson">Anderson</option><option value="CSM Maineville">Maineville</option></select></label><label>Student age (optional)<input name="student_age" type="number" min="2" max="99" inputmode="numeric"></label></div>' +
+      '<div class="service-request-grid"><label>Have you taken lessons at CSM before?<select name="existing_family" required><option value="">Please choose</option><option value="no">No, we’re new to CSM</option><option value="yes">Yes, we’re a CSM family</option></select></label><label>Student name (optional)<input name="student_name" maxlength="160"></label></div>' +
+      '<label class="service-request-message">What would you like to know or arrange?<textarea name="help_reason" rows="4" maxlength="2000" required></textarea></label>' +
+      '<p class="service-request-note reply-note" aria-live="polite">Choose how you’d like our office to reply. Sending this form does not book a lesson.</p></fieldset>' +
+      '<button class="service-request-submit" type="submit">Send My Question</button><div class="service-request-error" role="alert"></div></form>' +
+      '<div class="service-request-success" tabindex="-1" hidden><h3>Your request reached our office.</h3><p></p></div>';
   }
 
   function mount(root){
@@ -278,52 +199,70 @@
     if(!mountPoint || mountPoint.dataset.ready === '1') return;
     mountPoint.dataset.ready = '1';
     var serviceName = trim(root.getAttribute('data-service-name'),100) || 'Music';
-    var serviceSlug = trim(root.getAttribute('data-service-slug'),80) || 'music';
     mountPoint.innerHTML = formMarkup(serviceName);
-
     var form = mountPoint.querySelector('form');
     var success = mountPoint.querySelector('.service-request-success');
-    var errorBox = mountPoint.querySelector('.service-request-error');
-    var submit = mountPoint.querySelector('.service-request-submit');
-
-    form.addEventListener('submit', function(event){
-      event.preventDefault();
-      errorBox.textContent = '';
-      if(!form.reportValidity()) return;
-      var payload = buildPayload(form, serviceName, serviceSlug);
-      submit.disabled = true;
-      submit.textContent = 'Sending…';
-
-      fetch('/api/lesson-fit-submit',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload)
-      }).then(function(response){
-        return response.json().catch(function(){ return {}; }).then(function(body){
-          if(!response.ok || !body.ok) throw new Error(body.error || 'Request not confirmed.');
-          return body;
+    var errorBox = form.querySelector('.service-request-error');
+    var submit = form.querySelector('.service-request-submit');
+    var preference = form.elements.contact_preference;
+    var intent = form.elements.request_intent;
+    var phone = form.elements.phone;
+    var params = new URLSearchParams(location.search);
+    var submissionId = 'inquiry-' + uniqueId();
+    var pendingPayload = null;
+    var busy = false;
+    if(params.get('intent') === 'booking_help') intent.value = 'booking_help';
+    if(params.get('existing_family') === 'yes') form.elements.existing_family.value = 'yes';
+    if(LOCATION_LABELS[params.get('location')]) form.elements.preferred_location.value = LOCATION_LABELS[params.get('location')];
+    var names = {'music-discovery':'Music Discovery',drums:'Drums',piano:'Piano',voice:'Voice',guitar:'Guitar',violin:'Violin'};
+    if(serviceName === 'Music' && names[params.get('service')]) form.elements.instrument_interest.value = names[params.get('service')];
+    function sync(){
+      var needsPhone = preference.value === 'text' || preference.value === 'phone';
+      phone.disabled = !needsPhone; phone.required = needsPhone;
+      form.querySelector('.phone-field').hidden = !needsPhone;
+      if(!needsPhone) { phone.value = ''; phone.setCustomValidity(''); }
+      var copy = {email:'We’ll reply by email only. This request will not start calls or texts.',text:'Our office will text you about this request. Message and data rates may apply. Reply STOP to stop texts.',phone:'Our office will call you about this request.'};
+      form.querySelector('.reply-note').textContent = (copy[preference.value] || 'Choose how you’d like our office to reply.') + ' Sending this form does not book a lesson.';
+      submit.textContent = intent.value === 'question' ? 'Send My Question' : 'Request Booking Help';
+    }
+    preference.addEventListener('change',sync);intent.addEventListener('change',sync);phone.addEventListener('input',function(){phone.setCustomValidity('');});sync();
+    form.addEventListener('submit',function(event){
+      event.preventDefault(); if(busy) return; errorBox.textContent = '';
+      if(!pendingPayload){
+        var digits = phone.value.replace(/\D/g,'');
+        phone.setCustomValidity(phone.disabled || (digits.length === 10 || (digits.length === 11 && digits[0] === '1')) ? '' : 'Enter a 10-digit phone number.');
+        if(!form.reportValidity()) return;
+        var data = Object.fromEntries(new FormData(form));
+        pendingPayload = Object.assign({},currentAttribution(),data,{
+          'form-name':'lesson-fit-request',inquiry_version:'20261009',client_submission_id:submissionId,
+          submitted_at:nowIso(),phone:preference.value === 'email' ? '' : phone.value,
+          lesson_request:data.instrument_interest ? data.instrument_interest + ' lessons' : 'Music lessons',
+          routing_outcome:'explicit-inquiry',student_context:'Website inquiry from ' + location.pathname
         });
-      }).then(function(result){
-        pushLeadEvent(payload,result);
-        form.hidden = true;
-        success.hidden = false;
+      }
+      busy = true;submit.disabled = true;submit.textContent = 'Sending…';form.querySelector('fieldset').disabled = true;
+      var controller = new AbortController();var timeout = setTimeout(function(){controller.abort();},25000);
+      fetch('/api/lesson-fit-submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(pendingPayload),signal:controller.signal})
+      .then(function(response){return response.json().catch(function(){return {};}).then(function(body){
+        if(!response.ok || !body.ok || body.office_email_confirmed !== true){
+          if(response.status === 422 || response.status === 400){pendingPayload = null;form.querySelector('fieldset').disabled = false;}
+          throw new Error(body.error || 'Delivery is not confirmed.');
+        }
+        return body;
+      });}).then(function(result){
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({event:pendingPayload.request_intent === 'booking_help' ? 'lesson_fit_help_submit' : 'csm_question_submit',request_intent:pendingPayload.request_intent,contact_preference:pendingPayload.contact_preference,instrument_interest:pendingPayload.instrument_interest,preferred_location:pendingPayload.preferred_location,csm_lead_id:result.lead_id || ''});
+        if(pendingPayload.request_intent === 'booking_help' && typeof window.fbq === 'function') window.fbq('track','Lead',{content_name:'Booking help requested'});
+        form.hidden = true;success.hidden = false;
+        success.querySelector('p').textContent = {email:'We’ll reply by email. You haven’t requested a call or text.',text:'Our office will text you about your request.',phone:'Our office will call you about your request.'}[pendingPayload.contact_preference] + ' No lesson has been booked.';
         success.focus();
       }).catch(function(){
-        errorBox.textContent = 'We could not confirm your request. Please try again, or call or text (513) 560-9175.';
-        submit.disabled = false;
-        submit.textContent = 'Have CSM Help Me Find a Time';
-      });
+        errorBox.textContent = 'We could not confirm delivery. Your answers are still here. Retry this request, or email info@cincinnatischoolofmusic.com. Retrying will not create a duplicate inquiry.';
+        submit.disabled = false;submit.textContent = 'Retry Sending';
+      }).finally(function(){clearTimeout(timeout);busy=false;});
     });
   }
-
-  captureAttribution();
-  decorateBookingLinks();
-
-  function init(){
-    document.querySelectorAll(ROOT_SELECTOR).forEach(mount);
-    decorateBookingLinks();
-  }
-
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',init);
-  else init();
+  captureAttribution();decorateBookingLinks();
+  function init(){document.querySelectorAll(ROOT_SELECTOR).forEach(mount);decorateBookingLinks();}
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();

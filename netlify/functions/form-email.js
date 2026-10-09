@@ -1,3 +1,4 @@
+import { inquiryInstructions } from './_shared/inquiry-policy.js';
 const INFO_EMAIL = 'info@cincinnatischoolofmusic.com';
 const DIRECTOR_EMAIL = 'director@cincinnatischoolofmusic.com';
 const BACK_TO_SCHOOL_PROMO = 'Back-to-School Special';
@@ -19,10 +20,11 @@ const ROUTES = {
   },
   'lesson-fit-request': {
     to: INFO_EMAIL,
-    label: 'Request Info',
+    label: 'Website inquiry',
     subject: 'Request Info',
     replyTo: ['parent_email', 'email'],
     groups: [
+      ['Requested response', ['office_action', 'contact_preference', 'request_intent']],
       ['Contact', ['parent_name', 'parent_email', 'parent_phone', 'email', 'phone', 'contact_summary']],
       ['Lesson request', ['student_name', 'instrument', 'instrument_interest', 'student_age', 'preferred_location', 'preferred_time_window', 'next_step_preference', 'lesson_request']],
       ['Next step', ['parent_next_step', 'opus_profile_summary']],
@@ -33,7 +35,7 @@ const ROUTES = {
   },
   'piano-preregistration': {
     to: INFO_EMAIL,
-    label: 'Request Info',
+    label: 'Website inquiry',
     subject: 'Request Info',
     replyTo: ['parent_email'],
     groups: [
@@ -48,10 +50,11 @@ const ROUTES = {
   },
   'intro-bridge': {
     to: INFO_EMAIL,
-    label: 'Request Info',
+    label: 'Website inquiry',
     subject: 'Request Info',
     replyTo: ['parent_email'],
     groups: [
+      ['Requested response', ['office_action', 'contact_preference', 'request_intent']],
       ['CSM record', ['csm_lead_id', 'submitted_at', 'existing_family', 'duplicate_of_lead_id']],
       ['Parent', ['parent_name', 'parent_email', 'parent_phone']],
       ['Student', ['student_name', 'student_birthdate', 'student_age', 'service_slug', 'instrument']],
@@ -124,7 +127,7 @@ const ROUTES = {
 
 ROUTES['intro-bridge-office-help'] = {
   ...ROUTES['intro-bridge'],
-  label: 'Request Info',
+  label: 'Website inquiry',
   subject: 'Request Info'
 };
 
@@ -191,6 +194,9 @@ const FIELD_LABELS = {
   parent_email: 'Parent email',
   parent_phone: 'Parent phone',
   parent_next_step: 'Customer request',
+  office_action: 'Office action',
+  contact_preference: 'Reply method',
+  request_intent: 'Request type',
   opus_profile_summary: 'Opus account',
   phone: 'Phone',
   preferred_location: 'Preferred location',
@@ -709,7 +715,12 @@ async function sendFormEmailSubmission({ formName, data, id = '', createdAt = ''
     return { ok: true, skipped: true, reason: 'pipeline_only' };
   }
 
-  return sendEmail(route, formName, fields, { id, createdAt });
+  if (['lesson-fit-request', 'intro-bridge', 'intro-bridge-office-help'].includes(formName) && !fields.inquiry_heading) {
+    if (fields.booking_action === 'online_booking' || fields.handoff_choice === 'online_booking') return {ok:true,skipped:true,reason:'browsing_only'};
+    Object.assign(fields, inquiryInstructions({student_note:''}));
+  }
+  const displayRoute = fields.inquiry_heading ? { ...route, label: fields.inquiry_heading } : route;
+  return sendEmail(displayRoute, formName, fields, { id, createdAt });
 }
 
 export function createFormEmailHandler({

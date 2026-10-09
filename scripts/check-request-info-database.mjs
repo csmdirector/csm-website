@@ -32,22 +32,15 @@ try {
   const confirmed = await deliver(sameSubmission[0]);
   assert.equal(confirmed.office_email_confirmed, true);
   assert.equal(emails.length, 1, 'Concurrent delivery must send one notification.');
-  assert.equal(opusCount, 1, 'Concurrent delivery must create one account.');
-
-  const differentInquiries = await Promise.all(['piano', 'drums'].map(instrument_interest => save(`local-${instrument_interest}`, { ...fields, instrument_interest })));
-  const related = await Promise.all(differentInquiries.map(row => deliver(row)));
-  assert.equal(opusCount, 1, 'Different instruments with the same contact must reuse the known account.');
-  assert.ok(related.every(result => result.opus.status === 'office_help_linked'));
-
-  const uncertain = await save('local-uncertain', { ...fields, email: 'uncertain@example.com' });
-  let uncertainAttempts = 0;
-  const unknown = () => deliver(uncertain, { sendOpus: async () => { uncertainAttempts++; throw new Error('Timeout'); } });
-  await unknown();
-  await unknown();
-  assert.equal(uncertainAttempts, 1);
-  const relatedUnknown = await save('local-uncertain-again', { ...fields, email: 'uncertain@example.com', instrument_interest: 'Piano' });
-  assert.equal((await deliver(relatedUnknown)).opus.status, 'office_help_needs_review');
-  assert.equal(opusCount, 1, 'A second form cannot repeat an uncertain creation.');
+  assert.equal(opusCount, 0, 'Concurrent inquiry delivery must not create any Opus account.');
+  const differentInquiries = await Promise.all(['piano', 'drums'].map(instrument_interest => save(`local-${instrument_interest}`, { ...fields, instrument_interest, request_intent:'question', contact_preference:'email' })));
+  await Promise.all(differentInquiries.map(row => deliver(row)));
+  assert.equal(opusCount, 0, 'Cross-form inquiries must remain separate from account creation.');
+  const online = await save('local-browse-only');
+  const before = emails.length;
+  const browse = await deliver(online, {choice:'online_booking'});
+  assert.equal(browse.office_email_skipped,true);
+  assert.equal(emails.length,before,'Browsing must not send an office notification.');
 
   const retry = await save('local-email-retry', { ...fields, email: 'retry@example.com' });
   let firstPayload;
@@ -55,7 +48,7 @@ try {
   assert.equal(failed.office_email_confirmed, false);
   const success = await deliver(retry, { sendOfficeEmail: async payload => { assert.deepEqual(payload, firstPayload); return { sent: true, status: 200 }; } });
   assert.equal(success.office_email_confirmed, true);
-  console.log('PostgreSQL checks passed: concurrent saves, one notification, cross-form account deduplication, uncertain writes, and stable email retry. No live providers contacted.');
+  console.log('PostgreSQL checks passed: concurrent saves, one notification, inquiry/account isolation, browse-only isolation, and stable email retry. No live providers contacted.');
 } finally {
   await database.end();
 }

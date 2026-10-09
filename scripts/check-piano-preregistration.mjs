@@ -211,11 +211,11 @@ assert.doesNotMatch(pageSource, /dataLayer\.push/);
 assert.doesNotMatch(pageSource, /google_ads_booking|purchase|generate_lead/i);
 assert.match(pageSource, /<IntroBooking canonicalPath="\/book-piano-intro\/" defaultService="piano"/);
 const compactSource = readFileSync(new URL('../src/components/IntroBooking.astro', import.meta.url), 'utf8');
-assert.match(compactSource, /Book Your Free Intro Lesson/);
-assert.match(compactSource, /Continue to Available Times/);
+assert.match(compactSource, /Your Free Intro Lesson/);
+assert.match(compactSource, /View Available Times/);
 assert.doesNotMatch(pageSource, /\$42|enter payment/);
-assert.match(compactSource, /No ongoing commitment/);
-assert.match(compactSource, /Nothing is reserved or charged on this page/);
+assert.match(compactSource, /Browse available times without entering your name/);
+assert.match(compactSource, /Browsing times does not request a call or text/);
 assert.doesNotMatch(pageSource, /Pre-Registration<\/span>|Save &amp; Continue to Times|Choose an Opus time|does not pre-create/);
 
 const thankYouSource = readFileSync(new URL('../src/pages/book-piano-intro/thank-you.astro', import.meta.url), 'utf8');

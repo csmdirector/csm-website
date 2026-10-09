@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { CONTACT_CHANNELS, REQUEST_INTENTS } from './_shared/inquiry-policy.js';
 import { captureLessonFitSubmission } from './_shared/lead-pipeline.js';
 import { createPostgresPreregistrationRepository } from './_shared/intro-bridge.js';
 import { deliverRequestInfo, storeGuideRequestInfo } from './_shared/request-info-delivery.js';
@@ -23,7 +24,7 @@ function isEnabled(name) {
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
   });
 }
 
@@ -109,6 +110,14 @@ function validate(fields) {
     return { ok: true };
   }
 
+  if (valueFor(fields, 'inquiry_version') &&
+      (!CONTACT_CHANNELS.includes(fields.contact_preference) || !REQUEST_INTENTS.includes(fields.request_intent))) {
+    return { ok: false, status: 422, error: 'Choose what you need and how our office should reply.' };
+  }
+  if (['text', 'phone'].includes(fields.contact_preference) && !/^(?:1)?[0-9]{10}$/.test(valueFor(fields, 'phone').replace(/\D/g, ''))) {
+    return { ok: false, status: 422, error: 'A valid 10-digit phone number is required for your selected reply method.' };
+  }
+  if (fields.contact_preference === 'email') fields.phone = '';
   const missing = ['parent_name', 'email', 'help_reason'].filter((key) => !valueFor(fields, key));
   if (missing.length) {
     return { ok: false, status: 422, error: `Missing required field: ${missing.join(', ')}` };
@@ -169,7 +178,7 @@ return async function lessonFitSubmit(req, context) {
     if (!delivery.office_email_confirmed) return jsonResponse(delivery, delivery.status || 502);
   }
   // Analytics keeps its existing flags. The durable Request Info delivery above
-  // owns office email and Opus creation; this copy must never create a second profile.
+  // owns the reply request; neither this inquiry nor analytics creates an Opus profile.
   const pipelinePromise = settlePipeline(capture({
     formName: FORM_NAME,
     data: {

@@ -434,10 +434,9 @@ function canonicalFromLessonFit(event) {
   const note = buildStudentNote(fields, attribution, eventAt);
   const routingOutcome = valueFor(fields, 'routing_outcome');
   const isPipelineOnly = valueFor(fields, 'lead_pipeline_only') === '1';
-  const canForwardToOpus = isOpusInboundForwardingEnabled() &&
-    !isPipelineOnly &&
-    routingOutcome === 'staff-help' &&
-    Boolean(email || phone);
+  // Website inquiries are requests for a chosen human reply, not consent to
+  // create a prospect account and start account-level automation.
+  const canForwardToOpus = false;
   const opusPayload = compactObject({
     source: 'lesson_fit',
     student_tags: ['lesson-fit'],
@@ -728,6 +727,15 @@ async function attemptOpusForward(queueId) {
       await client.query('COMMIT');
       inTransaction = false;
       return { ok: true, skipped: true };
+    }
+    if (item.payload?.source === 'lesson_fit') {
+      await client.query(
+        "UPDATE opus_forward_queue SET status = 'blocked_config', last_error = 'Website inquiry: reply by the requested channel; do not auto-create an Opus prospect.', updated_at = now() WHERE id = $1",
+        [queueId]
+      );
+      await client.query('COMMIT');
+      inTransaction = false;
+      return { ok: true, skipped: true, reason: 'inquiry_requires_human_reply' };
     }
     await client.query(
       `UPDATE opus_forward_queue

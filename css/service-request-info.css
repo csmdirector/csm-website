@@ -33,3 +33,6 @@
   .service-request-grid{grid-template-columns:1fr;gap:14px}
   .service-request-options{display:grid;gap:4px}
 }
+.service-request-message{display:flex;flex-direction:column;gap:8px;font-size:.85rem;font-weight:600;color:var(--charcoal)}
+.service-request-message textarea{width:100%;box-sizing:border-box;font:inherit;font-size:16px;line-height:1.5;padding:12px;border:1px solid #c9c7c2;border-radius:3px;resize:vertical}
+.service-request-card[hidden]{display:none!important}.service-request-note{font-size:.85rem;color:#555}.service-request-message textarea:focus{outline:3px solid rgba(247,79,87,.2);border-color:var(--accent)}

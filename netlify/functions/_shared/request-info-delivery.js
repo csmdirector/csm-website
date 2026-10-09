@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { storeInquiryPolicy, visibleInquiryNote, inquiryInstructions } from './inquiry-policy.js';
 import {
   HANDOFF_CHOICES,
   attributionSummary,
@@ -10,11 +11,11 @@ import {
 } from './intro-bridge.js';
 import { sendFormEmailSubmission } from '../form-email.js';
 
-export const REQUEST_INFO_VERSION = 'request-info-20260909';
+export const REQUEST_INFO_VERSION = 'request-info-20261009';
 
 function clean(value, max = 500) { return String(value ?? '').trim().slice(0, max); }
 function inquiryContext(record) {
-  return clean(record.student_note, 6000)
+  return clean(visibleInquiryNote(record), 6000)
     .replace(/Parent still needs to complete the normal Opus booking\/payment flow\.?/g, '')
     .replace(/CSM did not pre-create an Opus parent or student for this ready-to-book lead\.?/g, '')
     .trim();
@@ -102,45 +103,17 @@ function opusResult(record) {
   };
 }
 
-async function ensureOpus(record, repository, configuration, sendOpus) {
-  if (record.handoff_choice !== HANDOFF_CHOICES.OFFICE_HELP || record.existing_family || record.matched_opus_client_id) return record;
-  if (record.opus_attempted_at || record.opus_post_status?.startsWith('office_help_')) return record;
-  try { opusUrl(configuration); } catch {
-    return repository.recordOpusRequestInfo(record.csm_lead_id, {
-      status: 'blocked_config_request_info', error: 'A valid Opus inbound webhook is not configured.'
-    });
-  }
-  const payload = buildRequestInfoOpusPayload(record);
-  const claim = await repository.claimOpusRequestInfo(record, payload);
-  if (!claim.claimed) return claim.record || record;
-  try {
-    const result = await sendOpus(payload, configuration);
-    return await repository.recordOpusRequestInfo(record.csm_lead_id, {
-      status: result.confirmed ? 'office_help_created' : 'office_help_needs_review',
-      httpStatus: result.status,
-      responseBody: result.responseBody,
-      error: result.confirmed ? null : 'Opus did not confirm record creation. Check the saved response before another attempt.'
-    });
-  } catch {
-    // A timeout may occur after Opus creates the record. Keep the durable attempt
-    // and require reconciliation rather than blindly creating another family.
-    return repository.recordOpusRequestInfo(record.csm_lead_id, {
-      status: 'office_help_needs_review', error: 'Opus delivery is unconfirmed; do not automatically repeat client creation.'
-    });
-  }
-}
-
 function profileSummary(record) {
   if (record.existing_family || record.matched_opus_client_id) return 'Existing CSM account. Use the current account.';
   if (record.handoff_choice !== HANDOFF_CHOICES.OFFICE_HELP) return 'The customer will create or access their account through normal Opus booking.';
   if (record.opus_post_status === 'office_help_created') return 'Opus confirmed the new contact record. No lesson is booked.';
   if (record.opus_post_status === 'office_help_linked') return 'This contact already has a recorded Opus account. No additional account was created.';
-  return 'Automatic Opus entry needs attention. The complete inquiry is saved in this email.';
+  return 'No Opus account was created for this inquiry. Reply using the requested method. Create or link an account when arranging a booking, with the customer’s knowledge.';
 }
 
 export function notificationConfirmed(record) {
   return record.office_notification_status === 'sent' && (
-    record.office_notification_payload?._request_info_version === REQUEST_INFO_VERSION ||
+    [REQUEST_INFO_VERSION, 'request-info-20260909'].includes(record.office_notification_payload?._request_info_version) ||
     record.office_notification_payload?.['form-name'] === 'intro-bridge-office-help'
   );
 }
@@ -156,9 +129,9 @@ export function requestInfoNotification(record, formName) {
   return {
     ...officeFields,
     'form-name': formName,
-    subject: 'Request Info',
+    ...inquiryInstructions(record),
     _request_info_version: REQUEST_INFO_VERSION,
-    parent_next_step: officeHelp ? 'Please contact me to help find a teacher and time.' : 'I am continuing to Opus to choose an intro time.',
+    parent_next_step: officeHelp ? (inquiryInstructions(record).request_intent === 'question' ? 'Please answer my question using my selected reply method.' : 'Please help me find a teacher and time using my selected reply method.') : 'Browsing available times. No office contact requested.',
     opus_profile_summary: profileSummary(record),
     csm_context: inquiryContext(record)
   };
@@ -175,12 +148,16 @@ export async function deliverRequestInfo({
   if (!selected.record) return { ok: false, status: 404, error: 'Lead not found.' };
   if (selected.blockedExistingFamily) return { ok: false, status: 409, existing_family: true, error: 'Existing CSM families are routed to office help.' };
   let record = selected.record;
-  try {
-    record = await ensureOpus(record, repository, configuration, sendOpus);
-  } catch {
-    // The office email remains mandatory even if the integration/database update fails.
-    record = { ...record, opus_post_status: 'office_help_needs_review' };
+  // Browsing is not an inquiry. Also protects visitors on a cached older form.
+  if (record.handoff_choice === HANDOFF_CHOICES.ONLINE_BOOKING) {
+    return { ok: true, status: 200, stored: true, lead_id: leadId,
+      choice: record.handoff_choice, booking_url: record.booking_url,
+      office_email_confirmed: false, office_email_skipped: true,
+      office_follow_up_required: false, opus_client_create_attempted: false,
+      opus: opusResult(record), replay: Boolean(selected.replay) };
   }
+  // Inquiry delivery must never create an Opus prospect: doing so can trigger
+  // account-level texts before the office has honored the chosen reply method.
   let confirmed = notificationConfirmed(record);
   if (!confirmed) {
     const claim = await repository.claimOfficeNotification(leadId, requestInfoNotification(record, formName));
@@ -240,7 +217,7 @@ export async function storeGuideRequestInfo(fields, repository, clientSubmission
     preferredTimeWindow: 'Flexible / not sure',
     existingFamily: ['yes', 'true', '1'].includes(clean(fields.existing_family).toLowerCase()),
     bookingUrl: '', attribution, attributionSummary: attributionSummary(attribution),
-    studentNote: context,
+    studentNote: storeInquiryPolicy(fields, context),
     dedupeFingerprint: crypto.createHash('sha256').update([normalizeEmail(email), normalizePhone(phone), instrument, location].join('|')).digest('hex'),
     conversionEligible: false, conversionExclusionReason: 'request_info_is_not_a_booking',
     submittedAt
