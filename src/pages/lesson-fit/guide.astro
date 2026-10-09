@@ -1,9 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 
-const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
-  String(import.meta.env.ENABLE_LEAD_PIPELINE || '').trim().toLowerCase()
-);
+
 ---
 <Base
   title="Find the Right Lesson Fit | Cincinnati School of Music"
@@ -44,6 +42,8 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
           id="intakeForm"
         >
           <input type="hidden" name="form-name" value="lesson-fit-request" />
+          <input type="hidden" name="inquiry_version" value="20261009" />
+          <input type="hidden" name="request_intent" value="booking_help" />
           <input type="hidden" name="subject" data-remove-prefix value="Request Info" />
           <textarea name="contact_summary" id="contactSummary" hidden></textarea>
           <textarea name="lesson_request" id="lessonRequestSummary" hidden></textarea>
@@ -237,9 +237,11 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
                 Email
                 <input type="email" name="email" autocomplete="email" />
               </label>
-              <label class="field-label">
-                Phone
-                <input type="tel" name="phone" autocomplete="tel" />
+              <label class="field-label">How should we reply?
+                <select name="contact_preference"><option value="">Choose a reply method</option><option value="email">Email only</option><option value="text">Text me</option><option value="phone">Call me</option></select>
+              </label>
+              <label class="field-label" id="guidePhoneLabel" hidden>Phone number
+                <input type="tel" name="phone" autocomplete="tel" disabled />
               </label>
             </div>
             <p class="handoff-note">
@@ -308,7 +310,7 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
     .recommendation-item{min-width:0}
     .recommendation-list dt{font-size:.58rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);margin-bottom:5px}
     .recommendation-list dd{font-size:1rem;font-weight:400;color:var(--charcoal);line-height:1.35;overflow-wrap:anywhere}
-    .help-details.is-hidden,.contact-grid.is-hidden{display:none}
+    .help-details.is-hidden,.contact-grid.is-hidden,.contact-grid [hidden]{display:none!important}
     .help-actions{display:none;flex-wrap:wrap;gap:10px;margin:-4px 0 24px}
     .help-actions.is-visible{display:flex}
     .contact-intro{font-size:.84rem;margin:-2px 0 18px;max-width:620px}
@@ -341,7 +343,7 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
     }
   </style>
 
-  <script define:vars={{ enableLeadPipelineCapture }}>
+  <script is:inline>
     (function(){
       var form = document.getElementById('intakeForm');
       if(!form) return;
@@ -349,7 +351,7 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
       var HELP_THANK_YOU_URL = '/lesson-fit/thank-you/?help=1';
       var DIRECT_SUBMIT_URL = '/api/lesson-fit-submit';
       var ATTRIBUTION_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
-      var ENABLE_LEAD_PIPELINE_CAPTURE = Boolean(enableLeadPipelineCapture);
+      var pendingInquiryBody = null;
       var ATTRIBUTION_STORAGE_KEY = 'csmLessonFitAttribution';
       var STATE_STORAGE_KEY = 'csmLessonFitState';
       var HELP_SUBMIT_EVENT_PUSHED_KEY = 'csmLessonFitHelpSubmitEventPushed';
@@ -744,12 +746,11 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
         recommendationBody.textContent = recommendation.body;
         helpDetails.classList.toggle('is-hidden', recommendation.outcome !== 'staff-help');
         helpActions.classList.toggle('is-visible', recommendation.outcome === 'staff-help');
-        var shouldCollectContact = recommendation.outcome === 'staff-help' ||
-          (recommendation.outcome === 'self-booking' && ENABLE_LEAD_PIPELINE_CAPTURE);
+        var shouldCollectContact = recommendation.outcome === 'staff-help';
         if(contactIntro){
           contactIntro.classList.toggle('is-hidden', !shouldCollectContact);
           contactIntro.innerHTML = recommendation.outcome === 'staff-help'
-            ? '<strong>Contact info:</strong> add your details so CSM can follow up.'
+            ? '<strong>Contact info:</strong> choose how our office should reply to your request.'
             : '<strong>Optional contact:</strong> add an email or mobile number so CSM can keep this booking path connected.';
         }
         contactGrid.classList.toggle('is-hidden', !shouldCollectContact);
@@ -762,9 +763,14 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
             handoffNote.parentNode.insertBefore(contactIntro, contactGrid);
           }
         }
-        handoffNoteText.textContent = recommendation.outcome === 'staff-help'
-          ? 'We will use this information when we reach out.'
-          : 'This opens the CSM scheduling page for your selected Intro Lesson.';
+        var preference = form.elements.contact_preference.value;
+        var needsPhone = shouldCollectContact && (preference === 'text' || preference === 'phone');
+        document.getElementById('guidePhoneLabel').hidden = !needsPhone;
+        form.elements.phone.disabled = !needsPhone;
+        if(!needsPhone) form.elements.phone.value = '';
+        handoffNoteText.textContent = shouldCollectContact
+          ? ({email:'We’ll reply by email only. This request will not start calls or texts.',text:'Our office will text you about this request. Message and data rates may apply. Reply STOP to stop texts.',phone:'Our office will call you about this request.'}[preference] || 'Choose how you’d like our office to reply.')
+          : 'Browse available times without requesting a call or text. Enter contact details in Opus when you book.';
 
         var items = [
           ['Instrument', readFormValue('instrument_interest') || 'Not selected'],
@@ -856,6 +862,8 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
           var helpReason = form.elements.help_reason;
           var parentName = form.elements.parent_name;
           var email = form.elements.email;
+          if(!form.elements.contact_preference.value){formError.textContent = 'Choose how you’d like us to reply.';form.elements.contact_preference.focus();return false;}
+          if(form.elements.contact_preference.value !== 'email' && !/^(?:1)?[0-9]{10}$/.test(form.elements.phone.value.replace(/\D/g,''))){formError.textContent = 'Please enter a 10-digit phone number.';form.elements.phone.focus();return false;}
           if(!String(helpReason.value || '').trim()){
             formError.textContent = 'Please choose what you would like help with.';
             helpReason.focus();
@@ -881,10 +889,13 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
         ensureClientSubmissionId();
         setLeadEventField('submitted_at', new Date().toISOString());
         setLeadEventField('lead_pipeline_only', '');
-        var formData = new URLSearchParams(new FormData(form));
+        var formData = new URLSearchParams(pendingInquiryBody || new FormData(form));
         formData.set('form-name', 'lesson-fit-request');
         formData.set('subject', 'Request Info');
         formData.set('lead_pipeline_only', '');
+        pendingInquiryBody = formData.toString();
+        form.querySelectorAll('input,select,textarea').forEach(function(field){field.disabled = true;});
+        backButton.disabled = true;
         return fetch(DIRECT_SUBMIT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -896,7 +907,7 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
             throw error;
           }
           return response.json().then(function(result){
-            if(!result || result.ok !== true || !result.email || result.email.sent !== true){
+            if(!result || result.ok !== true || result.office_email_confirmed !== true){
               throw new Error('Request Info delivery was not confirmed');
             }
             return result;
@@ -905,7 +916,7 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
       }
 
       function saveRequestBackup(){
-        var formData = new URLSearchParams(new FormData(form));
+        var formData = new URLSearchParams(pendingInquiryBody || new FormData(form));
         formData.set('form-name', 'lesson-fit-request');
         formData.set('subject', 'Request Info');
         formData.set('lead_pipeline_only', '');
@@ -924,20 +935,6 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
           }).then(function(){
             throw error;
           });
-        });
-      }
-
-      function submitPipelineOnly(){
-        updateAttributionFields();
-        ensureClientSubmissionId();
-        setLeadEventField('submitted_at', new Date().toISOString());
-        setLeadEventField('lead_pipeline_only', '1');
-        var formData = new URLSearchParams(new FormData(form));
-        formData.set('lead_pipeline_only', '1');
-        return fetch(DIRECT_SUBMIT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: formData.toString()
         });
       }
 
@@ -963,7 +960,7 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
 
       form.addEventListener('submit', function(event){
         event.preventDefault();
-        if(!validateCurrentStep()) return;
+        if(!pendingInquiryBody && !validateCurrentStep()) return;
         var recommendation = getRecommendation();
         submitButton.disabled = true;
         if(recommendation.outcome === 'self-booking'){
@@ -971,15 +968,7 @@ const enableLeadPipelineCapture = ['1', 'true', 'yes', 'on'].includes(
           try {
             window.localStorage.removeItem(STATE_STORAGE_KEY);
           } catch (error) {}
-          if(!ENABLE_LEAD_PIPELINE_CAPTURE){
-            navigateAfterTracking(recommendation.url, 'lesson_fit_self_booking_handoff', recommendation);
-            return;
-          }
-          submitPipelineOnly().catch(function(error){
-            if(window.console && window.console.warn) window.console.warn('Lesson Fit pipeline capture failed', error);
-          }).then(function(){
-            navigateAfterTracking(recommendation.url, 'lesson_fit_self_booking_handoff', recommendation);
-          });
+          navigateAfterTracking(recommendation.url, 'lesson_fit_self_booking_handoff', recommendation);
           return;
         }
         submitButton.textContent = 'Sending Request...';

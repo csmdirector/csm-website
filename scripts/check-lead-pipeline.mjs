@@ -169,7 +169,7 @@ const forwardableLesson = canonicalizeStoredEvent({
   payload: firstEnvelope.payload,
   received_at: '2026-07-04T19:01:00Z'
 });
-assert.equal(forwardableLesson.forwardToOpus, true);
+assert.equal(forwardableLesson.forwardToOpus, false, 'An inquiry must not create an Opus account even if the old forwarding flag is on.');
 assert.equal(forwardableLesson.opusInboundPayload.student_tags[0], 'lesson-fit');
 
 const pipelineOnlyLesson = canonicalizeStoredEvent({
@@ -291,7 +291,7 @@ const emailText = buildText(ROUTES['lesson-fit-request'], 'lesson-fit-request', 
   id: 'email-test',
   createdAt: '2026-07-04T15:01:00Z'
 });
-assert.match(emailText, /Request Info/);
+assert.match(emailText, /Website inquiry/);
 assert.doesNotMatch(emailText, /Routing Outcome/i);
 assert.doesNotMatch(emailText, /Lead Pipeline Only/i);
 assert.equal(shouldSkipOfficeEmail(emailFields), false);
@@ -410,7 +410,7 @@ assert.equal(directJson.pipeline.ok, false);
 assert.match(directJson.pipeline.error, /DATABASE_URL|POSTGRES_URL/);
 assert.equal(sentEmails.length, 2);
 assert.equal(sentEmails[1].body.to[0], 'info@cincinnatischoolofmusic.com');
-assert.equal(sentEmails[1].body.subject, 'Request Info');
+assert.equal(sentEmails[1].body.subject, 'Booking help | Email reply requested');
 assert.equal(sentEmails[1].headers['Idempotency-Key'], 'csm-lesson-fit-request-lesson-fit-direct-test-123');
 
 const duplicateDirectResponse = await lessonFitSubmit(new Request('https://example.com/api/lesson-fit-submit', {
@@ -453,14 +453,14 @@ delete process.env.ENABLE_OPUS_INBOUND_FORWARDING;
 
 const lessonFitPage = readFileSync(new URL('../src/pages/lesson-fit/guide.astro', import.meta.url), 'utf8');
 assert.match(lessonFitPage, /noindex=\{true\}/);
-assert.match(lessonFitPage, /ENABLE_LEAD_PIPELINE_CAPTURE/);
+assert.doesNotMatch(lessonFitPage, /ENABLE_LEAD_PIPELINE_CAPTURE|submitPipelineOnly/);
 assert.doesNotMatch(lessonFitPage, /ENABLE_LESSON_FIT_DIRECT_SUBMIT/);
 
 // Exercise the actual browser request code with provider failures. Saving a
 // fallback copy must never convert a delivery failure into a successful request.
 const browserRequestCode = lessonFitPage.slice(
   lessonFitPage.indexOf('      function submitDirect(){'),
-  lessonFitPage.indexOf('      function submitPipelineOnly(){')
+  lessonFitPage.indexOf("      form.addEventListener('change'")
 );
 const browserFields = {
   ...directFields,
@@ -474,8 +474,8 @@ function browserRequest(fetchImpl) {
   return new Function(
     'fetch', 'form', 'FormData', 'updateAttributionFields',
     'ensureClientSubmissionId', 'setLeadEventField', 'DIRECT_SUBMIT_URL',
-    browserRequestCode + '\nreturn submitRequestInfo;'
-  )(fetchImpl, { action: '/lesson-fit/thank-you/' }, TestFormData,
+    'var pendingInquiryBody=null; var backButton={};\n' + browserRequestCode + '\nreturn submitRequestInfo;'
+  )(fetchImpl, { action: '/lesson-fit/thank-you/', querySelectorAll(){return [];} }, TestFormData,
     () => {}, () => browserFields.client_submission_id, () => {}, '/api/lesson-fit-submit');
 }
 for (const failure of ['network', 404, 502, 'invalid-json', 'unconfirmed']) {
@@ -501,7 +501,7 @@ for (const failure of ['network', 404, 502, 'invalid-json', 'unconfirmed']) {
 let successfulRequests = 0;
 await browserRequest(async () => {
   successfulRequests += 1;
-  return Response.json({ ok: true, email: { sent: true, status: 200 } });
+  return Response.json({ ok: true, email: { sent: true, status: 200 }, office_email_confirmed:true });
 })();
 assert.equal(successfulRequests, 1);
 

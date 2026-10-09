@@ -43,4 +43,8 @@ await cp(path.join(root, 'images'), path.join(dist, 'images'), {
   force: true
 });
 
+for (const directory of ['js', 'css']) {
+  await cp(path.join(root, directory), path.join(dist, directory), { recursive: true, force: true });
+}
+
 console.log(`Preserved ${htmlFiles.length} existing HTML pages, _redirects, robots.txt, sitemap.xml, and images/ in dist with legacy hardcoded GA4 removed from HTML output.`);

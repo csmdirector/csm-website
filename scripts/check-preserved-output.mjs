@@ -67,6 +67,10 @@ for (const file of imageFiles) {
   await assertSameFile(file);
 }
 
+for (const directory of ['js', 'css']) {
+  for (const file of await listFiles(path.join(root, directory), directory)) await assertSameFile(file);
+}
+
 const publicHtmlFiles = (await listFiles(dist)).filter((file) => file.endsWith('.html'));
 for (const file of publicHtmlFiles) {
   const html = await readFile(path.join(dist, file), 'utf8');
