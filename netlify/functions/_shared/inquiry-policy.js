@@ -35,5 +35,5 @@ export function inquiryInstructions(record) {
     text: 'Text the customer about this request. Do not call or add this inquiry to an automated prospect sequence.',
     phone: 'Call the customer about this request. Do not add this inquiry to an automated prospect sequence.'
   }[channel];
-  return {request_intent:intent,contact_preference:channel,subject:kind + ' | ' + reply,inquiry_heading:kind + ': ' + reply,office_action:action};
+  return {request_intent:intent,contact_preference:channel,subject:channel === 'standard' ? 'Request Info' : kind + ' | ' + reply,inquiry_heading:channel === 'standard' ? 'Request Info' : kind + ': ' + reply,office_action:action};
 }
