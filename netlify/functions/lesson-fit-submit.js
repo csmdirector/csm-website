@@ -112,10 +112,10 @@ function validate(fields) {
 
   if (valueFor(fields, 'inquiry_version') &&
       (!CONTACT_CHANNELS.includes(fields.contact_preference) || !REQUEST_INTENTS.includes(fields.request_intent))) {
-    return { ok: false, status: 422, error: 'Choose what you need and how our office should reply.' };
+    return { ok: false, status: 422, error: 'Please tell us what you need.' };
   }
-  if (['text', 'phone'].includes(fields.contact_preference) && !/^(?:1)?[0-9]{10}$/.test(valueFor(fields, 'phone').replace(/\D/g, ''))) {
-    return { ok: false, status: 422, error: 'A valid 10-digit phone number is required for your selected reply method.' };
+  if (['standard', 'text', 'phone'].includes(fields.contact_preference) && !/^(?:1)?[0-9]{10}$/.test(valueFor(fields, 'phone').replace(/\D/g, ''))) {
+    return { ok: false, status: 422, error: 'Please enter a valid 10-digit phone number.' };
   }
   if (fields.contact_preference === 'email') fields.phone = '';
   const missing = ['parent_name', 'email', 'help_reason'].filter((key) => !valueFor(fields, key));

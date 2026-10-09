@@ -42,7 +42,7 @@ import Base from '../../layouts/Base.astro';
           id="intakeForm"
         >
           <input type="hidden" name="form-name" value="lesson-fit-request" />
-          <input type="hidden" name="inquiry_version" value="20261009" />
+          <input type="hidden" name="inquiry_version" value="20261009-standard" />
           <input type="hidden" name="request_intent" value="booking_help" />
           <input type="hidden" name="subject" data-remove-prefix value="Request Info" />
           <textarea name="contact_summary" id="contactSummary" hidden></textarea>
@@ -237,11 +237,9 @@ import Base from '../../layouts/Base.astro';
                 Email
                 <input type="email" name="email" autocomplete="email" />
               </label>
-              <label class="field-label">How should we reply?
-                <select name="contact_preference"><option value="">Choose a reply method</option><option value="email">Email only</option><option value="text">Text me</option><option value="phone">Call me</option></select>
-              </label>
-              <label class="field-label" id="guidePhoneLabel" hidden>Phone number
-                <input type="tel" name="phone" autocomplete="tel" disabled />
+              <input type="hidden" name="contact_preference" value="standard" />
+              <label class="field-label" id="guidePhoneLabel">Phone number
+                <input type="tel" name="phone" autocomplete="tel" />
               </label>
             </div>
             <p class="handoff-note">
@@ -750,7 +748,7 @@ import Base from '../../layouts/Base.astro';
         if(contactIntro){
           contactIntro.classList.toggle('is-hidden', !shouldCollectContact);
           contactIntro.innerHTML = recommendation.outcome === 'staff-help'
-            ? '<strong>Contact info:</strong> choose how our office should reply to your request.'
+            ? '<strong>Contact info:</strong> our office will contact you by email, phone, or text about your request.'
             : '<strong>Optional contact:</strong> add an email or mobile number so CSM can keep this booking path connected.';
         }
         contactGrid.classList.toggle('is-hidden', !shouldCollectContact);
@@ -764,12 +762,12 @@ import Base from '../../layouts/Base.astro';
           }
         }
         var preference = form.elements.contact_preference.value;
-        var needsPhone = shouldCollectContact && (preference === 'text' || preference === 'phone');
+        var needsPhone = shouldCollectContact;
         document.getElementById('guidePhoneLabel').hidden = !needsPhone;
         form.elements.phone.disabled = !needsPhone;
         if(!needsPhone) form.elements.phone.value = '';
         handoffNoteText.textContent = shouldCollectContact
-          ? ({email:'We’ll reply by email only. This request will not start calls or texts.',text:'Our office will text you about this request. Message and data rates may apply. Reply STOP to stop texts.',phone:'Our office will call you about this request.'}[preference] || 'Choose how you’d like our office to reply.')
+          ? 'By submitting, you’re asking CSM to contact you by email, phone, or text about lessons. Message and data rates may apply. Reply STOP to stop texts. Sending this form does not book a lesson.'
           : 'Browse available times without requesting a call or text. Enter contact details in Opus when you book.';
 
         var items = [
@@ -862,7 +860,6 @@ import Base from '../../layouts/Base.astro';
           var helpReason = form.elements.help_reason;
           var parentName = form.elements.parent_name;
           var email = form.elements.email;
-          if(!form.elements.contact_preference.value){formError.textContent = 'Choose how you’d like us to reply.';form.elements.contact_preference.focus();return false;}
           if(form.elements.contact_preference.value !== 'email' && !/^(?:1)?[0-9]{10}$/.test(form.elements.phone.value.replace(/\D/g,''))){formError.textContent = 'Please enter a 10-digit phone number.';form.elements.phone.focus();return false;}
           if(!String(helpReason.value || '').trim()){
             formError.textContent = 'Please choose what you would like help with.';

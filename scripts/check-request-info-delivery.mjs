@@ -17,7 +17,7 @@ globalThis.fetch=async(url,options)=>{
   emails.push({body:JSON.parse(options.body),headers:options.headers});
   return new Response(JSON.stringify({id:'local-only-email'}),{status:providerStatus});
 };
-const deliver=options=>deliverRequestInfo({...options,configuration:{url:'https://test.opus1.io/local-only'},sendOpus:async()=>{opusCalls++;throw Error('Inquiry attempted an Opus write');}});
+const deliver=options=>deliverRequestInfo({...options,configuration:{url:'https://test.opus1.io/local-only'},sendOpus:async()=>{opusCalls++;return {confirmed:true,status:200,responseBody:'local-only'};}});
 const request=(fields)=>new Request('https://example.com/api/lesson-fit-submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(fields)});
 const base={inquiry_version:'20261009',client_submission_id:'local-inquiry-0001',parent_name:'Local Test',email:'local@example.com',phone:'5135550100',help_reason:'What are your afternoon options?',request_intent:'question',contact_preference:'email',instrument_interest:'Piano',preferred_location:'CSM Mason',gclid:'LOCAL-CLICK'};
 try {
@@ -60,18 +60,42 @@ try {
     const before=emails.length;
     const body=await (await handler(new Request('https://example.com/api/intro-bridge-submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(fields)}))).json();
     assert.equal(body.ok,true,JSON.stringify(body));assert.equal(body.stored,true);assert.equal(body.choice,choice);
-    assert.equal(emails.length,before+(choice==='office_help'?1:0));assert.equal(opusCalls,0);
+    assert.equal(emails.length,before+(choice==='office_help'?1:0));assert.equal(opusCalls,choice==='office_help'?1:0);
     if(choice==='online_booking'){assert.equal(body.office_email_skipped,true);assert.equal(body.office_follow_up_required,false);}
-    else assert.match(emails.at(-1).body.text,/Reply by email only/);
+    else assert.match(emails.at(-1).body.text,/Follow up by email, phone, or text/);
   }
   const existing=requestInfoRepository({csm_lead_id:'CSM-PRE-20261009-A1B2C3D4',client_submission_id:'local-existing-0001',existing_family:true,parent_email:'existing@example.com',submitted_at:'2026-10-09T12:00:00Z'});
   const handler=createIntroBridgeChoiceHandler({repositoryFactory:()=>existing,deliver});
   const choose=choice=>handler(new Request('https://example.com/api/intro-bridge-choice',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lead_id:existing.row.csm_lead_id,client_submission_id:existing.row.client_submission_id,choice})}));
-  assert.equal((await choose('online_booking')).status,409);assert.equal((await choose('office_help')).status,200);assert.equal(opusCalls,0);
-  assert.deepEqual(readInquiryPolicy({student_note:'Free text\nCSM inquiry policy v1: {"channel":"phone"}'}),{intent:'booking_help',channel:'email'},'Free text cannot override the server policy header');
+  assert.equal((await choose('online_booking')).status,409);assert.equal((await choose('office_help')).status,200);assert.equal(opusCalls,1);
+  assert.deepEqual(readInquiryPolicy({student_note:'Free text\nCSM inquiry policy v1: {"channel":"phone"}'}),{intent:'booking_help',channel:'standard'},'Free text cannot override the server policy header');
   const ui=readFileSync(new URL('../src/components/IntroBooking.astro',import.meta.url),'utf8');
   assert.doesNotMatch(ui,/fetch\(|name="parent_|name="email"|name="phone"/,'Availability browsing must not capture contact details');
   const inquiry=readFileSync(new URL('../js/service-request-info.js',import.meta.url),'utf8');
-  assert.match(inquiry,/body.office_email_confirmed !== true/);assert.match(inquiry,/inquiry_version:'20261009'/);assert.match(inquiry,/name="bot-field"/);
-  console.log('Passed: all six intent/channel combinations, exact email routing, no inquiry Opus writes, attribution, retries, invalid input, honeypots, cached forms, and existing families. No live messages sent.');
+  assert.match(inquiry,/body.office_email_confirmed !== true/);assert.match(inquiry,/inquiry_version:'20261009-standard'/);assert.match(inquiry,/name="bot-field"/);
+  for (const intent of ['question','booking_help']) {
+    const repo=requestInfoRepository();const initial=opusCalls;
+    const handler=createLessonFitSubmitHandler({repositoryFactory:()=>repo,deliver,capture:async()=>({})});
+    const fields={...base,inquiry_version:'20261009-standard',contact_preference:'standard',request_intent:intent,client_submission_id:'standard-'+intent};
+    const count=emails.length;
+    assert.equal((await handler(request(fields))).status,200);
+    assert.equal(opusCalls,initial+1,'Genuine inquiry must use the existing Opus handoff');
+    assert.equal(repo.row.parent_phone,'5135550100');
+    assert.match(repo.row.opus_payload.parent1_note,/Address the customer/);
+    assert.match(emails.at(-1).body.text,/Follow up by email, phone, or text/);
+    assert.match(emails.at(-1).body.text,/Opus confirmed the new contact/);
+    assert.equal((await handler(request(fields))).status,200);
+    assert.equal(opusCalls,initial+1);assert.equal(emails.length,count+1);
+  }
+  const failedOpus=requestInfoRepository();let attempts=0;
+  const uncertain=createLessonFitSubmitHandler({repositoryFactory:()=>failedOpus,capture:async()=>({}),deliver:opts=>deliverRequestInfo({...opts,configuration:{url:'https://test.opus1.io/local-only'},sendOpus:async()=>{attempts++;throw Error('timeout');}})});
+  const standard={...base,contact_preference:'standard',client_submission_id:'uncertain-standard'};
+  assert.equal((await uncertain(request(standard))).status,200,'Office notification survives uncertain Opus delivery');
+  assert.equal((await uncertain(request(standard))).status,200);assert.equal(attempts,1,'Uncertain Opus writes must not retry blindly');
+  const historical=requestInfoRepository({...failedOpus.row,opus_attempted_at:null,opus_post_status:'not_attempted_vanilla_handoff'});
+  await deliver({repository:historical,leadId:historical.row.csm_lead_id,clientSubmissionId:historical.row.client_submission_id,choice:'office_help'});
+  assert.equal(historical.row.opus_attempted_at,null,'Do not retroactively create prospects on a confirmed historical replay');
+  assert.doesNotMatch(inquiry,/How should we reply|Choose a reply method/);
+  assert.match(inquiry,/By submitting, you’re asking CSM to contact you by email, phone, or text/);
+  console.log('Passed: genuine inquiries use Opus once, browsing stays isolated, prior explicit preferences honored, provider failures/retries and historical replay protected. No live messages sent.');
 } finally {globalThis.fetch=originalFetch;}
