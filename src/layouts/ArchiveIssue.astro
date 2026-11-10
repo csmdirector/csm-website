@@ -1,9 +1,11 @@
 ---
 import Base from './Base.astro';
-interface Props { month: string; title: string; description: string; canonicalPath: string; content: string; }
-const { month, title, description, canonicalPath, content } = Astro.props;
+import NewsletterShare from '../components/NewsletterShare.astro';
+interface Props { month: string; title: string; description: string; canonicalPath: string; content: string; image: string; imageAlt: string; imageWidth: number; imageHeight: number; }
+const { month, title, description, canonicalPath, content, image, imageAlt, imageWidth, imageHeight } = Astro.props;
+const social = { title, description, image, imageAlt, imageWidth, imageHeight };
 ---
-<Base title={`${title} — ${month} Newsletter | Cincinnati School of Music`} description={description} canonicalPath={canonicalPath}>
+<Base title={`${title} — ${month} Newsletter | Cincinnati School of Music`} description={description} canonicalPath={canonicalPath} social={social}>
   <div class="archive-page">
     <div class="issue-navigation"><a href="/newsletters/">← All newsletters</a><span>{month}</span></div>
     <article class="back-issue">
@@ -12,8 +14,10 @@ const { month, title, description, canonicalPath, content } = Astro.props;
         <h1>{title}</h1>
         <p>{description}</p>
       </header>
+      <NewsletterShare title={title} caption={description} canonicalPath={canonicalPath} />
       <aside class="archive-notice">From the newsletter archive. Event dates, deadlines, and offers below are from {month}.</aside>
       <div class="archive-content" set:html={content} />
+      <NewsletterShare title={title} caption={description} canonicalPath={canonicalPath} />
     </article>
     <a class="archive-return" href="/newsletters/">← Back to newsletters</a>
   </div>

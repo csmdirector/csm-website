@@ -1,5 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
+import NewsletterShare from '../../components/NewsletterShare.astro';
+const archiveCaption = 'Read the latest Cincinnati School of Music newsletter and catch up on past issues from Anna and Joe.';
+const social = { title: 'CSM Newsletters', description: archiveCaption, image: '/images/newsletters/joe-early-piano.jpeg', imageAlt: 'Joe during his early piano studies', imageWidth: 1290, imageHeight: 1254, type: 'website' as const };
 const issues = [
   {
     "month": "November 2026",
@@ -27,8 +30,9 @@ const issues = [
   }
 ];
 ---
-<Base title="CSM Newsletters | Cincinnati School of Music" description="News, student celebrations, upcoming dates, and notes from Anna and Joe at Cincinnati School of Music." canonicalPath="/newsletters/">
+<Base title="CSM Newsletters | Cincinnati School of Music" description="News, student celebrations, upcoming dates, and notes from Anna and Joe at Cincinnati School of Music." canonicalPath="/newsletters/" social={social}>
 <section class="newsletter-archive"><div class="archive-inner"><p class="label">Cincinnati School of Music</p><h1>CSM Newsletters</h1><p class="intro">Notes from Anna and Joe, student celebrations, and what’s coming up at CSM.</p>
+<NewsletterShare title="CSM Newsletters" caption={archiveCaption} canonicalPath="/newsletters/" label="Share the archive" />
 {issues.map(issue => <a class="issue" href={issue.path}><img src={issue.image} alt={issue.alt} loading="lazy" /><div class="issue-copy"><p class="label">{issue.month}</p><h2>{issue.title}</h2><p>{issue.description}</p><span>Read the newsletter →</span></div></a>)}
 </div></section>
 </Base>
