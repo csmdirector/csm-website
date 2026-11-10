@@ -1,7 +1,18 @@
 ---
 import Base from '../../layouts/Base.astro';
+import NewsletterShare from '../../components/NewsletterShare.astro';
+const shareTitle = 'I Didn’t Thank Her Enough';
+const shareDescription = 'I’m especially grateful now for some of the things my mom made me do that I hated at the time.';
+const social = {
+  title: shareTitle,
+  description: shareDescription,
+  image: '/images/newsletters/joe-early-piano.jpeg',
+  imageAlt: 'Joe during his early piano studies',
+  imageWidth: 1290,
+  imageHeight: 1254
+};
 ---
-<Base title="I Didn’t Thank Her Enough — November 2026 Newsletter | Cincinnati School of Music" description="A Thanksgiving reflection from Joe, our Halloween contest winner, food drive, winter recital news, practice tips, and October welcomes." canonicalPath="/newsletters/november-2026/">
+<Base title="I Didn’t Thank Her Enough — November 2026 Newsletter | Cincinnati School of Music" description="A Thanksgiving reflection from Joe, our Halloween contest winner, food drive, winter recital news, practice tips, and October welcomes." canonicalPath="/newsletters/november-2026/" social={social}>
 <div class="newsletter-page">
 <div class="issue-nav"><a href="/newsletters/">← All newsletters</a><span>November 2026</span></div>
 <article class="newsletter">
@@ -9,6 +20,7 @@ import Base from '../../layouts/Base.astro';
 <img src="/images/newsletters/joe-early-piano.jpeg" alt="Joe during his early piano studies" width="1290" height="1254" fetchpriority="high" />
 <div class="hero-title"><p class="eyebrow">Cincinnati School of Music · November 2026</p><h1>I Didn’t Thank Her Enough</h1><p>I’m especially grateful now for some of the things my mom made me do that I hated at the time.</p></div>
 </header>
+<NewsletterShare title={shareTitle} caption={`“${shareDescription}” — Joe Backer`} canonicalPath="/newsletters/november-2026/" />
 <div class="issue-contents" aria-label="In this issue"><span>In this issue</span><a href="#joes-note">Joe’s note</a><a href="#halloween">Halloween</a><a href="#food-drive">Food drive</a><a href="#winter-recital">Winter recital</a><a href="#practice-tip">Practice tip</a><a href="#dates">Dates</a><a href="#welcome">Welcome</a></div>
 <section id="joes-note" class="newsletter-section">
 <div class="eyebrow">A note from Joe</div>
@@ -100,6 +112,7 @@ import Base from '../../layouts/Base.astro';
 </div>
 <p><strong>Welcome to Cincinnati School of Music. We’re glad you’re here.</strong></p>
 </section><section class="newsletter-section signoff"><p>Thank you for trusting us with a small part of your family’s week.<br />We hope you have a wonderful Thanksgiving!</p><p><strong>Anna &amp; Joe</strong><br />Cincinnati School of Music</p></section>
+<NewsletterShare title={shareTitle} caption={`“${shareDescription}” — Joe Backer`} canonicalPath="/newsletters/november-2026/" />
 </article><a class="archive-return" href="/newsletters/">← Back to newsletters</a></div>
 </Base>
 <style>

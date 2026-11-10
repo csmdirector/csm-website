@@ -9,17 +9,28 @@ interface Props {
   description: string;
   canonicalPath?: string;
   noindex?: boolean;
+  social?: {
+    title: string;
+    description: string;
+    image: string;
+    imageAlt: string;
+    imageWidth: number;
+    imageHeight: number;
+    type?: 'article' | 'website';
+  };
 }
 
 const {
   title,
   description,
   canonicalPath = Astro.url.pathname,
-  noindex = false
+  noindex = false,
+  social
 } = Astro.props;
 
 const site = 'https://cincinnatischoolofmusic.com';
 const canonicalUrl = new URL(canonicalPath, site).href;
+const socialImageUrl = social ? new URL(social.image, site).href : undefined;
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -29,6 +40,24 @@ const canonicalUrl = new URL(canonicalPath, site).href;
     <title>{title}</title>
     <meta name="description" content={description}>
     <link rel="canonical" href={canonicalUrl}>
+    {social && <>
+      <meta property="og:site_name" content="Cincinnati School of Music" />
+      <meta property="og:type" content={social.type ?? 'article'} />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:title" content={social.title} />
+      <meta property="og:description" content={social.description} />
+      <meta property="og:image" content={socialImageUrl} />
+      <meta property="og:image:secure_url" content={socialImageUrl} />
+      <meta property="og:image:alt" content={social.imageAlt} />
+      <meta property="og:image:width" content={String(social.imageWidth)} />
+      <meta property="og:image:height" content={String(social.imageHeight)} />
+      <meta property="og:locale" content="en_US" />
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:title" content={social.title} />
+      <meta name="twitter:description" content={social.description} />
+      <meta name="twitter:image" content={socialImageUrl} />
+      <meta name="twitter:image:alt" content={social.imageAlt} />
+    </>}
     {noindex && <meta name="robots" content="noindex,nofollow">}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,200;0,300;0,400;0,500;0,600;1,200;1,300&display=swap" rel="stylesheet">

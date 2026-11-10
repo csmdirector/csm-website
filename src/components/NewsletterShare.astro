@@ -1,0 +1,64 @@
+---
+interface Props { title: string; caption: string; canonicalPath: string; label?: string; }
+const { title, caption, canonicalPath, label = 'Share this newsletter' } = Astro.props;
+const url = new URL(canonicalPath, 'https://cincinnatischoolofmusic.com').href;
+---
+<div class="newsletter-share" data-newsletter-share data-title={title} data-caption={caption} data-url={url}>
+  <span class="share-label">{label}</span>
+  <div class="share-actions">
+    <button type="button" data-share-native hidden>Share</button>
+    <button type="button" data-copy-link hidden>Copy link</button>
+    <button type="button" data-copy-caption hidden>Copy caption</button>
+    <noscript><a href={url}>Newsletter link</a></noscript>
+  </div>
+  <p class="share-status" role="status" aria-live="polite"></p>
+  <textarea class="share-copy-fallback" aria-label="Text to copy" rows="5" readonly hidden></textarea>
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-newsletter-share]').forEach(panel => {
+    const { title = '', caption = '', url = '' } = panel.dataset;
+    const status = panel.querySelector<HTMLElement>('.share-status')!;
+    const fallback = panel.querySelector<HTMLTextAreaElement>('textarea')!;
+    const share = panel.querySelector<HTMLButtonElement>('[data-share-native]')!;
+    const copyLink = panel.querySelector<HTMLButtonElement>('[data-copy-link]')!;
+    const copyCaption = panel.querySelector<HTMLButtonElement>('[data-copy-caption]')!;
+    const fullCaption = `${title}\n\n${caption}\n\n${url}`;
+
+    async function copy(text: string, confirmation: string) {
+      status.textContent = '';
+      fallback.hidden = true;
+      try {
+        await navigator.clipboard.writeText(text);
+        status.textContent = confirmation;
+      } catch {
+        fallback.value = text;
+        fallback.hidden = false;
+        fallback.focus();
+        fallback.select();
+        status.textContent = 'Select and copy the text below.';
+      }
+    }
+
+    copyLink.hidden = false;
+    copyCaption.hidden = false;
+    copyLink.addEventListener('click', () => copy(url, 'Link copied.'));
+    copyCaption.addEventListener('click', () => copy(fullCaption, 'Caption and link copied.'));
+
+    if (typeof navigator.share === 'function') {
+      share.hidden = false;
+      share.addEventListener('click', async () => {
+        status.textContent = '';
+        try {
+          await navigator.share({ title, text: caption, url });
+        } catch (error) {
+          if (!(error instanceof DOMException && error.name === 'AbortError')) {
+            status.textContent = 'Use Copy link or Copy caption to share this newsletter.';
+          }
+        }
+      });
+    }
+  });
+</script>
+<style>
+  .newsletter-share{padding:22px 52px;background:#f9f3eb;border-bottom:1px solid #e9dacc}.share-label{display:block;font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#805b45;margin-bottom:12px}.share-actions{display:flex;flex-wrap:wrap;gap:10px}.share-actions button,.share-actions a{font-family:var(--f);font-size:14px;font-weight:500;color:#754027;border:1px solid #cfb5a0;background:#fffdfa;padding:9px 16px;min-height:42px;border-radius:3px;cursor:pointer;text-decoration:none}.share-actions button:hover{background:#efe1d2}.share-actions button:focus-visible,.share-actions a:focus-visible{outline:2px solid #754027;outline-offset:3px}.share-status{font-family:var(--f);font-size:13px;color:#754027;line-height:1.5;margin-top:10px}.share-status:empty{display:none}.share-copy-fallback{margin-top:12px;width:100%;font:14px/1.6 Arial,Helvetica,sans-serif;color:#382c25;background:#fffdfa;border:1px solid #cfb5a0;padding:12px;resize:vertical}[hidden]{display:none!important}@media(max-width:600px){.newsletter-share{padding:20px 24px}.share-actions{gap:8px}.share-actions button{padding:9px 13px}}@media print{.newsletter-share{display:none}}
+</style>
