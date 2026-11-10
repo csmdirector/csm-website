@@ -33,6 +33,8 @@ const routes = [
   '/teachers',
   '/newsletters/',
   '/newsletters/november-2026/',
+  '/newsletters/october-2026/',
+  '/newsletters/september-2026/',
   '/parent-resources',
   '/parent-resources/music-lesson-cost-cincinnati',
   '/parent-resources/choosing-the-right-first-music-lesson',
