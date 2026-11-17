@@ -10,6 +10,9 @@ import {
   extractStripeEvidence
 } from '../netlify/functions/_shared/piano-intro-reconciliation.js';
 import { testables as stripeWebhookTestables } from '../netlify/functions/piano-intro-stripe-reconciliation.js';
+import { storeGuideRequestInfo } from '../netlify/functions/_shared/request-info-delivery.js';
+import { storeInquiryPolicy } from '../netlify/functions/_shared/inquiry-policy.js';
+import { requestInfoRepository } from './fixtures/request-info-repository.mjs';
 import Stripe from 'stripe';
 
 const clientPayload = {
@@ -430,6 +433,78 @@ assert.equal(stripeMatched.reconciliation_status, 'matched_paid');
 assert.equal(stripeRepository.leads[0].matched_opus_client_id, 'opus-client-acceptance-1');
 assert.equal(stripeRepository.leads[0].matched_opus_booking_id, 'order-acceptance-1');
 assert.deepEqual(stripeRepository.leads[0].attribution, stripeLead.attribution);
+
+// Exercise the actual inquiry row schema: request-info is a routing placeholder,
+// while the customer's explicit instrument/location answers live in other fields.
+const inquiryStore = requestInfoRepository();
+const inquiryFields = {
+  parent_name: 'Fake Reconcile Parent', email: 'pianoreconcile@gmail.com', phone: '5135550242',
+  student_name: baseLead.student_name, student_age: '9', existing_family: 'no',
+  instrument_interest: 'Piano', preferred_location: 'CSM Mason',
+  request_intent: 'booking_help', contact_preference: 'standard', help_reason: 'Help arrange a piano intro.',
+  utm_source: 'newsletter', utm_medium: 'email', last_paid_gclid: 'LOCAL-PRIOR-PAID'
+};
+const inquiryLead = await storeGuideRequestInfo(inquiryFields, inquiryStore, 'local-inquiry-reconciliation-0001', baseLead.submitted_at);
+assert.equal(inquiryLead.service_slug, 'request-info');
+assert.equal(inquiryLead.preferred_location_slug, 'request-info');
+const inquiryEvidence = { ...paidEvidence, ...clientEvidence, serviceSlug: 'piano', locationName: 'CSM Mason' };
+const inquiryDecision = (lead = inquiryLead, evidence = inquiryEvidence, emailCandidates = [lead]) =>
+  chooseReconciliationMatch({ evidence, emailCandidates, eventAt: paidEvidence.paidAt });
+assert.equal(inquiryDecision().action, 'match');
+for (const [patch, reason] of [
+  [{student_note: storeInquiryPolicy({request_intent:'question'}, 'Question only')}, 'inquiry_booking_help_not_explicit'],
+  [{student_note: 'Legacy inquiry without explicit policy'}, 'inquiry_booking_help_not_explicit'],
+  [{student_note: 'CSM inquiry policy v1: {"intent":"booking_help","channel":"standard"}'}, 'inquiry_booking_help_not_explicit'],
+  [{student_note: 'CSM inquiry policy v1: {"channel":"standard"}'}, 'inquiry_booking_help_not_explicit'],
+  [{student_note: 'CSM inquiry policy v1: invalid'}, 'inquiry_booking_help_not_explicit'],
+  [{student_note: 'Customer free text\n' + inquiryLead.student_note}, 'inquiry_booking_help_not_explicit'],
+  [{instrument:'Not selected'}, 'inquiry_instrument_unresolved'],
+  [{instrument:'Voice'}, 'service_conflict'],
+  [{preferred_location:'Flexible / not sure'}, 'inquiry_location_unresolved'],
+  [{preferred_location:'CSM Anderson'}, 'location_conflict'],
+  [{student_name:'Different Student'}, 'student_identity_conflict'],
+  [{student_name:''}, 'student_identity_conflict'],
+  [{existing_family:true}, 'existing_family_launch_path'],
+  [{parent_phone_norm:'+15135559999'}, 'phone_conflict_after_email_match'],
+  [{submitted_at:'2026-08-12T16:00:00Z'}, 'timing_conflict']
+]) {
+  const decision = inquiryDecision({...inquiryLead,...patch});
+  assert.equal(decision.action, 'manual_review', reason);
+  assert.ok(decision.reason.includes(reason), decision.reason);
+}
+assert.equal(inquiryDecision(inquiryLead, {...inquiryEvidence,locationName:''}).action, 'manual_review');
+assert.equal(inquiryDecision(inquiryLead, {...inquiryEvidence,locationName:'M'}).action, 'manual_review');
+assert.equal(inquiryDecision({...inquiryLead,student_name:''}, {...inquiryEvidence,studentName:''}).reason, 'inquiry_student_unverified');
+for (const request_intent of [undefined, 'invalid']) {
+  const unknownIntent = await storeGuideRequestInfo({...inquiryFields,request_intent}, requestInfoRepository(), 'local-unknown-intent', baseLead.submitted_at);
+  assert.equal(inquiryDecision(unknownIntent).reason, 'inquiry_booking_help_not_explicit', 'Actual writes must not label defaulted intent as explicit');
+}
+assert.equal(inquiryDecision(inquiryLead, inquiryEvidence, [inquiryLead,{...inquiryLead,csm_lead_id:'LOCAL-SECOND'}]).reason, 'multiple_exact_email_candidates');
+assert.equal(inquiryDecision(inquiryLead, inquiryEvidence, []).action, 'no_match', 'No synthetic lead for direct Opus checkout');
+const inquiryStripeEvidence = {...stripePaid,parentEmailNorm:inquiryLead.parent_email_norm,studentName:inquiryLead.student_name};
+assert.equal(inquiryDecision(inquiryLead, inquiryStripeEvidence).action, 'match', 'Verified Stripe location ID can match the explicit inquiry location');
+assert.equal(inquiryDecision(inquiryLead, {...inquiryStripeEvidence,opusLocationId:'wrong-location'}).reason, 'location_conflict');
+const inquiryRepository = new MemoryRepository([inquiryLead]);
+const inquiryReconcile = createPianoIntroReconciler({repository:inquiryRepository});
+await inquiryReconcile(clientPayload);
+const inquiryMatch = await inquiryReconcile(paidIntroPayload);
+assert.equal(inquiryMatch.reconciliation_status, 'matched_paid');
+assert.equal(inquiryMatch.matched_csm_lead_id, inquiryLead.csm_lead_id);
+assert.equal(inquiryRepository.leads[0].conversion_eligible, false, 'A reconciliation match must not grant Ads conversion eligibility');
+assert.deepEqual(inquiryRepository.leads[0].attribution, inquiryLead.attribution);
+const freePianoPayload = {
+  ...paidIntroPayload,
+  subscription: {...paidIntroPayload.subscription,id:'local-free-piano-subscription',amount_total:0,payment_status:'unpaid',paid_at:undefined,created_at:paidEvidence.paidAt,booking:{id:'local-free-piano-booking'}}
+};
+const freeInquiryRepository = new MemoryRepository([inquiryLead]);
+const freeInquiryReconcile = createPianoIntroReconciler({repository:freeInquiryRepository});
+await freeInquiryReconcile(clientPayload);
+const freeInquiryMatch = await freeInquiryReconcile(freePianoPayload);
+assert.equal(freeInquiryMatch.reconciliation_status, 'matched_booked_free');
+assert.equal(freeInquiryMatch.matched_csm_lead_id, inquiryLead.csm_lead_id);
+assert.equal(freeInquiryRepository.leads[0].opus_payment_status, 'not_required');
+assert.equal(freeInquiryRepository.leads[0].conversion_eligible, false);
+assert.deepEqual(freeInquiryRepository.leads[0].attribution, inquiryLead.attribution);
 
 const phoneLead = {
   ...baseLead,
