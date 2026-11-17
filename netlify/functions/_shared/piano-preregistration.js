@@ -34,6 +34,9 @@ const ATTRIBUTION_KEYS = [
   'referrer',
   'attribution_timestamp',
   'last_paid_click_timestamp',
+  'last_paid_gclid', 'last_paid_gbraid', 'last_paid_wbraid',
+  'last_paid_utm_source', 'last_paid_utm_medium', 'last_paid_utm_campaign',
+  'last_paid_utm_content', 'last_paid_utm_term', 'last_paid_landing_path', 'last_paid_referrer',
   'source_type'
 ];
 
@@ -129,7 +132,11 @@ export function attributionSummary(attribution) {
     ['Click ID', attribution?.gclid || attribution?.gbraid || attribution?.wbraid],
     ['First landing page', attribution?.first_landing_path],
     ['Latest landing page', attribution?.latest_landing_path || attribution?.landing_path],
-    ['Referrer', attribution?.referrer]
+    ['Referrer', attribution?.referrer],
+    ['Last paid source (separate from latest source)', [attribution?.last_paid_utm_source, attribution?.last_paid_utm_medium].filter(Boolean).join(' / ')],
+    ['Last paid campaign', attribution?.last_paid_utm_campaign],
+    ['Last paid click ID', attribution?.last_paid_gclid || attribution?.last_paid_gbraid || attribution?.last_paid_wbraid],
+    ['Last paid arrival', attribution?.last_paid_click_timestamp]
   ];
   optional.forEach(([label, value]) => {
     if (value) lines.push(`${label}: ${clean(value, 500)}`);

@@ -18,7 +18,7 @@ const locations = INTRO_LOCATIONS.map(l => ({ slug: l.slug, name: l.name.replace
         <label>Instrument or program<select id="introService" required><option value="">Choose a lesson</option>{services.map(s => <option value={s.slug}>{s.name}</option>)}</select></label>
         <label>Location<select id="introLocation" required><option value="">Choose a location</option>{locations.map(l => <option value={l.slug}>{l.name}</option>)}</select></label>
       </div>
-      <div class="booking-actions"><button class="btn-a" type="submit">View Available Times</button></div>
+      <div class="booking-actions"><a id="viewAvailableTimes" class="btn-a" href="#availabilityForm">View Available Times</a></div>
       <p class="booking-disclosure">You’ll choose a time and enter your details in Opus when you’re ready to book. Browsing times does not request a call or text.</p>
       <p class="guided-help"><a id="officeHelp" href="/request-info/?intent=booking_help">Have us help find a teacher and time</a></p>
       <p class="guided-help"><a id="guidedHelp" href="/lesson-fit/guide/">Not sure which lesson to choose? Get help choosing.</a></p>
@@ -33,7 +33,7 @@ const locations = INTRO_LOCATIONS.map(l => ({ slug: l.slug, name: l.name.replace
     </div>
   </div></section>
   <style>
-    .booking-width{width:min(100%,780px);margin-inline:auto}.booking-heading{padding:40px 24px 30px;background:var(--charcoal);color:#fff}.booking-heading .section-label{color:var(--slate-lt)}.booking-heading h1{color:#fff;margin:10px 0 12px;font-size:clamp(2rem,5vw,3rem)}.booking-heading p{margin:8px 0;line-height:1.6;color:#eee}.booking-heading .booking-how{font-size:.9rem;color:#d4d4d4}.booking-body{background:var(--offwhite);padding:30px 20px 60px}.booking-card{background:#fff;border:1px solid var(--offwb);padding:30px}.booking-card fieldset{border:0;padding:0;margin:0}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:0 0 20px}.lesson-row{grid-template-columns:1.3fr 1fr .6fr;margin-bottom:6px}.field-row label{display:flex;flex-direction:column;gap:7px;min-width:0;font-size:.9rem;color:var(--charcoal);font-weight:600}.field-row input,.field-row select{box-sizing:border-box;width:100%;min-height:48px;border:1px solid #c9c7c2;border-radius:3px;background:#fff;padding:11px 12px;font:inherit;font-weight:400;font-size:16px;color:#252525}.field-row input:focus,.field-row select:focus{outline:3px solid rgba(247,79,87,.22);border-color:var(--accent);outline-offset:1px}.field-help{font-size:.85rem;line-height:1.5;color:#555;margin:8px 0}.field-help:empty{display:none}.guided-help{font-size:.85rem;margin:10px 0 24px}.guided-help a,.contact-help a{color:var(--slate);text-underline-offset:3px}.booking-card .family-question{margin-top:4px}.family-question legend{font-size:.9rem;font-weight:600;margin-bottom:10px}.family-options{display:flex;flex-wrap:wrap;gap:12px 24px}.family-options label{display:flex;align-items:center;gap:9px;font-size:.88rem;min-height:44px;cursor:pointer}.family-options input{width:18px;height:18px;accent-color:var(--accent)}.booking-actions{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:14px}.booking-actions button,.booking-success .btn-a{min-height:50px;border:0;cursor:pointer;font-family:inherit;text-align:center;display:block;box-sizing:border-box}.office-button{border:0;background:transparent;color:var(--slate);font:inherit;font-size:.9rem;padding:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}.booking-actions button:disabled{opacity:.65;cursor:wait}.form-error{color:#9d2229;font-size:.9rem;line-height:1.5;margin-top:12px}.form-error:empty{display:none}.booking-disclosure{font-size:.79rem;color:#666;line-height:1.6;margin:14px 0}.contact-help{display:flex;flex-wrap:wrap;gap:8px 18px;border-top:1px solid var(--offwb);padding-top:20px;margin:24px 0 0;font-size:.85rem;line-height:1.6}.booking-success{padding:18px 0;outline:0}.booking-success h2{font-size:1.5rem}.booking-success p{line-height:1.6}.honeypot,.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.booking-card [hidden]{display:none!important}@media(max-width:560px){.booking-heading{padding:28px 20px 24px}.booking-body{padding:18px 12px 42px}.booking-card{padding:22px 18px}.field-row{grid-template-columns:1fr;gap:16px;margin-bottom:16px}.lesson-row{grid-template-columns:1fr 1fr}.lesson-row label:first-child{grid-column:1/-1}.family-options{display:grid;gap:4px}.contact-help{flex-direction:column}}
+    .booking-width{width:min(100%,780px);margin-inline:auto}.booking-heading{padding:40px 24px 30px;background:var(--charcoal);color:#fff}.booking-heading .section-label{color:var(--slate-lt)}.booking-heading h1{color:#fff;margin:10px 0 12px;font-size:clamp(2rem,5vw,3rem)}.booking-heading p{margin:8px 0;line-height:1.6;color:#eee}.booking-heading .booking-how{font-size:.9rem;color:#d4d4d4}.booking-body{background:var(--offwhite);padding:30px 20px 60px}.booking-card{background:#fff;border:1px solid var(--offwb);padding:30px}.booking-card fieldset{border:0;padding:0;margin:0}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:0 0 20px}.lesson-row{grid-template-columns:1.3fr 1fr .6fr;margin-bottom:6px}.field-row label{display:flex;flex-direction:column;gap:7px;min-width:0;font-size:.9rem;color:var(--charcoal);font-weight:600}.field-row input,.field-row select{box-sizing:border-box;width:100%;min-height:48px;border:1px solid #c9c7c2;border-radius:3px;background:#fff;padding:11px 12px;font:inherit;font-weight:400;font-size:16px;color:#252525}.field-row input:focus,.field-row select:focus{outline:3px solid rgba(247,79,87,.22);border-color:var(--accent);outline-offset:1px}.field-help{font-size:.85rem;line-height:1.5;color:#555;margin:8px 0}.field-help:empty{display:none}.guided-help{font-size:.85rem;margin:10px 0 24px}.guided-help a,.contact-help a{color:var(--slate);text-underline-offset:3px}.booking-card .family-question{margin-top:4px}.family-question legend{font-size:.9rem;font-weight:600;margin-bottom:10px}.family-options{display:flex;flex-wrap:wrap;gap:12px 24px}.family-options label{display:flex;align-items:center;gap:9px;font-size:.88rem;min-height:44px;cursor:pointer}.family-options input{width:18px;height:18px;accent-color:var(--accent)}.booking-actions{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:14px}.booking-actions button,.booking-actions>.btn-a,.booking-success .btn-a{min-height:50px;border:0;cursor:pointer;font-family:inherit;text-align:center;display:block;box-sizing:border-box}.office-button{border:0;background:transparent;color:var(--slate);font:inherit;font-size:.9rem;padding:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}.booking-actions button:disabled{opacity:.65;cursor:wait}.form-error{color:#9d2229;font-size:.9rem;line-height:1.5;margin-top:12px}.form-error:empty{display:none}.booking-disclosure{font-size:.79rem;color:#666;line-height:1.6;margin:14px 0}.contact-help{display:flex;flex-wrap:wrap;gap:8px 18px;border-top:1px solid var(--offwb);padding-top:20px;margin:24px 0 0;font-size:.85rem;line-height:1.6}.booking-success{padding:18px 0;outline:0}.booking-success h2{font-size:1.5rem}.booking-success p{line-height:1.6}.honeypot,.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.booking-card [hidden]{display:none!important}@media(max-width:560px){.booking-heading{padding:28px 20px 24px}.booking-body{padding:18px 12px 42px}.booking-card{padding:22px 18px}.field-row{grid-template-columns:1fr;gap:16px;margin-bottom:16px}.lesson-row{grid-template-columns:1fr 1fr}.lesson-row label:first-child{grid-column:1/-1}.family-options{display:grid;gap:4px}.contact-help{flex-direction:column}}
   </style>
 
   <script define:vars={{ services, locations, defaultService }}>
@@ -41,6 +41,7 @@ const locations = INTRO_LOCATIONS.map(l => ({ slug: l.slug, name: l.name.replace
       const form = document.getElementById('availabilityForm');
       const instrument = document.getElementById('introService');
       const school = document.getElementById('introLocation');
+      const availabilityLink = document.getElementById('viewAvailableTimes');
       const params = new URLSearchParams(location.search);
       const trackingKeys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid','landing_path','first_landing_path','latest_landing_path','attribution_timestamp','last_paid_click_timestamp'];
       const normalize = value => String(value || '').trim().toLowerCase().replace(/[_\s]+/g,'-');
@@ -50,6 +51,7 @@ const locations = INTRO_LOCATIONS.map(l => ({ slug: l.slug, name: l.name.replace
       const requestedLocation = normalize(params.get('location') || params.get('preferred_location')).replace(/^csm-/,'');
       if (locations.some(l => l.slug === requestedLocation)) school.value = requestedLocation;
       function decorate(raw){
+        if(window.CSMAttribution && typeof window.CSMAttribution.decorateUrl === 'function') return window.CSMAttribution.decorateUrl(raw);
         const url = new URL(raw,location.origin);
         let stored = {};
         try { const value = JSON.parse(localStorage.getItem('csmAttribution') || '{}'); if (!value.expires_at || Date.parse(value.expires_at) > Date.now()) stored = {...(value.latest_touch || value.first_touch || {}),first_landing_path:value.first_touch?.first_landing_path || ''}; } catch (_) {}
@@ -62,6 +64,8 @@ const locations = INTRO_LOCATIONS.map(l => ({ slug: l.slug, name: l.name.replace
         Array.from(school.options).forEach(option => { option.disabled = !!option.value && !allowed.includes(option.value); option.hidden = option.disabled; });
         if (school.value && !allowed.includes(school.value)) school.value = '';
         if (allowed.length === 1) school.value = allowed[0];
+        const raw = selected?.urls[school.value];
+        availabilityLink.href = raw ? decorate(raw) : '#availabilityForm';
         for (const [id,path] of [['officeHelp','/request-info/?intent=booking_help'],['guidedHelp','/lesson-fit/guide/']]) {
           const url = new URL(path,location.origin);
           if (instrument.value) url.searchParams.set('service',instrument.value);
@@ -70,15 +74,19 @@ const locations = INTRO_LOCATIONS.map(l => ({ slug: l.slug, name: l.name.replace
         }
       }
       instrument.addEventListener('change',sync);school.addEventListener('change',sync);sync();
-      form.addEventListener('submit',event => {
-        event.preventDefault();
-        if (!form.reportValidity()) return;
-        const raw = services.find(s => s.slug === instrument.value)?.urls[school.value];
-        if (!raw) return;
-        // This is browsing, not a lead or conversion. No contact capture/API request.
+      availabilityLink.addEventListener('click',event => {
+        if (!form.reportValidity() || !services.find(s => s.slug === instrument.value)?.urls[school.value]) {
+          event.preventDefault();
+          return;
+        }
+        // A real outgoing link allows Google's cross-domain linker to decorate
+        // the navigation. Browsing remains neither a lead nor a conversion.
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({event:'intro_availability_view',service_slug:instrument.value,location_slug:school.value});
-        location.assign(decorate(raw));
+      });
+      form.addEventListener('submit',event => {
+        event.preventDefault();
+        availabilityLink.click();
       });
     })();
   </script>

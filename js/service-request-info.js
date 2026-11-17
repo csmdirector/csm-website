@@ -60,6 +60,7 @@
   }
 
   function captureAttribution(){
+    if(window.CSMAttribution && typeof window.CSMAttribution.capture === 'function') return window.CSMAttribution.capture();
     var snapshot = trackingSnapshot();
     var stored = readJson(STORAGE_KEY);
     var timestamp = nowIso();
@@ -126,6 +127,7 @@
   }
 
   function currentAttribution(){
+    if(window.CSMAttribution && typeof window.CSMAttribution.getLatest === 'function') return window.CSMAttribution.getLatest();
     var params = trackingSnapshot();
     var stored = readJson(STORAGE_KEY);
     var first = stored.first_touch || {};
@@ -151,9 +153,11 @@
     document.querySelectorAll(selector).forEach(function(link){
       try {
         var url = new URL(link.getAttribute('href'), window.location.origin);
-        TRACKING_KEYS.forEach(function(key){
-          if(attribution[key] && !url.searchParams.has(key)) url.searchParams.set(key, attribution[key]);
-        });
+        if(window.CSMAttribution && typeof window.CSMAttribution.decorateUrl === 'function'){
+          url = new URL(window.CSMAttribution.decorateUrl(url.href));
+        } else {
+          TRACKING_KEYS.forEach(function(key){ if(attribution[key] && !url.searchParams.has(key)) url.searchParams.set(key, attribution[key]); });
+        }
         if(attribution.first_landing_path && !url.searchParams.has('first_landing_path')) url.searchParams.set('first_landing_path', attribution.first_landing_path);
         if(attribution.latest_landing_path && !url.searchParams.has('latest_landing_path')) url.searchParams.set('latest_landing_path', attribution.latest_landing_path);
         if(attribution.last_paid_click_timestamp && !url.searchParams.has('last_paid_click_timestamp')) url.searchParams.set('last_paid_click_timestamp', attribution.last_paid_click_timestamp);
