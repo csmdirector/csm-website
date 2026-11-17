@@ -15,6 +15,9 @@
   var PARAM_KEYS = ['gclid','gbraid','wbraid','utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
   var CLICK_ID_KEYS = ['gclid','gbraid','wbraid'];
   var TTL_MS = 90 * 24 * 60 * 60 * 1000;
+  var memory = {};
+  var capturedHref = '';
+  var PAID_KEYS = PARAM_KEYS.map(function(key){ return 'last_paid_' + key; });
 
   function trim(value){
     return String(value || '').trim().slice(0, 500);
@@ -24,24 +27,22 @@
     return new Date().toISOString();
   }
 
-  function readJson(key, storage){
-    try {
-      return JSON.parse(storage.getItem(key) || '{}') || {};
-    } catch (error) {
-      return {};
-    }
+  // Storage may be blocked entirely (including access to the property itself).
+  // Keep this page's attribution usable and carry it on the outgoing URL.
+  function readJson(key, storageName){
+    if(Object.prototype.hasOwnProperty.call(memory, key)) return memory[key];
+    try { return JSON.parse(window[storageName].getItem(key) || '{}') || {}; }
+    catch (error) { return memory[key] || {}; }
   }
 
-  function writeJson(key, value, storage){
-    try {
-      storage.setItem(key, JSON.stringify(value));
-    } catch (error) {}
+  function writeJson(key, value, storageName){
+    memory[key] = value;
+    try { window[storageName].setItem(key, JSON.stringify(value)); } catch (error) {}
   }
 
-  function removeJson(key, storage){
-    try {
-      storage.removeItem(key);
-    } catch (error) {}
+  function removeJson(key, storageName){
+    memory[key] = {};
+    try { window[storageName].removeItem(key); } catch (error) {}
   }
 
   function safePath(url){
@@ -93,10 +94,33 @@
     return /^(cpc|ppc|paid|paid[-_ ]?search|sem)$/i.test(snapshot.utm_medium || '');
   }
 
+  function freshTouch(touch){
+    var time = parseTimestamp(touch && touch.timestamp);
+    return time > 0 && time <= Date.now() + 60000 && Date.now() - time < TTL_MS;
+  }
+
+  function sameClick(left, right){
+    return CLICK_ID_KEYS.some(function(key){ return left && right && left[key] && left[key] === right[key]; });
+  }
+
+  function sameCampaign(left, right){
+    return PARAM_KEYS.every(function(key){ return (left && left[key] || '') === (right && right[key] || ''); });
+  }
+
   function pruneExpired(stored){
-    if(!stored || !stored.expires_at) return stored || {};
-    if(Date.parse(stored.expires_at) > Date.now()) return stored;
-    return {};
+    stored = stored || {};
+    // Expire each actual touch, not 90 days after the most recent page view.
+    ['first_touch','latest_touch','last_paid_touch'].forEach(function(key){
+      if(!freshTouch(stored[key])) delete stored[key];
+    });
+    if(!stored.first_touch && stored.latest_touch){
+      stored.latest_touch.first_landing_path = stored.latest_touch.latest_landing_path || '';
+      stored.first_touch = stored.latest_touch;
+    }
+    if(!stored.latest_touch && stored.first_touch) stored.latest_touch = stored.first_touch;
+    if(stored.last_paid_touch) stored.last_paid_click_timestamp = stored.last_paid_touch.timestamp;
+    else delete stored.last_paid_click_timestamp;
+    return stored;
   }
 
   function parseTimestamp(value){
@@ -113,7 +137,7 @@
   function isLegacyFreshEnough(legacy){
     var timestamp = getLegacyTimestamp(legacy);
     if(!timestamp) return false;
-    return Date.now() - timestamp <= TTL_MS;
+    return timestamp <= Date.now() + 60000 && Date.now() - timestamp < TTL_MS;
   }
 
   function buildTouch(snapshot, landingPath, referrer, timestamp){
@@ -127,15 +151,19 @@
       touch[key] = snapshot[key] || '';
     });
     touch.source_type = hasAnyTracking(snapshot) ? 'campaign' : 'direct';
+    if(!hasAnyTracking(snapshot) && referrer){
+      try { if(new URL(referrer).origin !== window.location.origin) touch.source_type = 'referral'; } catch (error) {}
+    }
     return touch;
   }
 
   function migrateLegacy(stored){
-    if(stored.first_touch || stored.latest_touch) return stored;
-    var legacy = readJson(LEGACY_LESSON_FIT_KEY, window.localStorage);
+    // A primary store that expired must not be revived from its legacy copy.
+    if(stored.version || stored.first_touch || stored.latest_touch) return stored;
+    var legacy = readJson(LEGACY_LESSON_FIT_KEY, 'localStorage');
     if(!legacy || !Object.keys(legacy).length) return stored;
     if(!isLegacyFreshEnough(legacy)){
-      removeJson(LEGACY_LESSON_FIT_KEY, window.localStorage);
+      removeJson(LEGACY_LESSON_FIT_KEY, 'localStorage');
       return stored;
     }
     var timestamp = new Date(getLegacyTimestamp(legacy)).toISOString();
@@ -149,13 +177,25 @@
     stored.created_at = timestamp;
     stored.updated_at = timestamp;
     if(hasPaidClick(legacy)){
-      stored.last_paid_click_timestamp = legacy.last_paid_click_timestamp || timestamp;
+      stored.last_paid_touch = Object.assign({}, touch);
+      stored.last_paid_click_timestamp = timestamp;
     }
     return stored;
   }
 
   function getStore(){
-    return migrateLegacy(pruneExpired(readJson(STORAGE_KEY, window.localStorage)));
+    var stored = readJson(STORAGE_KEY, 'localStorage');
+    // Upgrade known v2 evidence. Never invent a click from a timestamp alone.
+    if(stored.version !== 3 && !stored.last_paid_touch){
+      var candidates = [stored.latest_touch, stored.first_touch].filter(function(touch){ return parseTimestamp(touch && touch.timestamp) > 0 && hasPaidClick(touch); });
+      if(candidates.length){
+        var paid = candidates[0];
+        candidates.forEach(function(touch){ if(sameClick(touch, paid) && parseTimestamp(touch.timestamp) < parseTimestamp(paid.timestamp)) paid = touch; });
+        if(sameClick(stored.latest_touch, paid)) stored.latest_touch.timestamp = paid.timestamp;
+        stored.last_paid_touch = Object.assign({}, paid);
+      }
+    }
+    return pruneExpired(migrateLegacy(pruneExpired(stored)));
   }
 
   function normalizeFlat(stored){
@@ -171,20 +211,27 @@
     flat.landing_path = flat.latest_landing_path;
     flat.referrer = latest.referrer || first.referrer || '';
     flat.timestamp = latest.timestamp || stored.updated_at || '';
-    flat.last_paid_click_timestamp = stored.last_paid_click_timestamp || '';
+    var paid = stored.last_paid_touch || {};
+    PARAM_KEYS.forEach(function(key){ flat['last_paid_' + key] = paid[key] || ''; });
+    flat.last_paid_click_timestamp = paid.timestamp || '';
+    flat.last_paid_landing_path = paid.latest_landing_path || paid.first_landing_path || '';
+    flat.last_paid_referrer = paid.referrer || '';
+    flat.attribution_timestamp = flat.timestamp;
     flat.source_type = latest.source_type || '';
     return flat;
   }
 
   function syncLegacy(flat){
     if(hasAnyTracking(flat)){
-      writeJson(LEGACY_LESSON_FIT_KEY, flat, window.localStorage);
+      writeJson(LEGACY_LESSON_FIT_KEY, flat, 'localStorage');
     } else {
-      removeJson(LEGACY_LESSON_FIT_KEY, window.localStorage);
+      removeJson(LEGACY_LESSON_FIT_KEY, 'localStorage');
     }
   }
 
   function capture(){
+    // Multiple forms share this API on a page; re-reading is not a new arrival.
+    if(capturedHref === window.location.href) return normalizeFlat();
     var timestamp = nowIso();
     var landingPath = safePath();
     var referrer = safeReferrer(document.referrer);
@@ -193,28 +240,62 @@
     var paidClick = hasPaidClick(snapshot);
     var stored = getStore();
     var firstVisit = !stored.first_touch;
+    var internal = false;
+    try { internal = new URL(document.referrer).origin === window.location.origin; } catch (error) {}
+    var externalReferral = Boolean(referrer) && !internal;
+    var params = new URLSearchParams(window.location.search);
+    // When storage is unavailable, our own decorated links still preserve the
+    // independent paid touch. Do not reinterpret it as the latest source.
+    if(internal && !stored.last_paid_touch){
+      var carriedPaid = { timestamp: params.get('last_paid_click_timestamp') || '' };
+      PARAM_KEYS.forEach(function(key){ carriedPaid[key] = trim(params.get('last_paid_' + key)); });
+      carriedPaid.latest_landing_path = safePath(params.get('last_paid_landing_path') || '');
+      carriedPaid.first_landing_path = carriedPaid.latest_landing_path;
+      carriedPaid.referrer = safeReferrer(params.get('last_paid_referrer') || '');
+      carriedPaid.source_type = 'campaign';
+      if(freshTouch(carriedPaid) && hasPaidClick(carriedPaid)) stored.last_paid_touch = carriedPaid;
+    }
+    // A decorated internal navigation is the same arrival, not a new ad click.
+    var carriedTimestamp = internal || sameCampaign(snapshot, stored.latest_touch) ? params.get('attribution_timestamp') : '';
+    var carried = parseTimestamp(carriedTimestamp);
+    if(carried && (Date.now() - carried >= TTL_MS || carried > Date.now() + 60000)){
+      snapshot = {}; hasTracking = false; paidClick = false;
+    }
+    var priorPaid = stored.last_paid_touch;
+    var samePaidClick = paidClick && sameClick(snapshot, priorPaid);
+    var sameInternalCampaign = internal && sameCampaign(snapshot, stored.latest_touch);
+    if(samePaidClick) timestamp = priorPaid.timestamp;
+    else if(carried && hasTracking) timestamp = new Date(carried).toISOString();
 
     if(firstVisit){
       var initialTouch = buildTouch(snapshot, landingPath, referrer, timestamp);
+      if(internal && carried && hasTracking){
+        initialTouch.first_landing_path = safePath(params.get('first_landing_path') || landingPath);
+        initialTouch.latest_landing_path = safePath(params.get('latest_landing_path') || params.get('landing_path') || landingPath);
+        initialTouch.referrer = safeReferrer(params.get('referrer') || document.referrer);
+      }
       stored.first_touch = initialTouch;
       stored.latest_touch = initialTouch;
-      stored.created_at = timestamp;
-    } else if(hasTracking){
+    // Latest means the latest campaign or external referral. Direct returns
+    // keep the last non-direct source; neither replaces the independent paid touch.
+    } else if((hasTracking && !sameInternalCampaign) || (!hasTracking && externalReferral)){
       var latestTouch = buildTouch(snapshot, landingPath, referrer, timestamp);
       latestTouch.first_landing_path = stored.first_touch.first_landing_path || landingPath;
       stored.latest_touch = latestTouch;
     }
 
-    if(paidClick){
-      stored.last_paid_click_timestamp = timestamp;
+    if(paidClick && !samePaidClick && !sameInternalCampaign){
+      stored.last_paid_touch = buildTouch(snapshot, landingPath, referrer, timestamp);
     }
-
-    stored.version = 2;
+    stored = pruneExpired(stored);
+    stored.version = 3;
     stored.ttl_days = 90;
-    stored.updated_at = timestamp;
-    stored.expires_at = new Date(Date.now() + TTL_MS).toISOString();
+    stored.created_at = stored.first_touch && stored.first_touch.timestamp || timestamp;
+    stored.updated_at = nowIso();
+    var newest = Math.max.apply(null, ['first_touch','latest_touch','last_paid_touch'].map(function(key){ return parseTimestamp(stored[key] && stored[key].timestamp); }));
+    stored.expires_at = new Date((newest || Date.now()) + TTL_MS).toISOString();
 
-    var session = readJson(SESSION_KEY, window.sessionStorage);
+    var session = readJson(SESSION_KEY, 'sessionStorage');
     if(!session.started_at){
       session = {
         started_at: timestamp,
@@ -225,10 +306,11 @@
       ['utm_source','utm_medium','utm_campaign'].forEach(function(key){
         if(snapshot[key]) session[key] = snapshot[key];
       });
-      writeJson(SESSION_KEY, session, window.sessionStorage);
+      writeJson(SESSION_KEY, session, 'sessionStorage');
     }
 
-    writeJson(STORAGE_KEY, stored, window.localStorage);
+    writeJson(STORAGE_KEY, stored, 'localStorage');
+    capturedHref = window.location.href;
     var flat = normalizeFlat(stored);
     syncLegacy(flat);
 
@@ -255,10 +337,9 @@
     } catch (error) {
       return url;
     }
-    PARAM_KEYS.forEach(function(key){
-      if(flat[key]){
-        outbound.searchParams.set(key, flat[key]);
-      }
+    PARAM_KEYS.concat(PAID_KEYS, ['last_paid_click_timestamp','last_paid_landing_path','last_paid_referrer']).forEach(function(key){
+      if(flat[key]) outbound.searchParams.set(key, flat[key]);
+      else outbound.searchParams.delete(key);
     });
     if(flat.first_landing_path){
       outbound.searchParams.set('first_landing_path', flat.first_landing_path);
@@ -282,9 +363,10 @@
     getLatest: function(){ return normalizeFlat(); },
     decorateUrl: decorateUrl,
     clear: function(){
-      removeJson(STORAGE_KEY, window.localStorage);
-      removeJson(LEGACY_LESSON_FIT_KEY, window.localStorage);
-      removeJson(SESSION_KEY, window.sessionStorage);
+      capturedHref = '';
+      removeJson(STORAGE_KEY, 'localStorage');
+      removeJson(LEGACY_LESSON_FIT_KEY, 'localStorage');
+      removeJson(SESSION_KEY, 'sessionStorage');
     }
   };
 

@@ -473,9 +473,7 @@ import Base from '../../layouts/Base.astro';
       }
 
       function captureAttribution(){
-        if(window.CSMAttribution && typeof window.CSMAttribution.capture === 'function'){
-          window.CSMAttribution.capture();
-        }
+        if(window.CSMAttribution && typeof window.CSMAttribution.capture === 'function') return window.CSMAttribution.capture();
         var sitewide = getSitewideAttribution();
         var params = new URLSearchParams(window.location.search);
         var stored = getStoredJson(ATTRIBUTION_STORAGE_KEY);
@@ -512,6 +510,7 @@ import Base from '../../layouts/Base.astro';
       }
 
       function getAttribution(){
+        if(window.CSMAttribution && typeof window.CSMAttribution.getLatest === 'function') return window.CSMAttribution.getLatest();
         return normalizeAttribution(Object.assign(
           {},
           getStoredJson(ATTRIBUTION_STORAGE_KEY),
@@ -887,6 +886,10 @@ import Base from '../../layouts/Base.astro';
         setLeadEventField('submitted_at', new Date().toISOString());
         setLeadEventField('lead_pipeline_only', '');
         var formData = new URLSearchParams(pendingInquiryBody || new FormData(form));
+        if(!pendingInquiryBody){
+          var attribution = getAttribution();
+          Object.keys(attribution).forEach(function(key){ if(key.indexOf('last_paid_') === 0 && attribution[key]) formData.set(key, attribution[key]); });
+        }
         formData.set('form-name', 'lesson-fit-request');
         formData.set('subject', 'Request Info');
         formData.set('lead_pipeline_only', '');

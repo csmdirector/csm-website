@@ -467,16 +467,17 @@ const browserFields = {
   utm_source: 'google', utm_campaign: 'voice', gclid: 'test-click-id',
   landing_path: '/voice-lessons?utm_source=google'
 };
+const browserAttribution = { last_paid_gclid: 'test-prior-paid-click', last_paid_click_timestamp: '2026-06-01T10:00:00.000Z' };
 class TestFormData extends URLSearchParams {
   constructor() { super(browserFields); }
 }
 function browserRequest(fetchImpl) {
   return new Function(
     'fetch', 'form', 'FormData', 'updateAttributionFields',
-    'ensureClientSubmissionId', 'setLeadEventField', 'DIRECT_SUBMIT_URL',
+    'ensureClientSubmissionId', 'setLeadEventField', 'DIRECT_SUBMIT_URL', 'getAttribution',
     'var pendingInquiryBody=null; var backButton={};\n' + browserRequestCode + '\nreturn submitRequestInfo;'
   )(fetchImpl, { action: '/lesson-fit/thank-you/', querySelectorAll(){return [];} }, TestFormData,
-    () => {}, () => browserFields.client_submission_id, () => {}, '/api/lesson-fit-submit');
+    () => {}, () => browserFields.client_submission_id, () => {}, '/api/lesson-fit-submit', () => browserAttribution);
 }
 for (const failure of ['network', 404, 502, 'invalid-json', 'unconfirmed']) {
   const requests = [];
@@ -493,6 +494,8 @@ for (const failure of ['network', 404, 502, 'invalid-json', 'unconfirmed']) {
   assert.equal(requests[0].url, '/api/lesson-fit-submit');
   assert.equal(requests[1].url, '/lesson-fit/thank-you/');
   for (const attempt of requests) {
+    assert.equal(attempt.fields.get('last_paid_gclid'), browserAttribution.last_paid_gclid);
+    assert.equal(attempt.fields.get('last_paid_click_timestamp'), browserAttribution.last_paid_click_timestamp);
     for (const key of ['parent_name', 'email', 'phone', 'student_age', 'instrument_interest', 'preferred_location', 'gclid', 'utm_source', 'utm_campaign', 'landing_path']) {
       assert.equal(attempt.fields.get(key), browserFields[key], key);
     }
