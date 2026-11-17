@@ -10,7 +10,20 @@ export function normalizeInquiryPolicy(fields = {}) {
   };
 }
 export function storeInquiryPolicy(fields, note) {
-  return PREFIX + JSON.stringify(normalizeInquiryPolicy(fields)) + '\n' + note;
+  return PREFIX + JSON.stringify({
+    ...normalizeInquiryPolicy(fields),
+    intent_explicit: REQUEST_INTENTS.includes(fields.request_intent)
+  }) + '\n' + note;
+}
+// Attribution matching requires affirmative stored intent; outreach's legacy
+// default below must not turn an unknown inquiry into a booking-help request.
+export function hasExplicitBookingHelp(record) {
+  const first = String(record.student_note || '').split('\n')[0];
+  if (!first.startsWith(PREFIX)) return false;
+  try {
+    const policy = JSON.parse(first.slice(PREFIX.length));
+    return policy?.intent === 'booking_help' && policy.intent_explicit === true;
+  } catch { return false; }
 }
 export function readInquiryPolicy(record) {
   const first = String(record.student_note || '').split('\n')[0];

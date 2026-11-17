@@ -2,7 +2,9 @@ import crypto from 'node:crypto';
 import { getConnectionString } from '@netlify/database';
 import pg from 'pg';
 import { normalizeEmail, normalizePhone } from './piano-preregistration.js';
+import { hasExplicitBookingHelp } from './inquiry-policy.js';
 import {
+  introLocation,
   introService,
   introServiceFromText
 } from '../../../shared/intro-bridge-config.js';
@@ -406,7 +408,27 @@ function mergeIdentity(current, prior = []) {
 
 function sanityConflicts(lead, evidence, eventAt = new Date().toISOString()) {
   const conflicts = [];
-  const leadService = clean(lead.service_slug || lead.instrument, 100).toLowerCase().replace(/\s+/g, '-');
+  let leadService = clean(lead.service_slug || lead.instrument, 100).toLowerCase().replace(/\s+/g, '-');
+  let leadLocation = lead.preferred_location_slug || lead.preferred_location;
+  if (leadService === 'request-info') {
+    // Inquiry rows use routing placeholders. Match their explicit answers, while
+    // keeping questions, legacy intent, and unresolved answers in manual review.
+    if (!hasExplicitBookingHelp(lead)) conflicts.push('inquiry_booking_help_not_explicit');
+    const requestedService = introService(lead.instrument);
+    const requestedLocation = introLocation(lead.preferred_location);
+    const bookingLocation = introLocation(evidence.locationName);
+    leadService = requestedService?.slug || '';
+    leadLocation = requestedLocation?.slug || '';
+    if (!requestedService || !evidence.serviceSlug) conflicts.push('inquiry_instrument_unresolved');
+    if (!requestedLocation) conflicts.push('inquiry_location_unresolved');
+    if (!normalizeName(lead.student_name) || !normalizeName(evidence.studentName)) conflicts.push('inquiry_student_unverified');
+    if (!bookingLocation && !evidence.opusLocationId) conflicts.push('inquiry_booking_location_unverified');
+    if (evidence.locationName && !bookingLocation) conflicts.push('inquiry_booking_location_unverified');
+    if (requestedLocation && bookingLocation && requestedLocation.slug !== bookingLocation.slug) conflicts.push('location_conflict');
+    if (requestedLocation && evidence.opusLocationId && requestedLocation.opusLocationId !== evidence.opusLocationId) {
+      conflicts.push('location_conflict');
+    }
+  }
   if (evidence.serviceSlug && leadService && leadService !== evidence.serviceSlug) {
     conflicts.push('service_conflict');
   }
@@ -415,8 +437,8 @@ function sanityConflicts(lead, evidence, eventAt = new Date().toISOString()) {
   }
   if (evidence.locationName) {
     const evidenceLocation = normalizeLocation(evidence.locationName);
-    const leadLocation = normalizeLocation(lead.preferred_location_slug || lead.preferred_location);
-    if (evidenceLocation && leadLocation && !evidenceLocation.includes(leadLocation) && !leadLocation.includes(evidenceLocation)) {
+    const normalizedLeadLocation = normalizeLocation(leadLocation);
+    if (evidenceLocation && normalizedLeadLocation && !evidenceLocation.includes(normalizedLeadLocation) && !normalizedLeadLocation.includes(evidenceLocation)) {
       conflicts.push('location_conflict');
     }
   }
